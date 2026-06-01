@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app()" x-init="init()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4Rivers Realty — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    :root { --navy:#174079; --cyan:#00aeef; --bg:#f0f7fc; --dark:#07162b; }
+    body { background:var(--bg); font-family:'Segoe UI',system-ui,sans-serif; color:var(--dark); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:6px; height:6px; }
+    ::-webkit-scrollbar-track { background:#e2eaf4; }
+    ::-webkit-scrollbar-thumb { background:#174079; border-radius:3px; }
+
+    /* Sidebar */
+    .nav-link { border-left:3px solid transparent; transition:all .15s; }
+    .nav-link.active { background:rgba(0,174,239,.15); color:#00aeef; border-left:3px solid #00aeef; }
+    .nav-link:hover:not(.active) { background:rgba(255,255,255,.08); }
+
+    /* Badge */
+    .badge-super { background:#00aeef22; color:#00aeef; }
+    .badge-agent { background:#17407922; color:#174079; }
+
+    /* CRM */
+    .kanban-col { min-height:380px; }
+    .card-drag { opacity:.4; }
+    .crm-drag-over { outline:2px dashed var(--cyan); outline-offset:2px; background:rgba(0,174,239,.06); }
+    .timeline-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+    .pill { border-radius:999px; font-size:11px; font-weight:700; padding:2px 10px; letter-spacing:.03em; }
+    .stat-card { border-left:4px solid var(--cyan); }
+    .crm-nav-btn { transition:background .15s; }
+    .crm-nav-btn.active { background:rgba(0,174,239,.18); color:#00aeef; }
+    .crm-nav-btn:hover:not(.active) { background:rgba(23,64,121,.07); }
+
+    /* Modal */
+    .modal-bg { background:rgba(7,22,43,.55); backdrop-filter:blur(2px); }
+
+    /* Input focus */
+    input:focus,select:focus,textarea:focus { outline:none; border-color:#00aeef; box-shadow:0 0 0 3px #00aeef22; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- ===================== LOGIN ===================== -->
+<div x-show="!loggedIn" x-cloak class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#07162b] via-[#174079] to-[#00aeef]">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-10">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 mb-1">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="8" fill="#174079"/>
+          <path d="M6 26 L18 10 L30 26 Z" fill="none" stroke="#00aeef" stroke-width="2.5"/>
+          <rect x="14" y="18" width="8" height="8" rx="1" fill="#00aeef"/>
+        </svg>
+        <span class="text-2xl font-black tracking-tight text-[#174079]">4Rivers <span class="text-[#00aeef]">Realty</span></span>
+      </div>
+      <p class="text-sm text-gray-400 mt-1">Admin Portal</p>
+    </div>
+    <form @submit.prevent="login()">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <input x-model="loginForm.email" type="email" placeholder="you@4riversrealty.com"
+          class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <input x-model="loginForm.password" type="password" placeholder="••••••••"
+          class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+      </div>
+      <div x-show="loginError" class="mb-4 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2.5 rounded-lg" x-text="loginError"></div>
+      <button type="submit" class="w-full bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg transition text-sm">Sign In</button>
+      <p class="text-center text-xs text-gray-400 mt-4 cursor-pointer hover:text-[#00aeef]">Forgot password?</p>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== ADMIN PANEL ===================== -->
+<div x-show="loggedIn" x-cloak class="flex h-screen overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-[#07162b] text-white flex flex-col flex-shrink-0 h-screen overflow-y-auto">
+    <div class="px-6 pt-7 pb-5 border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <svg width="30" height="30" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="8" fill="#174079"/>
+          <path d="M6 26 L18 10 L30 26 Z" fill="none" stroke="#00aeef" stroke-width="2.5"/>
+          <rect x="14" y="18" width="8" height="8" rx="1" fill="#00aeef"/>
+        </svg>
+        <span class="font-black text-lg tracking-tight">4Rivers <span class="text-[#00aeef]">Realty</span></span>
+      </div>
+    </div>
+    <div class="px-6 py-4 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-[#00aeef] flex items-center justify-center font-bold text-sm text-white flex-shrink-0"
+          x-text="currentUser ? currentUser.name.split(' ').map(n=>n[0]).join('').slice(0,2) : ''"></div>
+        <div class="overflow-hidden">
+          <p class="text-sm font-semibold truncate" x-text="currentUser?.name"></p>
+          <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+            :class="currentUser?.role==='Super Admin'?'badge-super':'badge-agent'"
+            x-text="currentUser?.role"></span>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 py-4 space-y-1">
+      <template x-for="item in navItems" :key="item.id">
+        <button x-show="!item.superOnly || currentUser?.role==='Super Admin'"
+          @click="navigate(item.id)"
+          :class="{'active': currentSection===item.id}"
+          class="nav-link w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:text-white">
+          <span x-html="item.icon" class="w-5 h-5 flex-shrink-0"></span>
+          <span x-text="item.label"></span>
+        </button>
+      </template>
+    </nav>
+    <div class="px-3 pb-5">
+      <button @click="logout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 overflow-y-auto bg-[#f0f7fc]">
+
+    <!-- ======== DASHBOARD ======== -->
+    <section x-show="currentSection==='dashboard'" class="p-8">
+      <h1 class="text-2xl font-bold text-[#174079] mb-1">Dashboard</h1>
+      <p class="text-gray-500 text-sm mb-7">Welcome back, <span x-text="currentUser?.name.split(' ')[0]"></span>!</p>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <template x-for="kpi in kpis" :key="kpi.label">
+          <div class="bg-white rounded-xl shadow-sm p-5 border border-blue-50">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs text-gray-500 font-medium mb-1" x-text="kpi.label"></p>
+                <p class="text-3xl font-black text-[#174079]" x-text="kpi.value"></p>
+                <p class="text-xs mt-1" :class="kpi.trend>0?'text-green-500':'text-red-400'">
+                  <span x-text="kpi.trend>0?'▲':'▼'"></span>
+                  <span x-text="Math.abs(kpi.trend)+'% vs last month'"></span>
+                </p>
+              </div>
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center" :style="`background:${kpi.color}22`">
+                <span x-html="kpi.icon" :style="`color:${kpi.color}`" class="w-5 h-5"></span>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-blue-50">
+          <h2 class="text-sm font-bold text-[#174079] mb-5">Leads — Last 6 Months</h2>
+          <div class="flex items-end justify-around gap-3 h-44">
+            <template x-for="(bar,i) in chartData" :key="i">
+              <div class="flex flex-col items-center gap-1 flex-1">
+                <span class="text-xs font-bold text-[#174079]" x-text="bar.value"></span>
+                <div class="w-full rounded-t-md bg-gradient-to-t from-[#174079] to-[#00aeef]"
+                  :style="`height:${(bar.value/maxChart)*100}%;min-height:4px`"></div>
+                <span class="text-[10px] text-gray-400" x-text="bar.month"></span>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-blue-50">
+          <h2 class="text-sm font-bold text-[#174079] mb-4">Recent Activity</h2>
+          <div class="space-y-3">
+            <template x-for="act in recentActivity" :key="act.id">
+              <div class="flex items-start gap-3">
+                <div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" :class="act.dot"></div>
+                <div>
+                  <p class="text-xs text-gray-700" x-text="act.text"></p>
+                  <p class="text-[10px] text-gray-400" x-text="act.time"></p>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== CRM ======== -->
+    <section x-show="currentSection==='crm'">
+      <!-- CRM top bar -->
+      <header class="sticky top-0 z-10 flex items-center justify-between px-6 py-3 border-b border-navy/10 bg-[#f0f7fc]/90 backdrop-blur">
+        <div class="flex items-center gap-1">
+          <button @click="crmView='dashboard'" :class="crmView==='dashboard'?'active':''" class="crm-nav-btn text-sm font-semibold px-4 py-2 rounded-lg text-gray-600">Dashboard</button>
+          <button @click="crmView='pipeline'" :class="crmView==='pipeline'?'active':''" class="crm-nav-btn text-sm font-semibold px-4 py-2 rounded-lg text-gray-600">Pipeline</button>
+          <button @click="crmView='leads'" :class="crmView==='leads'?'active':''" class="crm-nav-btn text-sm font-semibold px-4 py-2 rounded-lg text-gray-600">All Leads</button>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-navy/50" x-text="crmToday()"></span>
+          <button @click="openNewLead()" class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-bold px-4 py-2 rounded-lg transition flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            New Lead
+          </button>
+        </div>
+      </header>
+
+      <!-- CRM Dashboard -->
+      <div x-show="crmView==='dashboard'" class="p-6">
+        <div class="grid grid-cols-4 gap-4 mb-6">
+          <div class="bg-white rounded-xl p-4 shadow-sm stat-card">
+            <div class="text-2xl font-black text-[#174079]" x-text="crmStats.active"></div>
+            <div class="text-sm text-navy/60 mt-0.5">Active Leads</div>
+          </div>
+          <div class="bg-white rounded-xl p-4 shadow-sm stat-card">
+            <div class="text-2xl font-black text-[#174079]" x-text="crmStats.showings"></div>
+            <div class="text-sm text-navy/60 mt-0.5">Showings Scheduled</div>
+          </div>
+          <div class="bg-white rounded-xl p-4 shadow-sm stat-card">
+            <div class="text-2xl font-black text-[#174079]" x-text="crmStats.offers"></div>
+            <div class="text-sm text-navy/60 mt-0.5">Offers In Progress</div>
+          </div>
+          <div class="bg-white rounded-xl p-4 shadow-sm stat-card">
+            <div class="text-2xl font-black text-[#174079]" x-text="crmStats.closedMonth"></div>
+            <div class="text-sm text-navy/60 mt-0.5">Closed This Month</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-6">
+          <!-- Overdue -->
+          <div class="bg-white rounded-xl p-5 shadow-sm">
+            <h2 class="font-bold text-[#174079] mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Overdue Follow-ups
+            </h2>
+            <template x-if="overdueLeads.length===0">
+              <p class="text-sm text-navy/40">All follow-ups up to date 🎉</p>
+            </template>
+            <template x-for="lead in overdueLeads" :key="lead.id">
+              <div class="flex items-center justify-between py-2 border-b border-navy/5 last:border-0 cursor-pointer hover:bg-[#f0f7fc] rounded px-1" @click="openLead(lead)">
+                <div>
+                  <div class="font-semibold text-sm text-[#174079]" x-text="lead.name"></div>
+                  <div class="text-xs text-navy/50" x-text="lead.property || 'No property noted'"></div>
+                </div>
+                <span class="pill text-red-600 bg-red-50" x-text="daysSince(lead.lastContact)+'d ago'"></span>
+              </div>
+            </template>
+          </div>
+          <!-- Upcoming -->
+          <div class="bg-white rounded-xl p-5 shadow-sm">
+            <h2 class="font-bold text-[#174079] mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4 text-[#00aeef]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Next 3 Days
+            </h2>
+            <template x-if="upcomingActivities.length===0">
+              <p class="text-sm text-navy/40">No activities in the next 3 days.</p>
+            </template>
+            <template x-for="act in upcomingActivities" :key="act.id">
+              <div class="flex items-start gap-3 py-2 border-b border-navy/5 last:border-0">
+                <div class="timeline-dot" :style="'background:'+actColor(act.type)"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-semibold text-[#174079]" x-text="act.leadName"></div>
+                  <div class="text-xs text-navy/60" x-text="act.type+' · '+fmtDate(act.date)"></div>
+                  <div class="text-xs text-navy/50 truncate" x-text="act.note"></div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRM Pipeline (Kanban) -->
+      <div x-show="crmView==='pipeline'" class="p-6 overflow-x-auto">
+        <div class="flex gap-4 min-w-max">
+          <template x-for="col in crmColumns" :key="col.id">
+            <div class="w-64 flex-shrink-0">
+              <div class="flex items-center justify-between mb-2 px-1">
+                <span class="font-bold text-xs uppercase tracking-wider text-navy/70" x-text="col.label"></span>
+                <span class="pill text-navy/70 bg-navy/10" x-text="leadsInCol(col.id).length"></span>
+              </div>
+              <div class="kanban-col rounded-xl p-2 space-y-2" style="background:rgba(23,64,121,.05);"
+                @dragover.prevent="onCrmDragOver($event)"
+                @dragleave="onCrmDragLeave($event)"
+                @drop.prevent="onCrmDrop($event, col.id)">
+                <template x-for="lead in leadsInCol(col.id)" :key="lead.id">
+                  <div class="bg-white rounded-lg p-3 shadow-sm cursor-pointer hover:shadow-md transition-shadow border border-navy/5 select-none"
+                    draggable="true"
+                    @dragstart="onCrmDragStart($event, lead.id)"
+                    @dragend="onCrmDragEnd($event)"
+                    @click="openLead(lead)">
+                    <div class="flex items-start justify-between mb-1">
+                      <span class="font-bold text-sm text-[#174079] leading-tight" x-text="lead.name"></span>
+                      <span class="pill ml-1 flex-shrink-0" :class="typePill(lead.type)" x-text="lead.type"></span>
+                    </div>
+                    <div class="text-xs text-navy/60 mb-1" x-text="lead.phone"></div>
+                    <div class="text-xs text-navy/50 truncate" x-text="lead.property || '—'"></div>
+                    <div class="mt-2 pt-2 border-t border-navy/5 flex items-center justify-between">
+                      <span class="text-xs text-navy/40">Last contact</span>
+                      <span class="text-xs font-semibold" :class="daysSince(lead.lastContact)>7?'text-red-500':'text-navy/60'"
+                        x-text="daysSince(lead.lastContact)===0?'Today':daysSince(lead.lastContact)+'d ago'"></span>
+                    </div>
+                  </div>
+                </template>
+                <template x-if="leadsInCol(col.id).length===0">
+                  <div class="text-center text-xs text-navy/30 py-6">Drop here</div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- CRM All Leads Table -->
+      <div x-show="crmView==='leads'" class="p-6">
+        <div class="flex items-center gap-3 mb-4 flex-wrap">
+          <input type="text" x-model="crmSearch" placeholder="Search leads…"
+            class="border border-navy/20 rounded-lg px-3 py-2 text-sm w-56 focus:outline-none focus:ring-2 focus:ring-cyan-300">
+          <select x-model="crmFilterType" class="border border-navy/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-300">
+            <option value="">All Types</option>
+            <option>Buyer</option><option>Seller</option><option>Investor</option>
+          </select>
+          <select x-model="crmFilterStage" class="border border-navy/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-300">
+            <option value="">All Stages</option>
+            <template x-for="col in crmColumns" :key="col.id"><option :value="col.id" x-text="col.label"></option></template>
+          </select>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="bg-[#174079] text-white text-xs uppercase tracking-wide">
+              <tr>
+                <th class="text-left px-5 py-3">Name</th>
+                <th class="text-left px-4 py-3">Type</th>
+                <th class="text-left px-4 py-3">Stage</th>
+                <th class="text-left px-4 py-3">Property Interest</th>
+                <th class="text-left px-4 py-3">Budget</th>
+                <th class="text-left px-4 py-3">Last Contact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="lead in filteredLeads" :key="lead.id">
+                <tr class="border-b border-navy/5 hover:bg-[#f0f7fc] cursor-pointer" @click="openLead(lead)">
+                  <td class="px-5 py-3">
+                    <div class="font-semibold text-[#174079]" x-text="lead.name"></div>
+                    <div class="text-xs text-navy/40" x-text="lead.email"></div>
+                  </td>
+                  <td class="px-4 py-3"><span class="pill" :class="typePill(lead.type)" x-text="lead.type"></span></td>
+                  <td class="px-4 py-3"><span class="pill bg-navy/10 text-navy/70" x-text="colLabel(lead.stage)"></span></td>
+                  <td class="px-4 py-3 text-navy/70" x-text="lead.property || '—'"></td>
+                  <td class="px-4 py-3 text-navy/70" x-text="lead.budget?'$'+Number(lead.budget).toLocaleString():'—'"></td>
+                  <td class="px-4 py-3">
+                    <span :class="daysSince(lead.lastContact)>7?'text-red-500 font-semibold':'text-navy/60'"
+                      x-text="daysSince(lead.lastContact)===0?'Today':daysSince(lead.lastContact)+'d ago'"></span>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== PROPERTIES ======== -->
+    <section x-show="currentSection==='properties'" class="p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-[#174079]">Properties</h1>
+          <p class="text-gray-500 text-sm mt-0.5"><span x-text="properties.length"></span> listings</p>
+        </div>
+        <button @click="openPropModal()"
+          class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Property
+        </button>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-[#174079] text-white text-xs uppercase tracking-wide">
+            <tr>
+              <th class="text-left px-5 py-3">Property</th>
+              <th class="text-left px-4 py-3">Type</th>
+              <th class="text-left px-4 py-3">Price</th>
+              <th class="text-left px-4 py-3">Status</th>
+              <th class="text-left px-4 py-3">Featured</th>
+              <th class="text-left px-4 py-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <template x-for="prop in properties" :key="prop.id">
+              <tr class="hover:bg-blue-50/40 transition">
+                <td class="px-5 py-3">
+                  <div class="font-semibold text-[#174079]" x-text="prop.address"></div>
+                  <div class="text-xs text-gray-400" x-text="prop.beds+'bd · '+prop.baths+'ba · '+prop.sqft+' sqft'"></div>
+                </td>
+                <td class="px-4 py-3 text-gray-600" x-text="prop.type"></td>
+                <td class="px-4 py-3 font-semibold text-[#174079]" x-text="prop.price"></td>
+                <td class="px-4 py-3">
+                  <span class="text-xs px-2 py-1 rounded-full font-medium"
+                    :class="{'bg-green-100 text-green-700':prop.status==='Active','bg-yellow-100 text-yellow-700':prop.status==='Pending','bg-gray-100 text-gray-600':prop.status==='Sold'}"
+                    x-text="prop.status"></span>
+                </td>
+                <td class="px-4 py-3">
+                  <button @click="prop.featured=!prop.featured"
+                    :class="prop.featured?'bg-[#00aeef] text-white':'bg-gray-100 text-gray-400'"
+                    class="text-xs px-2 py-1 rounded-full font-medium transition" x-text="prop.featured?'★ Featured':'☆ Feature'"></button>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="flex gap-2">
+                    <button @click="openPropModal(prop)" class="text-xs text-[#00aeef] hover:underline font-medium">Edit</button>
+                    <button @click="deleteProp(prop.id)" class="text-xs text-red-400 hover:underline font-medium">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======== USERS ======== -->
+    <section x-show="currentSection==='users'" class="p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-[#174079]">Users</h1>
+          <p class="text-gray-500 text-sm mt-0.5">Manage team access</p>
+        </div>
+        <button @click="openUserModal()"
+          class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add User
+        </button>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-[#174079] text-white text-xs uppercase tracking-wide">
+            <tr>
+              <th class="text-left px-5 py-3">User</th>
+              <th class="text-left px-4 py-3">Email</th>
+              <th class="text-left px-4 py-3">Role</th>
+              <th class="text-left px-4 py-3">Status</th>
+              <th class="text-left px-4 py-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <template x-for="u in users" :key="u.id">
+              <tr class="hover:bg-blue-50/40 transition">
+                <td class="px-5 py-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-[#174079] flex items-center justify-center text-white text-xs font-bold"
+                      x-text="u.name.split(' ').map(n=>n[0]).join('').slice(0,2)"></div>
+                    <span class="font-semibold text-[#174079]" x-text="u.name"></span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-gray-600" x-text="u.email"></td>
+                <td class="px-4 py-3">
+                  <span class="text-xs px-2 py-1 rounded-full font-medium"
+                    :class="u.role==='Super Admin'?'badge-super':'badge-agent'" x-text="u.role"></span>
+                </td>
+                <td class="px-4 py-3">
+                  <span class="text-xs px-2 py-1 rounded-full font-medium"
+                    :class="u.active?'bg-green-100 text-green-700':'bg-gray-100 text-gray-500'"
+                    x-text="u.active?'Active':'Inactive'"></span>
+                </td>
+                <td class="px-4 py-3">
+                  <button @click="u.active=!u.active"
+                    :class="u.active?'text-red-400':'text-green-500'"
+                    class="text-xs font-medium hover:underline" x-text="u.active?'Deactivate':'Activate'"></button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======== SETTINGS ======== -->
+    <section x-show="currentSection==='settings'" class="p-8">
+      <h1 class="text-2xl font-bold text-[#174079] mb-1">Settings</h1>
+      <p class="text-gray-500 text-sm mb-7">Company information</p>
+      <div class="bg-white rounded-xl shadow-sm border border-blue-50 p-8 max-w-2xl">
+        <div class="grid grid-cols-1 gap-5">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+            <input x-model="settings.name" type="text" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+            <input x-model="settings.email" type="email" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            <input x-model="settings.phone" type="text" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <textarea x-model="settings.address" rows="2" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition resize-none"></textarea>
+          </div>
+        </div>
+        <div x-show="settingsSaved" class="mt-4 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-2.5 rounded-lg">
+          ✓ Settings saved successfully.
+        </div>
+        <button @click="saveSettings()" class="mt-6 bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition">
+          Save Changes
+        </button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+
+<!-- CRM Lead Detail Modal -->
+<div x-show="modalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="closeModal()">
+  <div class="modal-bg absolute inset-0" @click="closeModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col z-10">
+    <div class="flex items-start justify-between px-6 pt-5 pb-4 border-b border-navy/10" style="background:var(--navy)">
+      <div>
+        <h2 class="text-xl font-black text-white" x-text="modalLead?.name"></h2>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="pill" :class="typePill(modalLead?.type)" x-text="modalLead?.type"></span>
+          <span class="text-white/60 text-xs" x-text="modalLead?.email"></span>
+          <span class="text-white/60 text-xs" x-text="modalLead?.phone"></span>
+        </div>
+      </div>
+      <button @click="closeModal()" class="text-white/60 hover:text-white mt-1">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="overflow-y-auto flex-1 px-6 py-4">
+      <div class="grid grid-cols-3 gap-3 mb-5">
+        <div class="bg-[#f0f7fc] rounded-lg p-3">
+          <div class="text-xs text-navy/50 mb-0.5">Stage</div>
+          <select class="text-sm font-semibold text-navy bg-transparent w-full focus:outline-none" x-model="modalLead.stage">
+            <template x-for="col in crmColumns" :key="col.id"><option :value="col.id" x-text="col.label"></option></template>
+          </select>
+        </div>
+        <div class="bg-[#f0f7fc] rounded-lg p-3">
+          <div class="text-xs text-navy/50 mb-0.5">Budget</div>
+          <div class="text-sm font-semibold text-navy" x-text="modalLead?.budget?'$'+Number(modalLead.budget).toLocaleString():'N/A'"></div>
+        </div>
+        <div class="bg-[#f0f7fc] rounded-lg p-3">
+          <div class="text-xs text-navy/50 mb-0.5">Source</div>
+          <div class="text-sm font-semibold text-navy" x-text="modalLead?.source||'—'"></div>
+        </div>
+        <div class="bg-[#f0f7fc] rounded-lg p-3">
+          <div class="text-xs text-navy/50 mb-0.5">Property Interest</div>
+          <div class="text-sm font-semibold text-navy" x-text="modalLead?.property||'—'"></div>
+        </div>
+        <div class="bg-[#f0f7fc] rounded-lg p-3">
+          <div class="text-xs text-navy/50 mb-0.5">Acreage</div>
+          <div class="text-sm font-semibold text-navy" x-text="modalLead?.acreage?modalLead.acreage+' acres':'—'"></div>
+        </div>
+        <div class="bg-[#f0f7fc] rounded-lg p-3">
+          <div class="text-xs text-navy/50 mb-0.5">County</div>
+          <div class="text-sm font-semibold text-navy" x-text="modalLead?.county||'—'"></div>
+        </div>
+      </div>
+      <template x-if="modalLead?.notes">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-5 text-sm text-navy/70" x-text="modalLead.notes"></div>
+      </template>
+      <h3 class="font-bold text-navy text-sm mb-3">Activity Timeline</h3>
+      <div class="space-y-3 mb-5">
+        <template x-if="sortedActivities.length===0">
+          <p class="text-sm text-navy/40">No activities yet.</p>
+        </template>
+        <template x-for="act in sortedActivities" :key="act.id">
+          <div class="flex gap-3 items-start">
+            <div class="timeline-dot" :style="'background:'+actColor(act.type)"></div>
+            <div class="flex-1 bg-[#f0f7fc] rounded-lg p-3">
+              <div class="flex items-center justify-between mb-0.5">
+                <span class="text-xs font-bold uppercase tracking-wide" :style="'color:'+actColor(act.type)" x-text="act.type"></span>
+                <span class="text-xs text-navy/40" x-text="fmtDate(act.date)"></span>
+              </div>
+              <div class="text-sm text-navy/70" x-text="act.note"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="border border-navy/15 rounded-xl p-4">
+        <h4 class="font-bold text-navy text-sm mb-3">Log Activity</h4>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div>
+            <label class="text-xs text-navy/50 block mb-1">Type</label>
+            <select x-model="newAct.type" class="w-full border border-navy/20 rounded-lg px-3 py-1.5 text-sm">
+              <option>Call</option><option>Email</option><option>Showing</option><option>Offer</option><option>Note</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-navy/50 block mb-1">Date</label>
+            <input type="date" x-model="newAct.date" class="w-full border border-navy/20 rounded-lg px-3 py-1.5 text-sm">
+          </div>
+        </div>
+        <textarea x-model="newAct.note" placeholder="Notes…" rows="2" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm resize-none mb-3"></textarea>
+        <button @click="addActivity()" class="px-4 py-2 rounded-lg text-white text-sm font-bold" style="background:var(--cyan)">Log Activity</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CRM New Lead Modal -->
+<div x-show="newLeadOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="modal-bg absolute inset-0" @click="newLeadOpen=false"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto z-10 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-black text-[#174079]">New Lead</h2>
+      <button @click="newLeadOpen=false" class="text-navy/40 hover:text-navy">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-navy/50 block mb-1">Name *</label>
+          <input x-model="newLead.name" type="text" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm" placeholder="Full name">
+        </div>
+        <div>
+          <label class="text-xs text-navy/50 block mb-1">Phone</label>
+          <input x-model="newLead.phone" type="tel" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm" placeholder="(352) 000-0000">
+        </div>
+      </div>
+      <div>
+        <label class="text-xs text-navy/50 block mb-1">Email</label>
+        <input x-model="newLead.email" type="email" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-navy/50 block mb-1">Type</label>
+          <select x-model="newLead.type" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm">
+            <option>Buyer</option><option>Seller</option><option>Investor</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-navy/50 block mb-1">Source</label>
+          <select x-model="newLead.source" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm">
+            <option>Website</option><option>Referral</option><option>Zillow</option><option>Realtor.com</option><option>Instagram</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs text-navy/50 block mb-1">Property Interest</label>
+        <input x-model="newLead.property" type="text" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Horse farm with arena, 20+ acres">
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="text-xs text-navy/50 block mb-1">Budget (USD)</label>
+          <input x-model="newLead.budget" type="number" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm" placeholder="1500000">
+        </div>
+        <div>
+          <label class="text-xs text-navy/50 block mb-1">Acreage</label>
+          <input x-model="newLead.acreage" type="number" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm" placeholder="20">
+        </div>
+        <div>
+          <label class="text-xs text-navy/50 block mb-1">County</label>
+          <input x-model="newLead.county" type="text" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm" placeholder="Marion">
+        </div>
+      </div>
+      <div>
+        <label class="text-xs text-navy/50 block mb-1">Initial Stage</label>
+        <select x-model="newLead.stage" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm">
+          <template x-for="col in crmColumns.filter(c=>!c.closed)" :key="col.id"><option :value="col.id" x-text="col.label"></option></template>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs text-navy/50 block mb-1">Notes</label>
+        <textarea x-model="newLead.notes" rows="3" class="w-full border border-navy/20 rounded-lg px-3 py-2 text-sm resize-none" placeholder="Additional notes…"></textarea>
+      </div>
+      <button @click="saveLead()" class="w-full py-2.5 rounded-lg text-white font-bold text-sm mt-1" style="background:var(--navy)">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- Property Modal -->
+<div x-show="propModal.open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg" @click.self="propModal.open=false">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-lg font-bold text-[#174079]" x-text="propModal.editing?'Edit Property':'Add Property'"></h2>
+      <button @click="propModal.open=false" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+    </div>
+    <div class="p-6">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Address *</label>
+          <input x-model="propForm.address" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Price *</label>
+          <input x-model="propForm.price" type="text" placeholder="$850,000" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Type</label>
+          <select x-model="propForm.type" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition">
+            <option>Single Family</option><option>Condo</option><option>Townhouse</option><option>Multi-Family</option><option>Commercial</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Bedrooms</label>
+          <input x-model="propForm.beds" type="number" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Bathrooms</label>
+          <input x-model="propForm.baths" type="number" step="0.5" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Sq Ft</label>
+          <input x-model="propForm.sqft" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Status</label>
+          <select x-model="propForm.status" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition">
+            <option>Active</option><option>Pending</option><option>Sold</option>
+          </select>
+        </div>
+        <div class="col-span-2 flex items-center gap-2">
+          <input x-model="propForm.featured" type="checkbox" id="featuredChk" class="w-4 h-4 accent-[#00aeef]" />
+          <label for="featuredChk" class="text-sm text-gray-600">Mark as Featured</label>
+        </div>
+      </div>
+      <button @click="saveProp()" class="w-full mt-5 bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg text-sm transition"
+        x-text="propModal.editing?'Save Changes':'Add Property'"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div x-show="userModal.open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg" @click.self="userModal.open=false">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+    <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-lg font-bold text-[#174079]">Add User</h2>
+      <button @click="userModal.open=false" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Full Name</label>
+        <input x-model="userForm.name" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Email</label>
+        <input x-model="userForm.email" type="email" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Role</label>
+        <select x-model="userForm.role" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition">
+          <option>Agent</option><option>Super Admin</option>
+        </select>
+      </div>
+      <button @click="addUser()" class="w-full bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg text-sm transition">Add User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ALPINE APP ===================== -->
+<script>
+function app() {
+  const TODAY = new Date();
+  const todayStr = TODAY.toISOString().split('T')[0];
+  function daysAgo(n) { const d=new Date(TODAY); d.setDate(d.getDate()-n); return d.toISOString().split('T')[0]; }
+  function daysFromNow(n) { const d=new Date(TODAY); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; }
+
+  return {
+    // Auth
+    loggedIn: false,
+    currentUser: null,
+    currentSection: 'dashboard',
+    loginError: '',
+    loginForm: { email:'', password:'' },
+    credentials: [
+      { email:'lucas@4riversrealty.com', password:'admin2024', name:'Lucas Leite', role:'Super Admin' },
+      { email:'lindoso@4riversrealty.com', password:'agent2024', name:'Lindoso Silva', role:'Agent' },
+      { email:'luan@4riversrealty.com', password:'agent2024', name:'Luan Castro', role:'Agent' },
+    ],
+
+    navItems: [
+      { id:'dashboard', label:'Dashboard', superOnly:false, icon:'<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>' },
+      { id:'crm', label:'CRM', superOnly:false, icon:'<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>' },
+      { id:'properties', label:'Properties', superOnly:false, icon:'<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 22V12h6v10"/></svg>' },
+      { id:'users', label:'Users', superOnly:true, icon:'<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>' },
+      { id:'settings', label:'Settings', superOnly:false, icon:'<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>' },
+    ],
+
+    // Dashboard
+    kpis: [
+      { label:'Active Listings', value:6, trend:20, color:'#174079', icon:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>' },
+      { label:'Leads This Month', value:8, trend:14, color:'#00aeef', icon:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>' },
+      { label:'Showings Scheduled', value:3, trend:-5, color:'#8b5cf6', icon:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>' },
+      { label:'Under Contract', value:2, trend:100, color:'#f97316', icon:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' },
+    ],
+    chartData: [
+      {month:'Dec',value:5},{month:'Jan',value:7},{month:'Feb',value:4},{month:'Mar',value:9},{month:'Apr',value:6},{month:'May',value:8},
+    ],
+    get maxChart() { return Math.max(...this.chartData.map(d=>d.value)); },
+    recentActivity: [
+      { id:1, text:'Derek Fontaine added — 48-acre seller lead', dot:'bg-blue-400', time:'Today' },
+      { id:2, text:'Carlos Vega inquiry from Realtor.com', dot:'bg-amber-400', time:'Today' },
+      { id:3, text:'Priya Nair — inspection completed, HVAC credit pending', dot:'bg-orange-400', time:'3 days ago' },
+      { id:4, text:'W. & C. Jennings — full-day tour of 3 properties', dot:'bg-purple-400', time:'5 days ago' },
+      { id:5, text:'Robert Ashford offer submitted: $4.75M', dot:'bg-green-500', time:'1 day ago' },
+    ],
+
+    // CRM
+    crmView: 'dashboard',
+    crmSearch: '',
+    crmFilterType: '',
+    crmFilterStage: '',
+    modalOpen: false,
+    modalLead: null,
+    newLeadOpen: false,
+    crmDragLeadId: null,
+    newAct: { type:'Call', date:todayStr, note:'' },
+    newLead: { name:'', email:'', phone:'', type:'Buyer', source:'Website', stage:'new', property:'', budget:'', acreage:'', county:'', notes:'' },
+
+    crmColumns: [
+      { id:'new', label:'New Lead', closed:false },
+      { id:'contacted', label:'Contacted', closed:false },
+      { id:'showing', label:'Showing', closed:false },
+      { id:'offer', label:'Offer Made', closed:false },
+      { id:'contract', label:'Under Contract', closed:false },
+      { id:'won', label:'Closed Won', closed:true },
+      { id:'lost', label:'Closed Lost', closed:true },
+    ],
+
+    leads: [
+      { id:1, name:'Margaret "Maggie" Collins', email:'maggie.collins@gmail.com', phone:'(352) 541-7823',
+        type:'Buyer', source:'Referral', stage:'showing',
+        property:'Horse farm w/ covered arena, 30+ acres', budget:2200000, acreage:30, county:'Marion',
+        lastContact: daysAgo(2),
+        notes:'Looking to relocate from Wellington FL. Has 6 horses, needs full equestrian setup.',
+        activities:[
+          { id:101, type:'Call', date:daysAgo(14), note:'Initial inquiry from referral by Tom Harwood. Discussed budget and timeline.' },
+          { id:102, type:'Email', date:daysAgo(10), note:'Sent 4 property listings matching 30+ acre criteria in NW Marion County.' },
+          { id:103, type:'Showing', date:daysAgo(2), note:'Toured Windmill Ranch — loved the arena. Wants to bring husband next week.' },
+        ]},
+      { id:2, name:'Robert Ashford', email:'rashford@ashfordcapital.com', phone:'(212) 448-9001',
+        type:'Investor', source:'Website', stage:'offer',
+        property:'Agricultural land 100+ acres, development potential', budget:5000000, acreage:100, county:'Alachua',
+        lastContact: daysAgo(1),
+        notes:'NYC-based private equity. Looking for land near Gainesville for agri-investment portfolio.',
+        activities:[
+          { id:201, type:'Call', date:daysAgo(20), note:'Cold inbound from website. Qualified — serious buyer, cash close.' },
+          { id:202, type:'Showing', date:daysAgo(12), note:'Flew in for 2-property tour. Preferred Hawthorn Road parcel.' },
+          { id:203, type:'Call', date:daysAgo(5), note:'Follow up on Hawthorn Road. Attorney reviewing zoning docs.' },
+          { id:204, type:'Offer', date:daysAgo(1), note:'Submitted $4.75M offer on Hawthorn Road 112-acre parcel. Seller countered at $4.9M.' },
+        ]},
+      { id:3, name:'Sandra & Jim Beaumont', email:'sandyjim.beaumont@outlook.com', phone:'(813) 302-5544',
+        type:'Buyer', source:'Zillow', stage:'contacted',
+        property:'Small farm / hobby homestead, 10-20 acres', budget:850000, acreage:15, county:'Marion',
+        lastContact: daysAgo(9),
+        notes:'Retiring couple from Tampa. Chickens, goats, a few horses. Not in a rush but motivated.',
+        activities:[
+          { id:301, type:'Call', date:daysAgo(15), note:'Reached out via Zillow. Scheduled intro call.' },
+          { id:302, type:'Email', date:daysAgo(9), note:'Sent welcome packet and 3 listings under $900K with 10+ acres.' },
+        ]},
+      { id:4, name:'Derek Fontaine', email:'derek.fontaine@icloud.com', phone:'(352) 889-2217',
+        type:'Seller', source:'Instagram', stage:'new',
+        property:'Listing: 48-acre horse farm, Citra FL', budget:1750000, acreage:48, county:'Marion',
+        lastContact: daysAgo(0),
+        notes:'Inherited property from father. Wants to list ASAP. Needs staging consultation.',
+        activities:[
+          { id:401, type:'Call', date:todayStr, note:'Initial call — confirmed ownership, probate is cleared. Scheduling listing appointment.' },
+        ]},
+      { id:5, name:'Priya Nair', email:'priya.nair@veterinaryclinic.com', phone:'(352) 774-0033',
+        type:'Buyer', source:'Referral', stage:'contract',
+        property:'10-15 acres with paddocks, close to Ocala', budget:1100000, acreage:12, county:'Marion',
+        lastContact: daysAgo(3),
+        notes:'Equine vet, wants to run a small rehab facility. Pre-approved for $1.1M.',
+        activities:[
+          { id:501, type:'Call', date:daysAgo(30), note:'Referred by Dr. Marcus Webb. Immediate need — wants to close within 60 days.' },
+          { id:502, type:'Showing', date:daysAgo(21), note:'Toured Oak Run property — ideal layout. Minor fencing concerns.' },
+          { id:503, type:'Offer', date:daysAgo(14), note:'Submitted $1.05M. Accepted after minor negotiation at $1.075M.' },
+          { id:504, type:'Note', date:daysAgo(3), note:'Inspection completed. 1 HVAC issue flagged. Negotiating credit of $4,500.' },
+        ]},
+      { id:6, name:'Carlos Vega', email:'cvega@vegafarmsllc.com', phone:'(352) 211-8800',
+        type:'Investor', source:'Realtor.com', stage:'new',
+        property:'Farm portfolio — looking for 3-5 properties', budget:8000000, acreage:50, county:'Marion',
+        lastContact: daysAgo(0),
+        notes:'Local agricultural investor. Already owns 2 farms. Expanding. Wants off-market deals.',
+        activities:[
+          { id:601, type:'Email', date:todayStr, note:'Inbound Realtor.com inquiry. Responded with intro and availability for a call.' },
+        ]},
+      { id:7, name:'Beth Ann Tully', email:'batully@gmail.com', phone:'(386) 504-1190',
+        type:'Buyer', source:'Instagram', stage:'lost',
+        property:'Equestrian estate, 50+ acres, gated', budget:3500000, acreage:55, county:'Marion',
+        lastContact: daysAgo(22),
+        notes:'Chose competing listing in Williston. Keep warm for future opportunities.',
+        activities:[
+          { id:701, type:'Call', date:daysAgo(40), note:'Highly motivated buyer. Toured 3 properties.' },
+          { id:702, type:'Offer', date:daysAgo(28), note:'Submitted offer on Silverbell Estate — seller rejected.' },
+          { id:703, type:'Note', date:daysAgo(22), note:'Confirmed she went with another agent. Left door open for future search.' },
+        ]},
+      { id:8, name:'William & Caro Jennings', email:'will.jennings@jenningsgroup.net', phone:'(404) 320-7845',
+        type:'Buyer', source:'Website', stage:'showing',
+        property:'Luxury equestrian estate 20-40 acres, must have guesthouse', budget:4200000, acreage:35, county:'Marion',
+        lastContact: daysAgo(5),
+        notes:'Atlanta executives. Semi-annual Ocala residents. Budget is firm. Architect reviewing properties.',
+        activities:[
+          { id:801, type:'Call', date:daysAgo(18), note:'Inbound from website. Very specific criteria — architect involved in any purchase.' },
+          { id:802, type:'Email', date:daysAgo(12), note:'Sent curated packet of 5 properties with guesthouses.' },
+          { id:803, type:'Showing', date:daysAgo(5), note:'Full-day tour of 3 properties. Architect reviewed floor plans on-site. Top pick: Bridle Creek Estate.' },
+        ]},
+    ],
+
+    upcomingActivities: [
+      { id:'ua1', leadName:'Maggie Collins', type:'Showing', date:daysFromNow(1), note:'Return visit to Windmill Ranch with husband', leadId:1 },
+      { id:'ua2', leadName:'William & Caro Jennings', type:'Call', date:daysFromNow(2), note:'Architect review feedback call on Bridle Creek Estate', leadId:8 },
+      { id:'ua3', leadName:'Priya Nair', type:'Note', date:daysFromNow(2), note:'HVAC credit resolution deadline', leadId:5 },
+    ],
+
+    get crmStats() {
+      const active = this.leads.filter(l=>!['won','lost'].includes(l.stage)).length;
+      const showings = this.leads.filter(l=>l.stage==='showing').length;
+      const offers = this.leads.filter(l=>['offer','contract'].includes(l.stage)).length;
+      const closedMonth = this.leads.filter(l=>l.stage==='won').length;
+      return { active, showings, offers, closedMonth };
+    },
+
+    get overdueLeads() {
+      return this.leads
+        .filter(l=>!['won','lost'].includes(l.stage) && this.daysSince(l.lastContact)>7)
+        .sort((a,b)=>this.daysSince(b.lastContact)-this.daysSince(a.lastContact));
+    },
+
+    get filteredLeads() {
+      return this.leads.filter(l => {
+        const q = this.crmSearch.toLowerCase();
+        const matchSearch = !q || l.name.toLowerCase().includes(q) || (l.property||'').toLowerCase().includes(q) || (l.email||'').toLowerCase().includes(q);
+        const matchType = !this.crmFilterType || l.type===this.crmFilterType;
+        const matchStage = !this.crmFilterStage || l.stage===this.crmFilterStage;
+        return matchSearch && matchType && matchStage;
+      });
+    },
+
+    get sortedActivities() {
+      if (!this.modalLead) return [];
+      return [...(this.modalLead.activities||[])].sort((a,b)=>new Date(b.date)-new Date(a.date));
+    },
+
+    // Properties
+    properties: [
+      { id:1, address:'523 Riverside Blvd, Fort Lauderdale, FL 33301', type:'Single Family', price:'$875,000', beds:4, baths:3, sqft:'2,850', status:'Active', featured:true },
+      { id:2, address:'1842 Waterfront Dr, Boca Raton, FL 33432', type:'Single Family', price:'$1,250,000', beds:5, baths:4, sqft:'4,100', status:'Pending', featured:true },
+      { id:3, address:'305 Maple Ave, Pembroke Pines, FL 33029', type:'Townhouse', price:'$349,000', beds:3, baths:2.5, sqft:'1,680', status:'Active', featured:false },
+      { id:4, address:'7701 Ocean Blvd #1204, Miami Beach, FL 33141', type:'Condo', price:'$995,000', beds:2, baths:2, sqft:'1,420', status:'Active', featured:false },
+      { id:5, address:'400 Weston Hills Dr, Weston, FL 33327', type:'Single Family', price:'$599,000', beds:4, baths:3, sqft:'2,200', status:'Active', featured:false },
+      { id:6, address:'2201 Palm Beach Lakes Blvd, West Palm Beach, FL 33409', type:'Commercial', price:'$1,800,000', beds:0, baths:2, sqft:'6,500', status:'Active', featured:false },
+    ],
+    propModal: { open:false, editing:false, prop:null },
+    propForm: { address:'', price:'', type:'Single Family', beds:3, baths:2, sqft:'', status:'Active', featured:false },
+
+    // Users
+    users: [
+      { id:1, name:'Lucas Leite', email:'lucas@4riversrealty.com', role:'Super Admin', active:true },
+      { id:2, name:'Lindoso Silva', email:'lindoso@4riversrealty.com', role:'Agent', active:true },
+      { id:3, name:'Luan Castro', email:'luan@4riversrealty.com', role:'Agent', active:true },
+    ],
+    userModal: { open:false },
+    userForm: { name:'', email:'', role:'Agent' },
+
+    // Settings
+    settings: { name:'4Rivers Realty', email:'info@4riversrealty.com', phone:'(954) 555-0100', address:'100 East Broward Blvd, Suite 1200\nFort Lauderdale, FL 33301' },
+    settingsSaved: false,
+
+    // ---- Methods ----
+    init() {},
+
+    login() {
+      const match = this.credentials.find(c=>c.email.toLowerCase()===this.loginForm.email.toLowerCase()&&c.password===this.loginForm.password);
+      if (match) { this.currentUser=match; this.loggedIn=true; this.loginError=''; this.currentSection='dashboard'; }
+      else { this.loginError='Invalid email or password. Please try again.'; }
+    },
+
+    logout() { this.loggedIn=false; this.currentUser=null; this.loginForm={email:'',password:''}; this.currentSection='dashboard'; },
+
+    navigate(section) {
+      if (section==='users'&&this.currentUser?.role!=='Super Admin') { this.currentSection='dashboard'; return; }
+      this.currentSection=section;
+    },
+
+    // CRM helpers
+    crmToday() { return TODAY.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}); },
+    daysSince(dateStr) { if(!dateStr) return 999; return Math.max(0,Math.floor((TODAY-new Date(dateStr))/86400000)); },
+    fmtDate(dateStr) { if(!dateStr) return '—'; return new Date(dateStr+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); },
+    colLabel(id) { const col=this.crmColumns.find(c=>c.id===id); return col?col.label:id; },
+    leadsInCol(colId) { return this.leads.filter(l=>l.stage===colId); },
+    typePill(type) { const m={Buyer:'bg-emerald-100 text-emerald-700',Seller:'bg-purple-100 text-purple-700',Investor:'bg-amber-100 text-amber-700'}; return m[type]||'bg-gray-100 text-gray-600'; },
+    actColor(type) { const m={Call:'#00aeef',Email:'#174079',Showing:'#f59e0b',Offer:'#10b981',Note:'#94a3b8'}; return m[type]||'#94a3b8'; },
+
+    openLead(lead) { this.modalLead=lead; this.newAct={type:'Call',date:todayStr,note:''}; this.modalOpen=true; },
+    closeModal() { this.modalOpen=false; this.modalLead=null; },
+    openNewLead() { this.newLead={name:'',email:'',phone:'',type:'Buyer',source:'Website',stage:'new',property:'',budget:'',acreage:'',county:'',notes:''}; this.newLeadOpen=true; },
+    saveLead() {
+      if(!this.newLead.name.trim()) { alert('Name is required.'); return; }
+      this.leads.push({ ...this.newLead, id:Date.now(), lastContact:todayStr, activities:[], budget:this.newLead.budget?Number(this.newLead.budget):null, acreage:this.newLead.acreage?Number(this.newLead.acreage):null });
+      this.newLeadOpen=false;
+    },
+    addActivity() {
+      if(!this.newAct.note.trim()) { alert('Please add a note.'); return; }
+      if(!this.modalLead.activities) this.modalLead.activities=[];
+      this.modalLead.activities.push({id:Date.now(),...this.newAct});
+      this.modalLead.lastContact=this.newAct.date;
+      this.newAct={type:'Call',date:todayStr,note:''};
+    },
+
+    // Drag & Drop CRM
+    onCrmDragStart(evt, leadId) { this.crmDragLeadId=leadId; evt.target.classList.add('card-drag'); evt.dataTransfer.effectAllowed='move'; },
+    onCrmDragEnd(evt) { evt.target.classList.remove('card-drag'); document.querySelectorAll('.crm-drag-over').forEach(el=>el.classList.remove('crm-drag-over')); },
+    onCrmDragOver(evt) { document.querySelectorAll('.crm-drag-over').forEach(el=>el.classList.remove('crm-drag-over')); evt.currentTarget.classList.add('crm-drag-over'); },
+    onCrmDragLeave(evt) { if(!evt.currentTarget.contains(evt.relatedTarget)) evt.currentTarget.classList.remove('crm-drag-over'); },
+    onCrmDrop(evt, colId) { evt.currentTarget.classList.remove('crm-drag-over'); if(this.crmDragLeadId!==null){const lead=this.leads.find(l=>l.id===this.crmDragLeadId);if(lead)lead.stage=colId;this.crmDragLeadId=null;} },
+
+    // Properties
+    openPropModal(prop=null) {
+      if(prop) { this.propModal.editing=true; this.propModal.prop=prop; this.propForm={...prop}; }
+      else { this.propModal.editing=false; this.propModal.prop=null; this.propForm={address:'',price:'',type:'Single Family',beds:3,baths:2,sqft:'',status:'Active',featured:false}; }
+      this.propModal.open=true;
+    },
+    saveProp() {
+      if(!this.propForm.address||!this.propForm.price) return;
+      if(this.propModal.editing&&this.propModal.prop) Object.assign(this.propModal.prop,this.propForm);
+      else this.properties.push({...this.propForm,id:Date.now()});
+      this.propModal.open=false;
+    },
+    deleteProp(id) { if(confirm('Delete this property?')) this.properties=this.properties.filter(p=>p.id!==id); },
+
+    // Users
+    openUserModal() { this.userForm={name:'',email:'',role:'Agent'}; this.userModal.open=true; },
+    addUser() { if(!this.userForm.name||!this.userForm.email) return; this.users.push({...this.userForm,id:Date.now(),active:true}); this.userModal.open=false; },
+
+    // Settings
+    saveSettings() { this.settingsSaved=true; setTimeout(()=>this.settingsSaved=false,3000); },
+  };
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app()" x-init="init()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4Rivers Realty — Horse Farms & Rural Properties in Ocala, FL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    :root {
+      --navy:  #174079;
+      --cyan:  #00aeef;
+      --cyan2: #33ccff;
+      --bg:    #f0f7fc;
+      --dark:  #07162b;
+    }
+    body { background: var(--bg); font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #e2eef7; }
+    ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+    /* gallery */
+    .thumb-active { outline: 3px solid var(--cyan); outline-offset: 2px; }
+
+    /* card hover */
+    .prop-card { transition: transform .2s, box-shadow .2s; }
+    .prop-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,174,239,.18); }
+
+    /* modal overlay */
+    .modal-overlay { background: rgba(7,22,43,.72); backdrop-filter: blur(3px); }
+
+    /* lightbox */
+    .lightbox-img { max-height: 70vh; object-fit: contain; }
+
+    /* badge pill */
+    .badge { font-size: .68rem; font-weight: 700; letter-spacing: .04em; padding: 2px 8px; border-radius: 9999px; }
+  </style>
+
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy:  '#174079',
+          cyan:  '#00aeef',
+          cyan2: '#33ccff',
+          bg:    '#f0f7fc',
+          dark:  '#07162b',
+        }
+      }
+    }
+  }
+  </script>
+</head>
+<body class="min-h-screen">
+
+<!-- ═══════════════════════════ TOP NAV ═══════════════════════════ -->
+<header class="bg-dark shadow-lg sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
+    <!-- Logo -->
+    <div class="flex items-center gap-3">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="36" height="36" rx="8" fill="#174079"/>
+        <path d="M6 26 L12 14 L18 20 L24 10 L30 26 Z" fill="#00aeef" opacity=".9"/>
+        <path d="M6 26 Q18 18 30 26" stroke="#33ccff" stroke-width="1.5" fill="none"/>
+        <circle cx="18" cy="10" r="3" fill="#33ccff"/>
+      </svg>
+      <div>
+        <div class="text-white font-bold text-lg leading-tight">4Rivers Realty</div>
+        <div class="text-cyan2 text-xs leading-tight">Horse Farms &amp; Rural Properties</div>
+      </div>
+    </div>
+    <!-- Tab switcher -->
+    <nav class="flex gap-1">
+      <button @click="currentTab='listings'"
+        :class="currentTab==='listings' ? 'bg-cyan text-white' : 'text-gray-300 hover:text-white hover:bg-white/10'"
+        class="px-5 py-2 rounded-lg text-sm font-semibold transition">
+        🏡 Listings
+      </button>
+      <button @click="currentTab='admin'"
+        :class="currentTab==='admin' ? 'bg-cyan text-white' : 'text-gray-300 hover:text-white hover:bg-white/10'"
+        class="px-5 py-2 rounded-lg text-sm font-semibold transition">
+        ⚙️ Admin
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════════════════ LISTINGS TAB ═══════════════════════════ -->
+<div x-show="currentTab==='listings'" x-cloak>
+
+  <!-- Hero -->
+  <div class="bg-navy py-10 px-4 text-center">
+    <h1 class="text-white text-3xl md:text-4xl font-extrabold mb-2">Find Your Perfect Rural Property</h1>
+    <p class="text-cyan2 text-lg">Horse Farms · Ranches · Land · Ocala &amp; North-Central Florida</p>
+    <div class="mt-5 flex flex-wrap justify-center gap-3 text-sm text-white/80">
+      <span>🐎 Equestrian Properties</span>
+      <span>·</span>
+      <span>🌾 Working Ranches</span>
+      <span>·</span>
+      <span>🌿 Pristine Land</span>
+      <span>·</span>
+      <span>🏡 Country Estates</span>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 py-8 flex gap-6">
+
+    <!-- ── Sidebar Filters ── -->
+    <aside class="w-64 shrink-0 hidden md:block">
+      <div class="bg-white rounded-2xl shadow-md p-5 sticky top-20">
+        <h2 class="text-navy font-bold text-base mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+          Filters
+        </h2>
+
+        <!-- Property Type -->
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Property Type</label>
+          <div class="space-y-1.5">
+            <template x-for="type in propertyTypes" :key="type">
+              <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 hover:text-navy">
+                <input type="checkbox" :value="type" x-model="filters.types" class="accent-cyan rounded"/>
+                <span x-text="type"></span>
+              </label>
+            </template>
+          </div>
+        </div>
+
+        <!-- Price Range -->
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Price Range</label>
+          <div class="flex gap-2 items-center">
+            <select x-model="filters.minPrice" class="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan">
+              <option value="">Min</option>
+              <option value="100000">$100K</option>
+              <option value="250000">$250K</option>
+              <option value="500000">$500K</option>
+              <option value="750000">$750K</option>
+              <option value="1000000">$1M</option>
+              <option value="2000000">$2M</option>
+            </select>
+            <span class="text-gray-400 text-xs">–</span>
+            <select x-model="filters.maxPrice" class="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan">
+              <option value="">Max</option>
+              <option value="250000">$250K</option>
+              <option value="500000">$500K</option>
+              <option value="750000">$750K</option>
+              <option value="1000000">$1M</option>
+              <option value="2000000">$2M</option>
+              <option value="5000000">$5M</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Min Acreage -->
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Min Acreage</label>
+          <select x-model="filters.minAcres" class="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan">
+            <option value="">Any</option>
+            <option value="5">5+ acres</option>
+            <option value="10">10+ acres</option>
+            <option value="20">20+ acres</option>
+            <option value="50">50+ acres</option>
+            <option value="100">100+ acres</option>
+            <option value="200">200+ acres</option>
+          </select>
+        </div>
+
+        <!-- County -->
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">County</label>
+          <div class="space-y-1.5">
+            <template x-for="county in counties" :key="county">
+              <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 hover:text-navy">
+                <input type="checkbox" :value="county" x-model="filters.counties" class="accent-cyan rounded"/>
+                <span x-text="county"></span>
+              </label>
+            </template>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">Status</label>
+          <div class="space-y-1.5">
+            <template x-for="s in ['Active','Under Contract','Sold']" :key="s">
+              <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 hover:text-navy">
+                <input type="checkbox" :value="s" x-model="filters.statuses" class="accent-cyan rounded"/>
+                <span x-text="s"></span>
+              </label>
+            </template>
+          </div>
+        </div>
+
+        <button @click="resetFilters()" class="w-full text-xs text-cyan hover:underline mt-1 text-left">Clear all filters</button>
+      </div>
+    </aside>
+
+    <!-- ── Cards Grid ── -->
+    <main class="flex-1 min-w-0">
+
+      <!-- Results bar -->
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-sm text-gray-500">
+          <span class="font-bold text-navy text-base" x-text="filteredProperties.length"></span>
+          <span x-text="filteredProperties.length===1?' property':' properties'"></span> found
+        </p>
+        <select x-model="sortBy" class="text-xs border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan bg-white">
+          <option value="featured">Featured First</option>
+          <option value="price_asc">Price: Low → High</option>
+          <option value="price_desc">Price: High → Low</option>
+          <option value="acres_desc">Most Acreage</option>
+          <option value="newest">Newest</option>
+        </select>
+      </div>
+
+      <!-- Empty state -->
+      <div x-show="filteredProperties.length===0" class="text-center py-20 text-gray-400">
+        <div class="text-5xl mb-3">🔍</div>
+        <p class="font-semibold text-lg">No properties match your filters</p>
+        <button @click="resetFilters()" class="mt-3 text-cyan hover:underline text-sm">Clear filters</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <template x-for="prop in sortedFilteredProperties" :key="prop.id">
+          <div class="prop-card bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer flex flex-col"
+               @click="openDetail(prop)">
+            <!-- Image -->
+            <div class="relative h-48 overflow-hidden bg-gray-100">
+              <img :src="prop.images[0]" :alt="prop.title" class="w-full h-full object-cover transition duration-300 hover:scale-105" loading="lazy"
+                   @error="$event.target.src='https://picsum.photos/seed/fallback/600/400'"/>
+              <!-- Badges -->
+              <div class="absolute top-2 left-2 flex flex-wrap gap-1">
+                <span x-show="prop.featured" class="badge bg-cyan text-white">⭐ Featured</span>
+                <span x-show="prop.badge==='New'" class="badge bg-green-500 text-white">New</span>
+                <span x-show="prop.badge==='Price Reduced'" class="badge bg-orange-500 text-white">💰 Price Reduced</span>
+                <span x-show="prop.status==='Sold'" class="badge bg-red-600 text-white">Sold</span>
+                <span x-show="prop.status==='Under Contract'" class="badge bg-yellow-500 text-dark">Under Contract</span>
+              </div>
+              <!-- Type pill -->
+              <div class="absolute bottom-2 right-2">
+                <span class="badge bg-dark/75 text-white" x-text="prop.type"></span>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-4 flex flex-col flex-1">
+              <h3 class="text-navy font-bold text-base leading-snug mb-1" x-text="prop.title"></h3>
+              <p class="text-gray-500 text-xs mb-2 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                <span x-text="prop.city + ', ' + prop.county + ' County'"></span>
+              </p>
+              <div class="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
+                <span class="text-navy font-extrabold text-lg" x-text="formatPrice(prop.price)"></span>
+                <span class="text-gray-500 text-sm flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/></svg>
+                  <span x-text="prop.acres + ' ac'"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ADMIN TAB ═══════════════════════════ -->
+<div x-show="currentTab==='admin'" x-cloak>
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-navy font-extrabold text-2xl">Admin Panel</h2>
+      <button @click="openAdminForm(null)"
+        class="bg-cyan hover:bg-cyan2 text-white font-semibold px-5 py-2 rounded-xl shadow transition text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Add Property
+      </button>
+    </div>
+
+    <!-- Admin Table -->
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-navy text-white">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold">Property</th>
+            <th class="px-4 py-3 text-left font-semibold hidden md:table-cell">Type</th>
+            <th class="px-4 py-3 text-left font-semibold hidden md:table-cell">Price</th>
+            <th class="px-4 py-3 text-left font-semibold hidden lg:table-cell">Acreage</th>
+            <th class="px-4 py-3 text-left font-semibold hidden lg:table-cell">Status</th>
+            <th class="px-4 py-3 text-center font-semibold">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="(prop, idx) in properties" :key="prop.id">
+            <tr :class="idx%2===0?'bg-white':'bg-bg'" class="border-t border-gray-100 hover:bg-cyan/5 transition">
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <img :src="prop.images[0]" class="w-12 h-10 object-cover rounded-lg" loading="lazy"
+                       @error="$event.target.src='https://picsum.photos/seed/fallback/120/80'"/>
+                  <div>
+                    <div class="font-semibold text-dark" x-text="prop.title"></div>
+                    <div class="text-gray-400 text-xs" x-text="prop.city + ', FL'"></div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-3 hidden md:table-cell text-gray-600" x-text="prop.type"></td>
+              <td class="px-4 py-3 hidden md:table-cell font-semibold text-navy" x-text="formatPrice(prop.price)"></td>
+              <td class="px-4 py-3 hidden lg:table-cell text-gray-600" x-text="prop.acres + ' ac'"></td>
+              <td class="px-4 py-3 hidden lg:table-cell">
+                <span :class="{
+                  'bg-green-100 text-green-700': prop.status==='Active',
+                  'bg-yellow-100 text-yellow-700': prop.status==='Under Contract',
+                  'bg-red-100 text-red-600': prop.status==='Sold'
+                }" class="px-2 py-0.5 rounded-full text-xs font-semibold" x-text="prop.status"></span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button @click="openAdminForm(prop)"
+                    class="p-1.5 rounded-lg hover:bg-cyan/10 text-cyan transition" title="Edit">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                  </button>
+                  <button @click="deleteProperty(prop.id)"
+                    class="p-1.5 rounded-lg hover:bg-red-50 text-red-400 hover:text-red-600 transition" title="Delete">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </template>
+          <tr x-show="properties.length===0">
+            <td colspan="6" class="text-center py-10 text-gray-400">No properties yet. Add your first one!</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ PROPERTY DETAIL MODAL ═══════════════════════════ -->
+<div x-show="detailOpen" x-cloak
+     class="fixed inset-0 z-50 flex items-start justify-center modal-overlay py-6 px-4 overflow-y-auto"
+     @click.self="detailOpen=false">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-auto" @click.stop>
+
+    <!-- Close -->
+    <div class="flex items-center justify-between p-5 border-b border-gray-100">
+      <h2 class="text-navy font-extrabold text-xl" x-text="selectedProp?.title"></h2>
+      <button @click="detailOpen=false" class="p-2 rounded-full hover:bg-gray-100 transition">
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="p-5">
+      <!-- Gallery -->
+      <div class="mb-4">
+        <div class="relative bg-gray-100 rounded-xl overflow-hidden h-72 md:h-96">
+          <img :src="selectedProp?.images[lightboxIdx]" class="lightbox-img w-full h-full object-cover" loading="lazy"/>
+          <!-- nav arrows -->
+          <button x-show="selectedProp?.images.length > 1"
+            @click="lightboxIdx = (lightboxIdx - 1 + selectedProp.images.length) % selectedProp.images.length"
+            class="absolute left-3 top-1/2 -translate-y-1/2 bg-dark/60 hover:bg-dark text-white rounded-full p-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button x-show="selectedProp?.images.length > 1"
+            @click="lightboxIdx = (lightboxIdx + 1) % selectedProp.images.length"
+            class="absolute right-3 top-1/2 -translate-y-1/2 bg-dark/60 hover:bg-dark text-white rounded-full p-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <!-- Thumbnails -->
+        <div class="flex gap-2 mt-2 overflow-x-auto pb-1">
+          <template x-for="(img, idx) in selectedProp?.images" :key="idx">
+            <img :src="img" @click="lightboxIdx=idx"
+                 :class="lightboxIdx===idx ? 'thumb-active' : ''"
+                 class="w-16 h-14 object-cover rounded-lg cursor-pointer shrink-0 hover:opacity-90 transition" loading="lazy"/>
+          </template>
+        </div>
+      </div>
+
+      <!-- Meta row -->
+      <div class="flex flex-wrap gap-4 mb-5">
+        <div class="flex items-center gap-2 bg-bg rounded-xl px-4 py-2">
+          <span class="text-cyan text-xl">💲</span>
+          <div>
+            <div class="text-xs text-gray-500">Price</div>
+            <div class="text-navy font-extrabold text-lg" x-text="formatPrice(selectedProp?.price)"></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 bg-bg rounded-xl px-4 py-2">
+          <span class="text-xl">🌿</span>
+          <div>
+            <div class="text-xs text-gray-500">Acreage</div>
+            <div class="font-bold text-dark" x-text="selectedProp?.acres + ' acres'"></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 bg-bg rounded-xl px-4 py-2">
+          <span class="text-xl">🏷️</span>
+          <div>
+            <div class="text-xs text-gray-500">Type</div>
+            <div class="font-bold text-dark" x-text="selectedProp?.type"></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 bg-bg rounded-xl px-4 py-2">
+          <span class="text-xl">📍</span>
+          <div>
+            <div class="text-xs text-gray-500">Location</div>
+            <div class="font-bold text-dark" x-text="selectedProp?.city + ', ' + selectedProp?.county + ' Co.'"></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 bg-bg rounded-xl px-4 py-2">
+          <span class="text-xl">📋</span>
+          <div>
+            <div class="text-xs text-gray-500">Status</div>
+            <div class="font-bold" :class="{'text-green-600': selectedProp?.status==='Active', 'text-yellow-600': selectedProp?.status==='Under Contract', 'text-red-600': selectedProp?.status==='Sold'}"
+                 x-text="selectedProp?.status"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address & Description -->
+      <div class="grid md:grid-cols-2 gap-5 mb-5">
+        <div>
+          <h3 class="text-navy font-bold text-sm mb-2">Address</h3>
+          <p class="text-gray-700 text-sm" x-text="selectedProp?.address"></p>
+          <!-- Map placeholder -->
+          <div class="mt-3 rounded-xl overflow-hidden bg-gray-100 h-36 flex items-center justify-center relative">
+            <img src="https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/static/-82.14,29.19,10/480x160?access_token=PLACEHOLDER"
+                 class="w-full h-full object-cover opacity-30" @error=""/>
+            <div class="absolute inset-0 flex items-center justify-center bg-navy/10">
+              <div class="text-center text-navy">
+                <svg class="w-8 h-8 mx-auto mb-1 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                <p class="text-xs font-semibold">Map View</p>
+                <p class="text-xs opacity-60" x-text="selectedProp?.city + ', FL'"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-navy font-bold text-sm mb-2">Description</h3>
+          <p class="text-gray-700 text-sm leading-relaxed" x-text="selectedProp?.description"></p>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
+        <button @click="showTourModal=true"
+          class="bg-cyan hover:bg-cyan2 text-white font-bold px-6 py-3 rounded-xl shadow transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Schedule a Tour
+        </button>
+        <button @click="detailOpen=false"
+          class="border border-gray-200 hover:bg-gray-50 text-gray-600 font-semibold px-6 py-3 rounded-xl transition">
+          Back to Listings
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TOUR MODAL ═══════════════════════════ -->
+<div x-show="showTourModal" x-cloak
+     class="fixed inset-0 z-[60] flex items-center justify-center modal-overlay px-4"
+     @click.self="showTourModal=false">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+    <div x-show="!tourSent">
+      <h3 class="text-navy font-extrabold text-xl mb-1">Schedule a Tour</h3>
+      <p class="text-gray-500 text-sm mb-4" x-text="'Interested in: ' + selectedProp?.title"></p>
+      <div class="space-y-3">
+        <input x-model="tourForm.name" type="text" placeholder="Your name *" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan"/>
+        <input x-model="tourForm.email" type="email" placeholder="Email address *" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan"/>
+        <input x-model="tourForm.phone" type="tel" placeholder="Phone number" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan"/>
+        <input x-model="tourForm.date" type="date" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan"/>
+        <textarea x-model="tourForm.message" rows="3" placeholder="Additional notes..." class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan resize-none"></textarea>
+      </div>
+      <div class="flex gap-3 mt-4">
+        <button @click="submitTour()" class="flex-1 bg-cyan hover:bg-cyan2 text-white font-bold py-2.5 rounded-xl transition text-sm">Send Request</button>
+        <button @click="showTourModal=false" class="px-4 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl transition text-sm">Cancel</button>
+      </div>
+    </div>
+    <div x-show="tourSent" class="text-center py-6">
+      <div class="text-5xl mb-3">✅</div>
+      <h3 class="text-navy font-bold text-lg mb-2">Tour Request Sent!</h3>
+      <p class="text-gray-500 text-sm mb-4">Our team will contact you within 24 hours to confirm your visit.</p>
+      <button @click="showTourModal=false; tourSent=false" class="bg-cyan text-white font-semibold px-6 py-2 rounded-xl">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ADMIN FORM MODAL ═══════════════════════════ -->
+<div x-show="adminFormOpen" x-cloak
+     class="fixed inset-0 z-50 flex items-start justify-center modal-overlay py-6 px-4 overflow-y-auto"
+     @click.self="adminFormOpen=false">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-auto" @click.stop>
+
+    <div class="flex items-center justify-between p-5 border-b border-gray-100">
+      <h2 class="text-navy font-extrabold text-xl" x-text="editingId ? 'Edit Property' : 'Add New Property'"></h2>
+      <button @click="adminFormOpen=false" class="p-2 rounded-full hover:bg-gray-100">
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="p-5 space-y-4">
+      <!-- Title -->
+      <div>
+        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Title *</label>
+        <input x-model="form.title" type="text" placeholder="e.g. Stunning 40-Acre Horse Farm with Arena" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan"/>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Type -->
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Property Type *</label>
+          <select x-model="form.type" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan">
+            <option value="">Select...</option>
+            <template x-for="t in propertyTypes" :key="t"><option :value="t" x-text="t"></option></template>
+          </select>
+        </div>
+        <!-- Status -->
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Status *</label>
+          <select x-model="form.status" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan">
+            <option value="Active">Active</option>
+            <option value="Under Contract">Under Contract</option>
+            <option value="Sold">Sold</option>
+          </select>
+        </div>
+        <!-- Price -->
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Price (USD) *</label>
+          <input x-model.number="form.price" type="number" min="0" placeholder="750000" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan"/>
+        </div>
+        <!-- Acres -->
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Acreage *</label>
+          <input x-model.number="form.acres" type="number" min="0" step="0.1" placeholder="40" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan"/>
+        </div>
+        <!-- County -->
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">County *</label>
+          <select x-model="form.county" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan">
+            <option value="">Select...</option>
+            <template x-for="c in counties" :key="c"><option :value="c" x-text="c"></option></template>
+          </select>
+        </div>
+        <!-- City -->
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">City *</label>
+          <input x-model="form.city" type="text" placeholder="Ocala" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan"/>
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div>
+        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Full Address</label>
+        <input x-model="form.address" type="text" placeholder="1234 Paddock Lane, Ocala, FL 34480" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan"/>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Description</label>
+        <textarea x-model="form.description" rows="4" placeholder="Describe this property in detail..." class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan resize-none"></textarea>
+      </div>
+
+      <!-- Badge & Featured -->
+      <div class="flex flex-wrap gap-4 items-center">
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Badge</label>
+          <select x-model="form.badge" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan">
+            <option value="">None</option>
+            <option value="New">New</option>
+            <option value="Price Reduced">Price Reduced</option>
+          </select>
+        </div>
+        <label class="flex items-center gap-2 cursor-pointer select-none mt-4">
+          <div class="relative">
+            <input type="checkbox" x-model="form.featured" class="sr-only peer"/>
+            <div class="w-10 h-6 bg-gray-200 peer-checked:bg-cyan rounded-full transition"></div>
+            <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition peer-checked:translate-x-4"></div>
+          </div>
+          <span class="text-sm font-semibold text-gray-700">Featured listing</span>
+        </label>
+      </div>
+
+      <!-- Image URLs -->
+      <div>
+        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Image URLs (one per line)</label>
+        <textarea x-model="form.imagesRaw" rows="3" placeholder="https://picsum.photos/seed/myfarm/800/500&#10;https://picsum.photos/seed/myfarm2/800/500" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-cyan resize-none"></textarea>
+        <!-- Image upload (preview only — in-memory via FileReader) -->
+        <div class="mt-2">
+          <label class="text-xs text-gray-400 mb-1 block">Or upload images (in-memory preview):</label>
+          <input type="file" multiple accept="image/*" @change="handleImageUpload($event)"
+                 class="block w-full text-xs text-gray-500 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan/10 file:text-cyan hover:file:bg-cyan/20 cursor-pointer"/>
+        </div>
+        <!-- Preview uploaded images -->
+        <div x-show="form.uploadedImages.length > 0" class="flex flex-wrap gap-2 mt-2">
+          <template x-for="(img, idx) in form.uploadedImages" :key="idx">
+            <div class="relative group">
+              <img :src="img" class="w-16 h-14 object-cover rounded-lg border-2"
+                   :class="form.coverIdx===idx ? 'border-cyan' : 'border-transparent'"/>
+              <button @click="form.coverIdx=idx"
+                class="absolute inset-0 bg-dark/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-lg transition text-white text-xs font-semibold">
+                Cover
+              </button>
+              <button @click="form.uploadedImages.splice(idx,1); if(form.coverIdx>=form.uploadedImages.length) form.coverIdx=0"
+                class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs leading-none opacity-0 group-hover:opacity-100 transition">×</button>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Save / Cancel -->
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <button @click="saveProperty()"
+          class="flex-1 bg-navy hover:bg-cyan text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span x-text="editingId ? 'Save Changes' : 'Add Property'"></span>
+        </button>
+        <button @click="adminFormOpen=false"
+          class="px-6 border border-gray-200 hover:bg-gray-50 text-gray-600 font-semibold rounded-xl transition text-sm">
+          Cancel
+        </button>
+      </div>
+      <!-- Validation error -->
+      <p x-show="formError" x-text="formError" class="text-red-500 text-sm text-center"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer class="bg-dark text-white/60 text-xs text-center py-6 mt-10">
+  <p>© 2025 4Rivers Realty · Ocala, Florida · Horse Farms &amp; Rural Properties</p>
+  <p class="mt-1">All listings are for demonstration purposes. Contact us at <span class="text-cyan">info@4riversrealty.com</span></p>
+</footer>
+
+<!-- ═══════════════════════════ ALPINE.JS APP ═══════════════════════════ -->
+<script>
+function app() {
+  return {
+    // ─── Navigation ───────────────────────────────────
+    currentTab: 'listings',
+
+    // ─── Reference data ───────────────────────────────
+    propertyTypes: ['Horse Farm', 'Ranch', 'Residential', 'Commercial', 'Land'],
+    counties: ['Marion', 'Alachua', 'Levy', 'Citrus'],
+
+    // ─── Filters ──────────────────────────────────────
+    filters: { types: [], minPrice: '', maxPrice: '', minAcres: '', counties: [], statuses: [] },
+    sortBy: 'featured',
+
+    // ─── Listings state ───────────────────────────────
+    properties: [],
+    detailOpen: false,
+    selectedProp: null,
+    lightboxIdx: 0,
+
+    // ─── Tour form ────────────────────────────────────
+    showTourModal: false,
+    tourSent: false,
+    tourForm: { name: '', email: '', phone: '', date: '', message: '' },
+
+    // ─── Admin form ───────────────────────────────────
+    adminFormOpen: false,
+    editingId: null,
+    formError: '',
+    form: {
+      title: '', type: '', price: '', acres: '', county: '', city: '', address: '',
+      description: '', status: 'Active', badge: '', featured: false,
+      imagesRaw: '', uploadedImages: [], coverIdx: 0
+    },
+
+    // ─── Init ─────────────────────────────────────────
+    init() {
+      this.properties = this.getSeedData();
+    },
+
+    // ─── Computed ─────────────────────────────────────
+    get filteredProperties() {
+      return this.properties.filter(p => {
+        if (this.filters.types.length && !this.filters.types.includes(p.type)) return false;
+        if (this.filters.minPrice && p.price < +this.filters.minPrice) return false;
+        if (this.filters.maxPrice && p.price > +this.filters.maxPrice) return false;
+        if (this.filters.minAcres && p.acres < +this.filters.minAcres) return false;
+        if (this.filters.counties.length && !this.filters.counties.includes(p.county)) return false;
+        if (this.filters.statuses.length && !this.filters.statuses.includes(p.status)) return false;
+        return true;
+      });
+    },
+
+    get sortedFilteredProperties() {
+      const list = [...this.filteredProperties];
+      switch (this.sortBy) {
+        case 'price_asc':   return list.sort((a,b) => a.price - b.price);
+        case 'price_desc':  return list.sort((a,b) => b.price - a.price);
+        case 'acres_desc':  return list.sort((a,b) => b.acres - a.acres);
+        case 'newest':      return list.sort((a,b) => b.id - a.id);
+        default:            return list.sort((a,b) => (b.featured?1:0) - (a.featured?1:0));
+      }
+    },
+
+    // ─── Actions ──────────────────────────────────────
+    resetFilters() {
+      this.filters = { types: [], minPrice: '', maxPrice: '', minAcres: '', counties: [], statuses: [] };
+    },
+
+    openDetail(prop) {
+      this.selectedProp = prop;
+      this.lightboxIdx = 0;
+      this.detailOpen = true;
+    },
+
+    formatPrice(v) {
+      if (!v && v !== 0) return '—';
+      return '$' + Number(v).toLocaleString('en-US');
+    },
+
+    submitTour() {
+      if (!this.tourForm.name || !this.tourForm.email) return;
+      this.tourSent = true;
+      this.tourForm = { name: '', email: '', phone: '', date: '', message: '' };
+    },
+
+    // ─── Admin ────────────────────────────────────────
+    openAdminForm(prop) {
+      this.formError = '';
+      if (prop) {
+        this.editingId = prop.id;
+        this.form = {
+          title: prop.title, type: prop.type, price: prop.price, acres: prop.acres,
+          county: prop.county, city: prop.city, address: prop.address,
+          description: prop.description, status: prop.status, badge: prop.badge || '',
+          featured: prop.featured || false, imagesRaw: prop.images.join('\n'),
+          uploadedImages: [], coverIdx: 0
+        };
+      } else {
+        this.editingId = null;
+        this.form = {
+          title: '', type: '', price: '', acres: '', county: '', city: '', address: '',
+          description: '', status: 'Active', badge: '', featured: false,
+          imagesRaw: '', uploadedImages: [], coverIdx: 0
+        };
+      }
+      this.adminFormOpen = true;
+    },
+
+    handleImageUpload(evt) {
+      const files = Array.from(evt.target.files);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => { this.form.uploadedImages.push(e.target.result); };
+        reader.readAsDataURL(file);
+      });
+    },
+
+    saveProperty() {
+      this.formError = '';
+      const { title, type, price, acres, county, city, status } = this.form;
+      if (!title || !type || price === '' || acres === '' || !county || !city) {
+        this.formError = 'Please fill in all required fields (*)'; return;
+      }
+
+      // Build image array: uploaded first (cover at index 0), then URL lines
+      let images = [];
+      if (this.form.uploadedImages.length) {
+        const sorted = [...this.form.uploadedImages];
+        const cover = sorted.splice(this.form.coverIdx, 1);
+        images = [...cover, ...sorted];
+      }
+      const urlLines = this.form.imagesRaw.split('\n').map(s=>s.trim()).filter(Boolean);
+      images = [...images, ...urlLines];
+      if (!images.length) images = ['https://picsum.photos/seed/newprop/800/500'];
+
+      if (this.editingId) {
+        const idx = this.properties.findIndex(p => p.id === this.editingId);
+        if (idx !== -1) {
+          this.properties[idx] = { ...this.properties[idx], title, type, price: +price, acres: +acres, county, city,
+            address: this.form.address, description: this.form.description, status,
+            badge: this.form.badge, featured: this.form.featured, images };
+        }
+      } else {
+        const newId = Math.max(0, ...this.properties.map(p=>p.id)) + 1;
+        this.properties.push({ id: newId, title, type, price: +price, acres: +acres, county, city,
+          address: this.form.address, description: this.form.description, status,
+          badge: this.form.badge, featured: this.form.featured, images });
+      }
+      this.adminFormOpen = false;
+    },
+
+    deleteProperty(id) {
+      if (!confirm('Delete this property? This cannot be undone.')) return;
+      this.properties = this.properties.filter(p => p.id !== id);
+    },
+
+    // ─── Seed Data ────────────────────────────────────
+    getSeedData() {
+      return [
+        {
+          id: 1,
+          title: 'Grand Equestrian Estate — 80-Acre Horse Farm with Full Facilities',
+          type: 'Horse Farm',
+          price: 2850000,
+          acres: 80,
+          county: 'Marion',
+          city: 'Ocala',
+          address: '8400 NW 115th Ave, Ocala, FL 34482',
+          description: 'This magnificent 80-acre equestrian estate is the crown jewel of Marion County horse country. The property features a 24-stall center-aisle barn with European-style rubber pavers, a climate-controlled tack room, wash racks, and a dedicated veterinary bay. The 200×400 ft covered arena with GGT footing is complemented by a 1-mile private exercise track and 8 lush pastures with four-board fencing. The 5,200 sq ft main residence boasts 5 bedrooms, 4.5 baths, chef\'s kitchen, and breathtaking views of the pastoral grounds. A 3/2 guest cottage and manager\'s apartment complete this turnkey operation.',
+          status: 'Active',
+          featured: true,
+          badge: '',
+          images: [
+            'https://picsum.photos/seed/farm1a/800/500',
+            'https://picsum.photos/seed/farm1b/800/500',
+            'https://picsum.photos/seed/farm1c/800/500',
+            'https://picsum.photos/seed/farm1d/800/500',
+          ]
+        },
+        {
+          id: 2,
+          title: 'Pristine 40-Acre Training Farm — Minutes from HITS',
+          type: 'Horse Farm',
+          price: 1475000,
+          acres: 40,
+          county: 'Marion',
+          city: 'Reddick',
+          address: '12200 NW 142nd St, Reddick, FL 32686',
+          description: 'Located just 10 minutes from the HITS Post Time Farm showgrounds, this immaculate 40-acre training farm is ideal for hunter/jumper or dressage operations. Includes a 12-stall shedrow barn, 20×60 m dressage arena, round pen, and 6 paddocks with automatic waterers. The charming 3/2 farmhouse has been fully renovated with modern finishes while preserving its classic Florida ranch character. Surrounded by mature live oaks and rolling pastures, this property offers peace and convenience in equal measure.',
+          status: 'Active',
+          featured: true,
+          badge: 'New',
+          images: [
+            'https://picsum.photos/seed/farm2a/800/500',
+            'https://picsum.photos/seed/farm2b/800/500',
+            'https://picsum.photos/seed/farm2c/800/500',
+          ]
+        },
+        {
+          id: 3,
+          title: 'Working Cattle Ranch — 320 Acres with Improvements',
+          type: 'Ranch',
+          price: 3200000,
+          acres: 320,
+          county: 'Levy',
+          city: 'Chiefland',
+          address: '9750 SE 60th Ave, Chiefland, FL 32626',
+          description: 'A rare opportunity to own a fully operational cattle ranch spanning 320 contiguous acres in Levy County. The property features improved Bahia and Bermuda pastures, two large hay barns, a working cattle pen with squeeze chutes, and miles of perimeter fencing. Three ponds provide abundant water resources for livestock. The main home is a 4/3 brick ranch-style residence, plus a 2/1 foreman\'s house and equipment barn. Timber stands provide additional income potential. This is generational land at its finest.',
+          status: 'Active',
+          featured: false,
+          badge: '',
+          images: [
+            'https://picsum.photos/seed/ranch3a/800/500',
+            'https://picsum.photos/seed/ranch3b/800/500',
+            'https://picsum.photos/seed/ranch3c/800/500',
+          ]
+        },
+        {
+          id: 4,
+          title: 'Luxury Country Estate — 25 Acres, Private Lake & Pool',
+          type: 'Residential',
+          price: 1195000,
+          acres: 25,
+          county: 'Marion',
+          city: 'Ocala',
+          address: '6720 SE 32nd Court, Ocala, FL 34480',
+          description: 'Escape to this stunning luxury estate set on 25 private acres with a spring-fed lake. The 4,800 sq ft custom home features soaring ceilings, an open-concept living area, gourmet kitchen with Sub-Zero appliances, and a master suite with spa bath and lake views. Outside, enjoy a resort-style pool/spa, summer kitchen, boat dock, and fire pit. The property also includes a 3-stall barn suitable for horses or livestock, three fenced paddocks, and a 3-car garage. Completely private yet minutes from I-75 and downtown Ocala.',
+          status: 'Active',
+          featured: true,
+          badge: 'Price Reduced',
+          images: [
+            'https://picsum.photos/seed/estate4a/800/500',
+            'https://picsum.photos/seed/estate4b/800/500',
+            'https://picsum.photos/seed/estate4c/800/500',
+            'https://picsum.photos/seed/estate4d/800/500',
+          ]
+        },
+        {
+          id: 5,
+          title: 'Prime Development Land — 55 Acres with Road Frontage',
+          type: 'Land',
+          price: 895000,
+          acres: 55,
+          county: 'Alachua',
+          city: 'Gainesville',
+          address: 'NW 143rd St & CR 241, Gainesville, FL 32606',
+          description: 'Exceptional 55-acre parcel in rapidly growing northwest Gainesville, offering 1,200 ft of paved road frontage on two sides. Currently zoned agricultural with potential for residential subdivision or equestrian development. Flat to gently rolling topography, sandy loam soils, and excellent drainage make this one of the most versatile parcels on the market. Utilities available at road. Close proximity to I-75 interchange, University of Florida, and North Florida Regional Medical Center makes this an outstanding investment opportunity.',
+          status: 'Under Contract',
+          featured: false,
+          badge: '',
+          images: [
+            'https://picsum.photos/seed/land5a/800/500',
+            'https://picsum.photos/seed/land5b/800/500',
+          ]
+        },
+        {
+          id: 6,
+          title: 'Charming Mini Farm — 10 Acres, 4-Stall Barn, Move-In Ready',
+          type: 'Horse Farm',
+          price: 465000,
+          acres: 10,
+          county: 'Citrus',
+          city: 'Inverness',
+          address: '3820 W Citrus Springs Blvd, Inverness, FL 34453',
+          description: 'The perfect starter horse property or weekend retreat! This 10-acre mini farm in Citrus County features a well-maintained 4-stall barn with tack room and wash rack, three cross-fenced paddocks, and a round pen. The 3/2 block home has a new metal roof (2023), updated kitchen, and a screened lanai overlooking the pastures. Well water, septic, and a whole-house generator provide complete self-sufficiency. A peaceful country setting with easy access to the Withlacoochee State Forest trail system — paradise for trail riders.',
+          status: 'Active',
+          featured: false,
+          badge: 'New',
+          images: [
+            'https://picsum.photos/seed/minifarm6a/800/500',
+            'https://picsum.photos/seed/minifarm6b/800/500',
+            'https://picsum.photos/seed/minifarm6c/800/500',
+          ]
+        },
+      ];
+    }
+  }
+}
+</script>
+</body>
+</html>
