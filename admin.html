@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app()" x-init="init()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4Rivers Realty — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    :root {
+      --navy: #174079;
+      --cyan: #00aeef;
+      --bg: #f0f7fc;
+      --dark: #07162b;
+    }
+    body { background: var(--bg); font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #e2eaf4; }
+    ::-webkit-scrollbar-thumb { background: #174079; border-radius: 3px; }
+
+    /* Kanban */
+    .kanban-col { min-height: 200px; }
+    .kanban-card { cursor: grab; transition: box-shadow .15s, transform .15s; }
+    .kanban-card:active { cursor: grabbing; }
+    .kanban-card.dragging { opacity: .5; transform: rotate(2deg); }
+    .kanban-col.drag-over { outline: 2px dashed var(--cyan); outline-offset: 2px; background: #e0f5ff; }
+
+    /* Sidebar active */
+    .nav-link.active { background: #00aeef20; color: #00aeef; border-left: 3px solid #00aeef; }
+    .nav-link { border-left: 3px solid transparent; transition: all .15s; }
+    .nav-link:hover { background: #ffffff18; }
+
+    /* Badge */
+    .badge-super { background: #00aeef22; color: #00aeef; }
+    .badge-agent { background: #17407922; color: #174079; }
+
+    /* Status dots */
+    .dot-new { background:#6366f1; }
+    .dot-contacted { background:#f59e0b; }
+    .dot-showing { background:#3b82f6; }
+    .dot-offer { background:#8b5cf6; }
+    .dot-contract { background:#f97316; }
+    .dot-won { background:#22c55e; }
+    .dot-lost { background:#ef4444; }
+
+    /* Modal */
+    .modal-overlay { background: rgba(7,22,43,.55); }
+
+    /* Chart bars */
+    .bar { transition: height .4s ease; }
+
+    /* Input focus */
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #00aeef;
+      box-shadow: 0 0 0 3px #00aeef22;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- ===================== LOGIN ===================== -->
+<div x-show="!loggedIn" x-cloak class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#07162b] via-[#174079] to-[#00aeef]">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-10">
+
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 mb-1">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="8" fill="#174079"/>
+          <path d="M6 26 L18 10 L30 26 Z" fill="none" stroke="#00aeef" stroke-width="2.5"/>
+          <rect x="14" y="18" width="8" height="8" rx="1" fill="#00aeef"/>
+        </svg>
+        <span class="text-2xl font-black tracking-tight text-[#174079]">4Rivers <span class="text-[#00aeef]">Realty</span></span>
+      </div>
+      <p class="text-sm text-gray-400 mt-1">Admin Portal</p>
+    </div>
+
+    <!-- Form -->
+    <form @submit.prevent="login()">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <input x-model="loginForm.email" type="email" placeholder="you@4riversrealty.com"
+          class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <input x-model="loginForm.password" type="password" placeholder="••••••••"
+          class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+      </div>
+
+      <div x-show="loginError" class="mb-4 bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2.5 rounded-lg" x-text="loginError"></div>
+
+      <button type="submit"
+        class="w-full bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg transition text-sm">
+        Sign In
+      </button>
+
+      <p class="text-center text-xs text-gray-400 mt-4 cursor-pointer hover:text-[#00aeef]">Forgot password?</p>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== ADMIN PANEL ===================== -->
+<div x-show="loggedIn" x-cloak class="flex h-screen overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-[#07162b] text-white flex flex-col flex-shrink-0 h-screen overflow-y-auto">
+
+    <!-- Logo -->
+    <div class="px-6 pt-7 pb-5 border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <svg width="30" height="30" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="8" fill="#174079"/>
+          <path d="M6 26 L18 10 L30 26 Z" fill="none" stroke="#00aeef" stroke-width="2.5"/>
+          <rect x="14" y="18" width="8" height="8" rx="1" fill="#00aeef"/>
+        </svg>
+        <span class="font-black text-lg tracking-tight">4Rivers <span class="text-[#00aeef]">Realty</span></span>
+      </div>
+    </div>
+
+    <!-- User info -->
+    <div class="px-6 py-4 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-[#00aeef] flex items-center justify-center font-bold text-sm text-white flex-shrink-0"
+          x-text="currentUser ? currentUser.name.split(' ').map(n=>n[0]).join('').slice(0,2) : ''"></div>
+        <div class="overflow-hidden">
+          <p class="text-sm font-semibold truncate" x-text="currentUser?.name"></p>
+          <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+            :class="currentUser?.role === 'Super Admin' ? 'badge-super' : 'badge-agent'"
+            x-text="currentUser?.role"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 px-3 py-4 space-y-1">
+      <template x-for="item in navItems" :key="item.id">
+        <button x-show="!item.superOnly || currentUser?.role === 'Super Admin'"
+          @click="navigate(item.id)"
+          :class="{'active': currentSection === item.id}"
+          class="nav-link w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:text-white">
+          <span x-html="item.icon" class="w-5 h-5 flex-shrink-0"></span>
+          <span x-text="item.label"></span>
+        </button>
+      </template>
+    </nav>
+
+    <!-- Logout -->
+    <div class="px-3 pb-5">
+      <button @click="logout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 overflow-y-auto bg-[#f0f7fc]">
+
+    <!-- ---- DASHBOARD ---- -->
+    <section x-show="currentSection === 'dashboard'" class="p-8">
+      <h1 class="text-2xl font-bold text-[#174079] mb-1">Dashboard</h1>
+      <p class="text-gray-500 text-sm mb-7">Welcome back, <span x-text="currentUser?.name.split(' ')[0]"></span>!</p>
+
+      <!-- KPIs -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <template x-for="kpi in kpis" :key="kpi.label">
+          <div class="bg-white rounded-xl shadow-sm p-5 border border-blue-50">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs text-gray-500 font-medium mb-1" x-text="kpi.label"></p>
+                <p class="text-3xl font-black text-[#174079]" x-text="kpi.value"></p>
+                <p class="text-xs mt-1" :class="kpi.trend > 0 ? 'text-green-500' : 'text-red-400'">
+                  <span x-text="kpi.trend > 0 ? '▲' : '▼'"></span>
+                  <span x-text="Math.abs(kpi.trend) + '% vs last month'"></span>
+                </p>
+              </div>
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center" :style="`background:${kpi.color}22`">
+                <span x-html="kpi.icon" :style="`color:${kpi.color}`" class="w-5 h-5"></span>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Bar Chart -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-blue-50">
+          <h2 class="text-sm font-bold text-[#174079] mb-5">Leads — Last 6 Months</h2>
+          <div class="flex items-end justify-around gap-3 h-44">
+            <template x-for="(bar, i) in chartData" :key="i">
+              <div class="flex flex-col items-center gap-1 flex-1">
+                <span class="text-xs font-bold text-[#174079]" x-text="bar.value"></span>
+                <div class="w-full rounded-t-md bg-gradient-to-t from-[#174079] to-[#00aeef] bar"
+                  :style="`height:${(bar.value / maxChart) * 100}%`" style="min-height:4px"></div>
+                <span class="text-[10px] text-gray-400" x-text="bar.month"></span>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-blue-50">
+          <h2 class="text-sm font-bold text-[#174079] mb-4">Recent Activity</h2>
+          <div class="space-y-3">
+            <template x-for="act in recentActivity" :key="act.id">
+              <div class="flex items-start gap-3">
+                <div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" :class="act.dot"></div>
+                <div>
+                  <p class="text-xs text-gray-700" x-text="act.text"></p>
+                  <p class="text-[10px] text-gray-400" x-text="act.time"></p>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- CRM ---- -->
+    <section x-show="currentSection === 'crm'" class="p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-[#174079]">CRM — Lead Pipeline</h1>
+          <p class="text-gray-500 text-sm mt-0.5"><span x-text="allLeads.length"></span> total leads</p>
+        </div>
+        <button @click="openNewLeadModal()"
+          class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          New Lead
+        </button>
+      </div>
+
+      <!-- Kanban Board -->
+      <div class="flex gap-4 overflow-x-auto pb-4" style="min-height:500px">
+        <template x-for="col in pipeline" :key="col.id">
+          <div class="flex-shrink-0 w-60">
+            <!-- Column header -->
+            <div class="flex items-center gap-2 mb-3 px-1">
+              <div class="w-3 h-3 rounded-full" :class="col.dot"></div>
+              <span class="text-xs font-bold text-gray-600 uppercase tracking-wide" x-text="col.label"></span>
+              <span class="ml-auto text-xs bg-gray-200 text-gray-600 rounded-full px-2 font-medium"
+                x-text="leadsInCol(col.id).length"></span>
+            </div>
+            <!-- Drop zone -->
+            <div class="kanban-col bg-gray-100/70 rounded-xl p-2 space-y-2 min-h-[400px]"
+              @dragover.prevent="onDragOver($event)"
+              @dragleave="onDragLeave($event)"
+              @drop="onDrop($event, col.id)">
+              <template x-for="lead in leadsInCol(col.id)" :key="lead.id">
+                <div class="kanban-card bg-white rounded-lg shadow-sm border border-gray-100 p-3 cursor-grab"
+                  draggable="true"
+                  @dragstart="onDragStart($event, lead.id)"
+                  @dragend="onDragEnd($event)"
+                  @click="openLeadModal(lead)">
+                  <div class="flex items-start justify-between mb-2">
+                    <p class="text-sm font-semibold text-[#174079] leading-tight" x-text="lead.name"></p>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded font-medium ml-2 flex-shrink-0"
+                      :class="lead.priority === 'Hot' ? 'bg-red-100 text-red-600' : lead.priority === 'Warm' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'"
+                      x-text="lead.priority"></span>
+                  </div>
+                  <p class="text-xs text-gray-500 truncate" x-text="lead.interest"></p>
+                  <div class="flex items-center gap-2 mt-2">
+                    <span class="text-[10px] text-gray-400" x-text="lead.email"></span>
+                  </div>
+                  <div class="flex items-center justify-between mt-2 pt-2 border-t border-gray-50">
+                    <span class="text-[10px] text-gray-400" x-text="lead.date"></span>
+                    <span class="text-[10px] font-medium text-[#00aeef]" x-text="lead.budget"></span>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- ---- PROPERTIES ---- -->
+    <section x-show="currentSection === 'properties'" class="p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-[#174079]">Properties</h1>
+          <p class="text-gray-500 text-sm mt-0.5"><span x-text="properties.length"></span> listings</p>
+        </div>
+        <button @click="openPropModal()"
+          class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Property
+        </button>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-[#174079] text-white text-xs uppercase tracking-wide">
+            <tr>
+              <th class="text-left px-5 py-3">Property</th>
+              <th class="text-left px-4 py-3">Type</th>
+              <th class="text-left px-4 py-3">Price</th>
+              <th class="text-left px-4 py-3">Status</th>
+              <th class="text-left px-4 py-3">Featured</th>
+              <th class="text-left px-4 py-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <template x-for="prop in properties" :key="prop.id">
+              <tr class="hover:bg-blue-50/40 transition">
+                <td class="px-5 py-3">
+                  <div>
+                    <p class="font-semibold text-[#174079]" x-text="prop.address"></p>
+                    <p class="text-xs text-gray-400" x-text="prop.beds + ' bd · ' + prop.baths + ' ba · ' + prop.sqft + ' sqft'"></p>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-gray-600" x-text="prop.type"></td>
+                <td class="px-4 py-3 font-semibold text-[#174079]" x-text="prop.price"></td>
+                <td class="px-4 py-3">
+                  <span class="text-xs px-2 py-1 rounded-full font-medium"
+                    :class="{
+                      'bg-green-100 text-green-700': prop.status === 'Active',
+                      'bg-yellow-100 text-yellow-700': prop.status === 'Pending',
+                      'bg-gray-100 text-gray-600': prop.status === 'Sold'
+                    }" x-text="prop.status"></span>
+                </td>
+                <td class="px-4 py-3">
+                  <button @click="prop.featured = !prop.featured"
+                    :class="prop.featured ? 'bg-[#00aeef] text-white' : 'bg-gray-100 text-gray-400'"
+                    class="text-xs px-2 py-1 rounded-full font-medium transition">
+                    <span x-text="prop.featured ? '★ Featured' : '☆ Feature'"></span>
+                  </button>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="flex gap-2">
+                    <button @click="openPropModal(prop)"
+                      class="text-xs text-[#00aeef] hover:underline font-medium">Edit</button>
+                    <button @click="deleteProp(prop.id)"
+                      class="text-xs text-red-400 hover:underline font-medium">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---- USERS ---- -->
+    <section x-show="currentSection === 'users'" class="p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-[#174079]">Users</h1>
+          <p class="text-gray-500 text-sm mt-0.5">Manage team access</p>
+        </div>
+        <button @click="openUserModal()"
+          class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add User
+        </button>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-[#174079] text-white text-xs uppercase tracking-wide">
+            <tr>
+              <th class="text-left px-5 py-3">User</th>
+              <th class="text-left px-4 py-3">Email</th>
+              <th class="text-left px-4 py-3">Role</th>
+              <th class="text-left px-4 py-3">Status</th>
+              <th class="text-left px-4 py-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <template x-for="u in users" :key="u.id">
+              <tr class="hover:bg-blue-50/40 transition">
+                <td class="px-5 py-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-[#174079] flex items-center justify-center text-white text-xs font-bold"
+                      x-text="u.name.split(' ').map(n=>n[0]).join('').slice(0,2)"></div>
+                    <span class="font-semibold text-[#174079]" x-text="u.name"></span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-gray-600" x-text="u.email"></td>
+                <td class="px-4 py-3">
+                  <span class="text-xs px-2 py-1 rounded-full font-medium"
+                    :class="u.role === 'Super Admin' ? 'badge-super' : 'badge-agent'"
+                    x-text="u.role"></span>
+                </td>
+                <td class="px-4 py-3">
+                  <span class="text-xs px-2 py-1 rounded-full font-medium"
+                    :class="u.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'"
+                    x-text="u.active ? 'Active' : 'Inactive'"></span>
+                </td>
+                <td class="px-4 py-3">
+                  <button @click="u.active = !u.active"
+                    :class="u.active ? 'text-red-400 hover:underline' : 'text-green-500 hover:underline'"
+                    class="text-xs font-medium"
+                    x-text="u.active ? 'Deactivate' : 'Activate'"></button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---- SETTINGS ---- -->
+    <section x-show="currentSection === 'settings'" class="p-8">
+      <h1 class="text-2xl font-bold text-[#174079] mb-1">Settings</h1>
+      <p class="text-gray-500 text-sm mb-7">Company information</p>
+
+      <div class="bg-white rounded-xl shadow-sm border border-blue-50 p-8 max-w-2xl">
+        <div class="grid grid-cols-1 gap-5">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+            <input x-model="settings.name" type="text" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+            <input x-model="settings.email" type="email" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            <input x-model="settings.phone" type="text" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <textarea x-model="settings.address" rows="2" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm transition resize-none"></textarea>
+          </div>
+        </div>
+
+        <div x-show="settingsSaved" class="mt-4 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-2.5 rounded-lg">
+          ✓ Settings saved successfully.
+        </div>
+
+        <button @click="saveSettings()"
+          class="mt-6 bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition">
+          Save Changes
+        </button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+
+<!-- Lead Detail Modal -->
+<div x-show="leadModal.open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay"
+  @click.self="leadModal.open = false">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto">
+    <div class="p-6 border-b border-gray-100 flex items-start justify-between">
+      <div>
+        <h2 class="text-lg font-bold text-[#174079]" x-text="leadModal.lead?.name"></h2>
+        <p class="text-sm text-gray-400" x-text="leadModal.lead?.email"></p>
+      </div>
+      <button @click="leadModal.open = false" class="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+    </div>
+    <div class="p-6">
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div><p class="text-xs text-gray-400 mb-1">Phone</p><p class="text-sm font-medium" x-text="leadModal.lead?.phone"></p></div>
+        <div><p class="text-xs text-gray-400 mb-1">Budget</p><p class="text-sm font-medium text-[#00aeef]" x-text="leadModal.lead?.budget"></p></div>
+        <div><p class="text-xs text-gray-400 mb-1">Interest</p><p class="text-sm font-medium" x-text="leadModal.lead?.interest"></p></div>
+        <div><p class="text-xs text-gray-400 mb-1">Priority</p>
+          <span class="text-xs px-2 py-0.5 rounded font-medium"
+            :class="leadModal.lead?.priority === 'Hot' ? 'bg-red-100 text-red-600' : leadModal.lead?.priority === 'Warm' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'"
+            x-text="leadModal.lead?.priority"></span>
+        </div>
+        <div><p class="text-xs text-gray-400 mb-1">Stage</p>
+          <span class="text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-medium" x-text="leadModal.lead?.stage"></span>
+        </div>
+        <div><p class="text-xs text-gray-400 mb-1">Added</p><p class="text-sm font-medium" x-text="leadModal.lead?.date"></p></div>
+      </div>
+
+      <div>
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Activity Timeline</p>
+        <div class="space-y-3">
+          <template x-for="act in leadModal.lead?.activities || []" :key="act.id">
+            <div class="flex gap-3">
+              <div class="flex flex-col items-center">
+                <div class="w-2 h-2 rounded-full bg-[#00aeef] mt-1.5"></div>
+                <div class="w-px bg-gray-100 flex-1 mt-1"></div>
+              </div>
+              <div class="pb-3">
+                <p class="text-xs font-medium text-gray-700" x-text="act.text"></p>
+                <p class="text-[10px] text-gray-400" x-text="act.time"></p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Move Stage -->
+      <div class="mt-4 pt-4 border-t border-gray-100">
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Move to Stage</p>
+        <div class="flex flex-wrap gap-2">
+          <template x-for="col in pipeline" :key="col.id">
+            <button @click="moveLead(leadModal.lead, col.id)"
+              :class="leadModal.lead?.stage === col.id ? 'bg-[#174079] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+              class="text-xs px-3 py-1.5 rounded-full font-medium transition" x-text="col.label"></button>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Lead Modal -->
+<div x-show="newLeadModal.open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay"
+  @click.self="newLeadModal.open = false">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+    <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-lg font-bold text-[#174079]">New Lead</h2>
+      <button @click="newLeadModal.open = false" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+    </div>
+    <div class="p-6">
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Full Name *</label>
+          <input x-model="newLeadForm.name" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Email *</label>
+          <input x-model="newLeadForm.email" type="email" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Phone</label>
+          <input x-model="newLeadForm.phone" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Budget</label>
+          <input x-model="newLeadForm.budget" type="text" placeholder="$500k" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Priority</label>
+          <select x-model="newLeadForm.priority" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition">
+            <option>Cold</option><option>Warm</option><option>Hot</option>
+          </select>
+        </div>
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Interest</label>
+          <input x-model="newLeadForm.interest" type="text" placeholder="3bd home, downtown area" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+      </div>
+      <button @click="addLead()"
+        class="w-full bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg text-sm transition">
+        Add Lead
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Property Modal -->
+<div x-show="propModal.open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay"
+  @click.self="propModal.open = false">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-lg font-bold text-[#174079]" x-text="propModal.editing ? 'Edit Property' : 'Add Property'"></h2>
+      <button @click="propModal.open = false" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+    </div>
+    <div class="p-6">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Address *</label>
+          <input x-model="propForm.address" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Price *</label>
+          <input x-model="propForm.price" type="text" placeholder="$850,000" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Type</label>
+          <select x-model="propForm.type" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition">
+            <option>Single Family</option><option>Condo</option><option>Townhouse</option><option>Multi-Family</option><option>Commercial</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Bedrooms</label>
+          <input x-model="propForm.beds" type="number" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Bathrooms</label>
+          <input x-model="propForm.baths" type="number" step="0.5" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Sq Ft</label>
+          <input x-model="propForm.sqft" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Status</label>
+          <select x-model="propForm.status" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition">
+            <option>Active</option><option>Pending</option><option>Sold</option>
+          </select>
+        </div>
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Image URL (optional)</label>
+          <input x-model="propForm.image" type="text" placeholder="https://..." class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+        </div>
+        <div class="col-span-2 flex items-center gap-2">
+          <input x-model="propForm.featured" type="checkbox" id="featuredChk" class="w-4 h-4 accent-[#00aeef]" />
+          <label for="featuredChk" class="text-sm text-gray-600">Mark as Featured</label>
+        </div>
+      </div>
+      <button @click="saveProp()"
+        class="w-full mt-5 bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg text-sm transition">
+        <span x-text="propModal.editing ? 'Save Changes' : 'Add Property'"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div x-show="userModal.open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay"
+  @click.self="userModal.open = false">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+    <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-lg font-bold text-[#174079]">Add User</h2>
+      <button @click="userModal.open = false" class="text-gray-400 hover:text-gray-600 text-xl">×</button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Full Name</label>
+        <input x-model="userForm.name" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Email</label>
+        <input x-model="userForm.email" type="email" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Role</label>
+        <select x-model="userForm.role" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition">
+          <option>Agent</option><option>Super Admin</option>
+        </select>
+      </div>
+      <button @click="addUser()"
+        class="w-full bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg text-sm transition">
+        Add User
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================== ALPINE APP ===================== -->
+<script>
+function app() {
+  return {
+    loggedIn: false,
+    currentUser: null,
+    currentSection: 'dashboard',
+    loginError: '',
+
+    loginForm: { email: '', password: '' },
+
+    credentials: [
+      { email: 'lucas@4riversrealty.com', password: 'admin2024', name: 'Lucas Leite', role: 'Super Admin' },
+      { email: 'lindoso@4riversrealty.com', password: 'agent2024', name: 'Lindoso Silva', role: 'Agent' },
+      { email: 'luan@4riversrealty.com', password: 'agent2024', name: 'Luan Castro', role: 'Agent' },
+    ],
+
+    navItems: [
+      { id: 'dashboard', label: 'Dashboard', superOnly: false, icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>' },
+      { id: 'crm', label: 'CRM', superOnly: false, icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>' },
+      { id: 'properties', label: 'Properties', superOnly: false, icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2"/></svg>' },
+      { id: 'users', label: 'Users', superOnly: true, icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>' },
+      { id: 'settings', label: 'Settings', superOnly: false, icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>' },
+    ],
+
+    // Dashboard
+    kpis: [
+      { label: 'Active Listings', value: 6, trend: 20, color: '#174079', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>' },
+      { label: 'Leads This Month', value: 24, trend: 12, color: '#00aeef', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>' },
+      { label: 'Showings Scheduled', value: 11, trend: -5, color: '#8b5cf6', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>' },
+      { label: 'Under Contract', value: 3, trend: 50, color: '#f97316', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' },
+    ],
+
+    chartData: [
+      { month: 'Dec', value: 14 },
+      { month: 'Jan', value: 18 },
+      { month: 'Feb', value: 12 },
+      { month: 'Mar', value: 22 },
+      { month: 'Apr', value: 19 },
+      { month: 'May', value: 24 },
+    ],
+
+    get maxChart() { return Math.max(...this.chartData.map(d => d.value)); },
+
+    recentActivity: [
+      { id: 1, text: 'New lead: Marcus Thompson added to pipeline', dot: 'bg-blue-400', time: '2 hours ago' },
+      { id: 2, text: 'Property at 1842 Waterfront Dr marked as Pending', dot: 'bg-yellow-400', time: '4 hours ago' },
+      { id: 3, text: 'Jennifer Walsh moved to Under Contract', dot: 'bg-orange-400', time: '1 day ago' },
+      { id: 4, text: 'New showing scheduled: 523 Riverside Blvd', dot: 'bg-purple-400', time: '1 day ago' },
+      { id: 5, text: 'David Martinez — offer accepted!', dot: 'bg-green-500', time: '2 days ago' },
+    ],
+
+    // CRM
+    pipeline: [
+      { id: 'new', label: 'New Lead', dot: 'dot-new' },
+      { id: 'contacted', label: 'Contacted', dot: 'dot-contacted' },
+      { id: 'showing', label: 'Showing', dot: 'dot-showing' },
+      { id: 'offer', label: 'Offer Made', dot: 'dot-offer' },
+      { id: 'contract', label: 'Under Contract', dot: 'dot-contract' },
+      { id: 'won', label: 'Closed Won', dot: 'dot-won' },
+      { id: 'lost', label: 'Closed Lost', dot: 'dot-lost' },
+    ],
+
+    allLeads: [
+      { id: 1, name: 'Sarah Johnson', email: 'sarah.j@gmail.com', phone: '(954) 555-0101', budget: '$450K–$550K', interest: '3bd Single Family, Coral Springs', priority: 'Hot', stage: 'showing', date: 'May 10', activities: [
+        { id:1, text: 'Lead created via website form', time: 'May 10, 9:00 AM' },
+        { id:2, text: 'Initial call — interested in 3bd homes', time: 'May 11, 2:00 PM' },
+        { id:3, text: 'Showing scheduled at 523 Riverside Blvd', time: 'May 14, 10:00 AM' },
+      ]},
+      { id: 2, name: 'Marcus Thompson', email: 'm.thompson@outlook.com', phone: '(561) 555-0134', budget: '$700K–$900K', interest: 'Waterfront condo, Fort Lauderdale', priority: 'Warm', stage: 'new', date: 'May 12', activities: [
+        { id:1, text: 'Lead created from referral', time: 'May 12, 11:00 AM' },
+      ]},
+      { id: 3, name: 'Jennifer Walsh', email: 'jwalsh@yahoo.com', phone: '(786) 555-0198', budget: '$1.1M–$1.3M', interest: 'Luxury home, Boca Raton', priority: 'Hot', stage: 'contract', date: 'Apr 28', activities: [
+        { id:1, text: 'Lead created', time: 'Apr 28' },
+        { id:2, text: 'Property tour — loved 1842 Waterfront Dr', time: 'May 3' },
+        { id:3, text: 'Offer submitted: $1.18M', time: 'May 8' },
+        { id:4, text: 'Offer accepted — under contract', time: 'May 12' },
+      ]},
+      { id: 4, name: 'David Martinez', email: 'dmartinez@gmail.com', phone: '(954) 555-0207', budget: '$300K–$380K', interest: 'Starter home, Pembroke Pines', priority: 'Warm', stage: 'offer', date: 'May 5', activities: [
+        { id:1, text: 'Lead from open house event', time: 'May 5' },
+        { id:2, text: 'Showed 2 properties', time: 'May 9' },
+        { id:3, text: 'Offer submitted on 305 Maple Ave', time: 'May 14' },
+      ]},
+      { id: 5, name: 'Amanda Foster', email: 'afoster@icloud.com', phone: '(305) 555-0312', budget: '$550K–$650K', interest: 'Townhouse, Weston area', priority: 'Cold', stage: 'contacted', date: 'May 8', activities: [
+        { id:1, text: 'Lead via Instagram ad', time: 'May 8' },
+        { id:2, text: 'Email sent — no reply yet', time: 'May 10' },
+      ]},
+      { id: 6, name: 'Robert Kim', email: 'rkim@company.com', phone: '(561) 555-0441', budget: '$2M+', interest: 'Waterfront estate, Palm Beach', priority: 'Hot', stage: 'showing', date: 'May 1', activities: [
+        { id:1, text: 'Lead from luxury referral network', time: 'May 1' },
+        { id:2, text: 'VIP tour of 3 properties', time: 'May 7' },
+      ]},
+      { id: 7, name: 'Patricia Lane', email: 'plane@email.com', phone: '(786) 555-0523', budget: '$400K–$480K', interest: 'Quiet neighborhood, 4bd', priority: 'Warm', stage: 'new', date: 'May 14', activities: [
+        { id:1, text: 'Lead from Zillow inquiry', time: 'May 14' },
+      ]},
+      { id: 8, name: 'Carlos Reyes', email: 'creyes@business.net', phone: '(954) 555-0615', budget: '$800K–$1M', interest: 'Investment property, multi-unit', priority: 'Hot', stage: 'contacted', date: 'May 6', activities: [
+        { id:1, text: 'Investment buyer — portfolio expansion', time: 'May 6' },
+        { id:2, text: 'Discussed 4-unit properties in Dade County', time: 'May 9' },
+      ]},
+    ],
+
+    // Properties
+    properties: [
+      { id: 1, address: '523 Riverside Blvd, Fort Lauderdale, FL 33301', type: 'Single Family', price: '$875,000', beds: 4, baths: 3, sqft: '2,850', status: 'Active', featured: true },
+      { id: 2, address: '1842 Waterfront Dr, Boca Raton, FL 33432', type: 'Single Family', price: '$1,250,000', beds: 5, baths: 4, sqft: '4,100', status: 'Pending', featured: true },
+      { id: 3, address: '305 Maple Ave, Pembroke Pines, FL 33029', type: 'Townhouse', price: '$349,000', beds: 3, baths: 2.5, sqft: '1,680', status: 'Active', featured: false },
+      { id: 4, address: '7701 Ocean Blvd #1204, Miami Beach, FL 33141', type: 'Condo', price: '$995,000', beds: 2, baths: 2, sqft: '1,420', status: 'Active', featured: false },
+      { id: 5, address: '400 Weston Hills Dr, Weston, FL 33327', type: 'Single Family', price: '$599,000', beds: 4, baths: 3, sqft: '2,200', status: 'Active', featured: false },
+      { id: 6, address: '2201 Palm Beach Lakes Blvd, West Palm Beach, FL 33409', type: 'Commercial', price: '$1,800,000', beds: 0, baths: 2, sqft: '6,500', status: 'Active', featured: false },
+    ],
+
+    // Users
+    users: [
+      { id: 1, name: 'Lucas Leite', email: 'lucas@4riversrealty.com', role: 'Super Admin', active: true },
+      { id: 2, name: 'Lindoso Silva', email: 'lindoso@4riversrealty.com', role: 'Agent', active: true },
+      { id: 3, name: 'Luan Castro', email: 'luan@4riversrealty.com', role: 'Agent', active: true },
+    ],
+
+    // Settings
+    settings: {
+      name: '4Rivers Realty',
+      email: 'info@4riversrealty.com',
+      phone: '(954) 555-0100',
+      address: '100 East Broward Blvd, Suite 1200\nFort Lauderdale, FL 33301'
+    },
+    settingsSaved: false,
+
+    // Drag & Drop
+    draggingLeadId: null,
+
+    // Modals
+    leadModal: { open: false, lead: null },
+    newLeadModal: { open: false },
+    newLeadForm: { name: '', email: '', phone: '', budget: '', priority: 'Warm', interest: '' },
+    propModal: { open: false, editing: false, prop: null },
+    propForm: { address: '', price: '', type: 'Single Family', beds: 3, baths: 2, sqft: '', status: 'Active', featured: false, image: '' },
+    userModal: { open: false },
+    userForm: { name: '', email: '', role: 'Agent' },
+
+    // Methods
+    init() {
+      // Check if was previously logged in this session (not persistent)
+    },
+
+    login() {
+      const match = this.credentials.find(c =>
+        c.email.toLowerCase() === this.loginForm.email.toLowerCase() &&
+        c.password === this.loginForm.password
+      );
+      if (match) {
+        this.currentUser = match;
+        this.loggedIn = true;
+        this.loginError = '';
+        this.currentSection = 'dashboard';
+      } else {
+        this.loginError = 'Invalid email or password. Please try again.';
+      }
+    },
+
+    logout() {
+      this.loggedIn = false;
+      this.currentUser = null;
+      this.loginForm = { email: '', password: '' };
+      this.currentSection = 'dashboard';
+    },
+
+    navigate(section) {
+      if (section === 'users' && this.currentUser?.role !== 'Super Admin') {
+        this.currentSection = 'dashboard';
+        return;
+      }
+      this.currentSection = section;
+    },
+
+    leadsInCol(stage) {
+      return this.allLeads.filter(l => l.stage === stage);
+    },
+
+    // Drag & Drop
+    onDragStart(event, leadId) {
+      this.draggingLeadId = leadId;
+      event.target.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+    },
+
+    onDragEnd(event) {
+      event.target.classList.remove('dragging');
+      document.querySelectorAll('.kanban-col').forEach(el => el.classList.remove('drag-over'));
+    },
+
+    onDragOver(event) {
+      event.currentTarget.classList.add('drag-over');
+    },
+
+    onDragLeave(event) {
+      event.currentTarget.classList.remove('drag-over');
+    },
+
+    onDrop(event, colId) {
+      event.currentTarget.classList.remove('drag-over');
+      if (this.draggingLeadId !== null) {
+        const lead = this.allLeads.find(l => l.id === this.draggingLeadId);
+        if (lead) lead.stage = colId;
+        this.draggingLeadId = null;
+      }
+    },
+
+    openLeadModal(lead) {
+      this.leadModal.lead = lead;
+      this.leadModal.open = true;
+    },
+
+    moveLead(lead, stageId) {
+      if (lead) lead.stage = stageId;
+      this.leadModal.open = false;
+    },
+
+    openNewLeadModal() {
+      this.newLeadForm = { name: '', email: '', phone: '', budget: '', priority: 'Warm', interest: '' };
+      this.newLeadModal.open = true;
+    },
+
+    addLead() {
+      if (!this.newLeadForm.name || !this.newLeadForm.email) return;
+      const newId = Math.max(...this.allLeads.map(l => l.id)) + 1;
+      this.allLeads.push({
+        id: newId,
+        name: this.newLeadForm.name,
+        email: this.newLeadForm.email,
+        phone: this.newLeadForm.phone,
+        budget: this.newLeadForm.budget,
+        interest: this.newLeadForm.interest,
+        priority: this.newLeadForm.priority,
+        stage: 'new',
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        activities: [{ id: 1, text: 'Lead created manually', time: new Date().toLocaleString() }]
+      });
+      this.newLeadModal.open = false;
+    },
+
+    // Properties
+    openPropModal(prop = null) {
+      if (prop) {
+        this.propModal.editing = true;
+        this.propModal.prop = prop;
+        this.propForm = { ...prop };
+      } else {
+        this.propModal.editing = false;
+        this.propModal.prop = null;
+        this.propForm = { address: '', price: '', type: 'Single Family', beds: 3, baths: 2, sqft: '', status: 'Active', featured: false, image: '' };
+      }
+      this.propModal.open = true;
+    },
+
+    saveProp() {
+      if (!this.propForm.address || !this.propForm.price) return;
+      if (this.propModal.editing && this.propModal.prop) {
+        Object.assign(this.propModal.prop, this.propForm);
+      } else {
+        const newId = Math.max(...this.properties.map(p => p.id)) + 1;
+        this.properties.push({ ...this.propForm, id: newId });
+      }
+      this.propModal.open = false;
+    },
+
+    deleteProp(id) {
+      if (confirm('Delete this property?')) {
+        this.properties = this.properties.filter(p => p.id !== id);
+      }
+    },
+
+    // Users
+    openUserModal() {
+      this.userForm = { name: '', email: '', role: 'Agent' };
+      this.userModal.open = true;
+    },
+
+    addUser() {
+      if (!this.userForm.name || !this.userForm.email) return;
+      const newId = Math.max(...this.users.map(u => u.id)) + 1;
+      this.users.push({ ...this.userForm, id: newId, active: true });
+      this.userModal.open = false;
+    },
+
+    // Settings
+    saveSettings() {
+      this.settingsSaved = true;
+      setTimeout(() => this.settingsSaved = false, 3000);
+    },
+  };
+}
+</script>
+</body>
+</html>
