@@ -358,11 +358,18 @@
           <h1 class="text-2xl font-bold text-[#174079]">Properties</h1>
           <p class="text-gray-500 text-sm mt-0.5"><span x-text="properties.length"></span> listings</p>
         </div>
-        <button @click="openPropModal()"
-          class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-          Add Property
-        </button>
+        <div class="flex items-center gap-2">
+          <button @click="forceSyncToPortal()"
+            class="bg-[#00aeef] hover:bg-[#0098d4] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Sync to Portal
+          </button>
+          <button @click="openPropModal()"
+            class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add Property
+          </button>
+        </div>
       </div>
       <div class="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden">
         <table class="w-full text-sm">
@@ -373,6 +380,7 @@
               <th class="text-left px-4 py-3">Price</th>
               <th class="text-left px-4 py-3">Status</th>
               <th class="text-left px-4 py-3">Featured</th>
+              <th class="text-left px-4 py-3">Portal</th>
               <th class="text-left px-4 py-3">Actions</th>
             </tr>
           </thead>
@@ -394,6 +402,15 @@
                   <button @click="prop.featured=!prop.featured"
                     :class="prop.featured?'bg-[#00aeef] text-white':'bg-gray-100 text-gray-400'"
                     class="text-xs px-2 py-1 rounded-full font-medium transition" x-text="prop.featured?'★ Featured':'☆ Feature'"></button>
+                </td>
+                <td class="px-4 py-3">
+                  <button @click="prop.show_on_portal=!prop.show_on_portal; syncPortalVisibility()"
+                    :title="prop.show_on_portal ? 'Visible on portal' : 'Hidden from portal'"
+                    class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
+                    :class="prop.show_on_portal ? 'bg-[#00aeef]' : 'bg-gray-300'">
+                    <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform"
+                      :class="prop.show_on_portal ? 'translate-x-4' : 'translate-x-1'"></span>
+                  </button>
                 </td>
                 <td class="px-4 py-3">
                   <div class="flex gap-2">
@@ -706,6 +723,17 @@
           <input x-model="propForm.featured" type="checkbox" id="featuredChk" class="w-4 h-4 accent-[#00aeef]" />
           <label for="featuredChk" class="text-sm text-gray-600">Mark as Featured</label>
         </div>
+        <div class="col-span-2 flex items-center gap-3">
+          <span class="text-sm text-gray-600">Show on Portal</span>
+          <button type="button" @click="propForm.show_on_portal=!propForm.show_on_portal"
+            class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
+            :class="propForm.show_on_portal ? 'bg-[#00aeef]' : 'bg-gray-300'">
+            <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform"
+              :class="propForm.show_on_portal ? 'translate-x-4' : 'translate-x-1'"></span>
+          </button>
+          <span class="text-xs" :class="propForm.show_on_portal ? 'text-[#00aeef]' : 'text-gray-400'"
+            x-text="propForm.show_on_portal ? 'Visible' : 'Hidden'"></span>
+        </div>
       </div>
       <button @click="saveProp()" class="w-full mt-5 bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg text-sm transition"
         x-text="propModal.editing?'Save Changes':'Add Property'"></button>
@@ -738,6 +766,13 @@
       <button @click="addUser()" class="w-full bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg text-sm transition">Add User</button>
     </div>
   </div>
+</div>
+
+<!-- Toast: Portal Synced -->
+<div x-show="portalSyncToast" x-cloak x-transition.opacity
+  class="fixed bottom-6 right-6 z-[100] bg-[#174079] text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-xl flex items-center gap-2">
+  <svg class="w-4 h-4 text-[#00aeef]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+  Portal updated!
 </div>
 
 <!-- ===================== ALPINE APP ===================== -->
@@ -927,15 +962,16 @@ function app() {
 
     // Properties
     properties: [
-      { id:1, address:'523 Riverside Blvd, Fort Lauderdale, FL 33301', type:'Single Family', price:'$875,000', beds:4, baths:3, sqft:'2,850', status:'Active', featured:true },
-      { id:2, address:'1842 Waterfront Dr, Boca Raton, FL 33432', type:'Single Family', price:'$1,250,000', beds:5, baths:4, sqft:'4,100', status:'Pending', featured:true },
-      { id:3, address:'305 Maple Ave, Pembroke Pines, FL 33029', type:'Townhouse', price:'$349,000', beds:3, baths:2.5, sqft:'1,680', status:'Active', featured:false },
-      { id:4, address:'7701 Ocean Blvd #1204, Miami Beach, FL 33141', type:'Condo', price:'$995,000', beds:2, baths:2, sqft:'1,420', status:'Active', featured:false },
-      { id:5, address:'400 Weston Hills Dr, Weston, FL 33327', type:'Single Family', price:'$599,000', beds:4, baths:3, sqft:'2,200', status:'Active', featured:false },
-      { id:6, address:'2201 Palm Beach Lakes Blvd, West Palm Beach, FL 33409', type:'Commercial', price:'$1,800,000', beds:0, baths:2, sqft:'6,500', status:'Active', featured:false },
+      { id:1, address:'523 Riverside Blvd, Fort Lauderdale, FL 33301', type:'Single Family', price:'$875,000', beds:4, baths:3, sqft:'2,850', status:'Active', featured:true, show_on_portal:true },
+      { id:2, address:'1842 Waterfront Dr, Boca Raton, FL 33432', type:'Single Family', price:'$1,250,000', beds:5, baths:4, sqft:'4,100', status:'Pending', featured:true, show_on_portal:true },
+      { id:3, address:'305 Maple Ave, Pembroke Pines, FL 33029', type:'Townhouse', price:'$349,000', beds:3, baths:2.5, sqft:'1,680', status:'Active', featured:false, show_on_portal:true },
+      { id:4, address:'7701 Ocean Blvd #1204, Miami Beach, FL 33141', type:'Condo', price:'$995,000', beds:2, baths:2, sqft:'1,420', status:'Active', featured:false, show_on_portal:true },
+      { id:5, address:'400 Weston Hills Dr, Weston, FL 33327', type:'Single Family', price:'$599,000', beds:4, baths:3, sqft:'2,200', status:'Active', featured:false, show_on_portal:true },
+      { id:6, address:'2201 Palm Beach Lakes Blvd, West Palm Beach, FL 33409', type:'Commercial', price:'$1,800,000', beds:0, baths:2, sqft:'6,500', status:'Active', featured:false, show_on_portal:true },
     ],
     propModal: { open:false, editing:false, prop:null },
-    propForm: { address:'', price:'', type:'Single Family', beds:3, baths:2, sqft:'', status:'Active', featured:false },
+    propForm: { address:'', price:'', type:'Single Family', beds:3, baths:2, sqft:'', status:'Active', featured:false, show_on_portal:true },
+    portalSyncToast: false,
 
     // Users
     users: [
@@ -951,7 +987,18 @@ function app() {
     settingsSaved: false,
 
     // ---- Methods ----
-    init() {},
+    init() {
+      // Load portal visibility flags from localStorage and apply to properties
+      try {
+        const saved = localStorage.getItem('4rivers_portal_visibility');
+        if (saved) {
+          const flags = JSON.parse(saved);
+          this.properties.forEach(p => { if (flags[p.id] !== undefined) p.show_on_portal = flags[p.id]; });
+        }
+      } catch(e) {}
+      // Persist current state
+      this.syncPortalVisibility();
+    },
 
     login() {
       const match = this.credentials.find(c=>c.email.toLowerCase()===this.loginForm.email.toLowerCase()&&c.password===this.loginForm.password);
@@ -1001,7 +1048,7 @@ function app() {
     // Properties
     openPropModal(prop=null) {
       if(prop) { this.propModal.editing=true; this.propModal.prop=prop; this.propForm={...prop}; }
-      else { this.propModal.editing=false; this.propModal.prop=null; this.propForm={address:'',price:'',type:'Single Family',beds:3,baths:2,sqft:'',status:'Active',featured:false}; }
+      else { this.propModal.editing=false; this.propModal.prop=null; this.propForm={address:'',price:'',type:'Single Family',beds:3,baths:2,sqft:'',status:'Active',featured:false,show_on_portal:true}; }
       this.propModal.open=true;
     },
     saveProp() {
@@ -1009,8 +1056,21 @@ function app() {
       if(this.propModal.editing&&this.propModal.prop) Object.assign(this.propModal.prop,this.propForm);
       else this.properties.push({...this.propForm,id:Date.now()});
       this.propModal.open=false;
+      this.syncPortalVisibility();
     },
-    deleteProp(id) { if(confirm('Delete this property?')) this.properties=this.properties.filter(p=>p.id!==id); },
+    deleteProp(id) { if(confirm('Delete this property?')) { this.properties=this.properties.filter(p=>p.id!==id); this.syncPortalVisibility(); } },
+
+    // Portal sync
+    syncPortalVisibility() {
+      const flags = {};
+      this.properties.forEach(p => flags[p.id] = p.show_on_portal !== false);
+      localStorage.setItem('4rivers_portal_visibility', JSON.stringify(flags));
+    },
+    forceSyncToPortal() {
+      this.syncPortalVisibility();
+      this.portalSyncToast = true;
+      setTimeout(() => this.portalSyncToast = false, 2500);
+    },
 
     // Users
     openUserModal() { this.userForm={name:'',email:'',role:'Agent'}; this.userModal.open=true; },
