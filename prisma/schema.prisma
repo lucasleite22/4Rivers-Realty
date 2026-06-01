@@ -1,0 +1,198 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────
+
+enum UserRole {
+  SUPER_ADMIN
+  AGENT
+}
+
+enum PropertyType {
+  HORSE_FARM
+  RANCH
+  RESIDENTIAL
+  COMMERCIAL
+  LAND
+}
+
+enum PropertyStatus {
+  ACTIVE
+  SOLD
+  UNDER_CONTRACT
+}
+
+enum LeadType {
+  BUYER
+  SELLER
+  INVESTOR
+}
+
+enum LeadOrigin {
+  WEBSITE
+  REFERRAL
+  ZILLOW
+  REALTOR_COM
+  INSTAGRAM
+  OTHER
+}
+
+enum LeadStatus {
+  NEW_LEAD
+  CONTACTED
+  SHOWING
+  OFFER_MADE
+  UNDER_CONTRACT
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum ActivityType {
+  CALL
+  EMAIL
+  SHOWING
+  OFFER
+  NOTE
+}
+
+enum DashboardEventType {
+  PROPERTY_CREATED
+  PROPERTY_SOLD
+  LEAD_CREATED
+  LEAD_STAGE_CHANGED
+  SHOWING_SCHEDULED
+  OFFER_MADE
+  DEAL_CLOSED
+}
+
+// ─────────────────────────────────────────────
+// Models
+// ─────────────────────────────────────────────
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String
+  password   String
+  role       UserRole @default(AGENT)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  leads      Lead[]         @relation("AssignedLeads")
+  activities LeadActivity[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Property {
+  id            String         @id @default(cuid())
+  title         String
+  type          PropertyType
+  priceUsd      Decimal        @db.Decimal(15, 2)
+  acreage       Decimal        @db.Decimal(10, 2)
+  county        String
+  city          String
+  address       String
+  description   String         @db.Text
+  status        PropertyStatus @default(ACTIVE)
+  featured      Boolean        @default(true)
+  showOnPortal  Boolean        @default(true)
+  stables       Int?
+  arenas        Int?
+  pastures      Int?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  images        PropertyImage[]
+
+  @@index([type])
+  @@index([status])
+  @@index([county])
+  @@index([featured])
+  @@index([showOnPortal])
+  @@map("properties")
+}
+
+model PropertyImage {
+  id          String   @id @default(cuid())
+  propertyId  String
+  url         String
+  isCover     Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("property_images")
+}
+
+model Lead {
+  id               String     @id @default(cuid())
+  name             String
+  email            String?
+  phone            String?
+  type             LeadType
+  origin           LeadOrigin
+  propertyInterest String?
+  budgetUsd        Decimal?   @db.Decimal(15, 2)
+  acreageDesired   Decimal?   @db.Decimal(10, 2)
+  countyPreferred  String?
+  status           LeadStatus @default(NEW_LEAD)
+  notes            String?    @db.Text
+  assignedToId     String?
+  lastContactAt    DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  assignedTo       User?          @relation("AssignedLeads", fields: [assignedToId], references: [id], onDelete: SetNull)
+  activities       LeadActivity[]
+
+  @@index([status])
+  @@index([type])
+  @@index([assignedToId])
+  @@index([lastContactAt])
+  @@map("leads")
+}
+
+model LeadActivity {
+  id           String       @id @default(cuid())
+  leadId       String
+  userId       String?
+  type         ActivityType
+  notes        String?      @db.Text
+  activityDate DateTime
+  createdAt    DateTime     @default(now())
+
+  lead         Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  user         User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([leadId])
+  @@index([userId])
+  @@map("lead_activities")
+}
+
+model DashboardEvent {
+  id          String             @id @default(cuid())
+  type        DashboardEventType
+  entityId    String
+  entityType  String
+  metadata    Json?
+  userId      String?
+  createdAt   DateTime           @default(now())
+
+  @@index([type])
+  @@index([createdAt])
+  @@map("dashboard_events")
+}

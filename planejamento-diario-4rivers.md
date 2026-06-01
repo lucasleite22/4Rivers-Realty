@@ -16,13 +16,13 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Sex 05/06 | Lucas | Setup do projeto: criar repo, estrutura Next.js, Tailwind, Supabase project, variáveis de ambiente | Repo criado, projeto rodando localmente |
-| Seg 09/06 (início semana real) | Lindoso | Layout base: NavBar, Footer, sistema de fontes (Cormorant + Barlow), paleta de cores do branding | Componentes base |
+| Sex 05/06 | Lucas | Setup do projeto: criar repo, estrutura Next.js, Tailwind, Supabase project, variáveis de ambiente | ✅ Repo criado, projeto rodando localmente |
+| Seg 09/06 (início semana real) | Lindoso | Layout base: NavBar, Footer, sistema de fontes (Cormorant + Barlow), paleta de cores do branding | ✅ Componentes base |
 
 **Tarefas Claude desta semana:**
-- Gerar estrutura de pastas do projeto Next.js + Supabase
-- Criar `tailwind.config.js` com as cores e fontes da 4Rivers
-- Scaffolding dos componentes: `<Navbar>`, `<Footer>`, `<HeroSection>`
+- [ ] Gerar estrutura de pastas do projeto Next.js + Supabase
+- [x] Criar `tailwind.config.js` com as cores e fontes da 4Rivers
+- [x] Scaffolding dos componentes: `<Navbar>`, `<Footer>`, `<HeroSection>`
 
 ---
 
@@ -31,17 +31,17 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 12/06 | Lindoso | Página Home: hero com busca, seção de estatísticas, seção de destaques | Home completa |
-| Ter 13/06 | Lindoso | Página Sobre: história, equipe, valores da empresa | Página Sobre |
-| Qua 14/06 | Lindoso | Página Contato: formulário + mapa Google Maps embed | Página Contato |
-| Qui 15/06 | Lucas + Lindoso | SEO: meta tags, Open Graph, sitemap.xml, robots.txt | SEO configurado |
+| Seg 12/06 | Lindoso | Página Home: hero com busca, seção de estatísticas, seção de destaques | ✅ Home completa |
+| Ter 13/06 | Lindoso | Página Sobre: história, equipe, valores da empresa | ✅ Página Sobre |
+| Qua 14/06 | Lindoso | Página Contato: formulário + mapa Google Maps embed | ✅ Página Contato |
+| Qui 15/06 | Lucas + Lindoso | SEO: meta tags, Open Graph, sitemap.xml, robots.txt | ✅ SEO configurado |
 | Sex 16/06 | Lindoso | Animações (Framer Motion), micro-interações, responsividade mobile | Módulo 01 ✅ |
 
 **Tarefas Claude esta semana:**
-- Gerar componentes React para cada seção do Home
-- Criar schema de meta tags dinâmicas com Next.js `<Head>`
-- Gerar sitemap.xml e configurar next-sitemap
-- Revisar responsividade com breakpoints mobile/tablet/desktop
+- [x] Gerar componentes React para cada seção do Home
+- [x] Criar schema de meta tags dinâmicas com Next.js `<Head>`
+- [x] Gerar sitemap.xml e configurar next-sitemap
+- [ ] Revisar responsividade com breakpoints mobile/tablet/desktop
 
 ---
 
@@ -52,15 +52,15 @@
 |-----|-------------|------------------|------------|
 | Seg 19/06 | Lindoso | Layout da landing: hero de lançamento, galeria de fotos/vídeo | Layout base |
 | Ter 20/06 | Lindoso | Contador regressivo animado (React) + seção de especificações | Countdown funcional |
-| Qua 21/06 | Luan | Formulário de captação integrado ao Supabase (tabela `leads`) | Lead salvo no banco |
+| Qua 21/06 | Luan | Formulário de captação integrado ao Supabase (tabela `leads`) | ✅ Lead salvo no banco |
 | Qui 22/06 | Lindoso | Botão CTA WhatsApp flutuante + otimização mobile | CTA mobile |
 | Sex 23/06 | Lucas | Code review geral + deploy de preview (Vercel) | Módulo 02 ✅ |
 
 **Tarefas Claude esta semana:**
-- Gerar componente `<CountdownTimer>` em React
-- Criar schema SQL da tabela `leads` no Supabase
-- Gerar API Route Next.js para salvar lead (`/api/leads`)
-- Revisar acessibilidade e performance (Lighthouse)
+- [ ] Gerar componente `<CountdownTimer>` em React
+- [x] Criar schema SQL da tabela `leads` no Supabase
+- [x] Gerar API Route Next.js para salvar lead (`/api/leads`)
+- [ ] Revisar acessibilidade e performance (Lighthouse)
 
 ---
 
@@ -69,17 +69,17 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 26/06 | Luan | Schema SQL: tabelas `properties`, `property_images`, `property_types` | Banco modelado |
-| Ter 27/06 | Lindoso | Grid de cards de imóveis: visualização lista e quadro (toggle) | Grid responsivo |
-| Qua 28/06 | Lindoso | Filtros avançados: tipo, preço, acreagem, condado (URL params) | Filtros funcionando |
-| Qui 29/06 | Luan | API Routes: `GET /api/properties` com paginação e filtros | API funcionando |
-| Sex 30/06 | Lindoso | Início formulário multi-etapas de cadastro de propriedades | Step 1 e 2 prontos |
+| Seg 26/06 | Luan | Schema SQL: tabelas `properties`, `property_images`, `property_types` | ✅ Banco modelado |
+| Ter 27/06 | Lindoso | Grid de cards de imóveis: visualização lista e quadro (toggle) | ✅ Grid responsivo |
+| Qua 28/06 | Lindoso | Filtros avançados: tipo, preço, acreagem, condado (URL params) | ✅ Filtros funcionando |
+| Qui 29/06 | Luan | API Routes: `GET /api/properties` com paginação e filtros | ✅ API funcionando |
+| Sex 30/06 | Lindoso | Início formulário multi-etapas de cadastro de propriedades | ✅ Step 1 e 2 prontos |
 
 **Tarefas Claude esta semana:**
-- Gerar schema SQL completo de properties com campos específicos para farms/horse farms
-- Criar hook `useProperties()` com React Query
-- Gerar componente `<PropertyCard>` e `<PropertyGrid>`
-- Criar componente `<MultiStepForm>` com validação Zod
+- [x] Gerar schema SQL completo de properties com campos específicos para farms/horse farms
+- [x] Criar hook `useProperties()` com React Query
+- [x] Gerar componente `<PropertyCard>` e `<PropertyGrid>`
+- [x] Criar componente `<MultiStepForm>` com validação Zod
 
 ---
 
@@ -89,16 +89,16 @@
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
 | Seg 03/07 | Lindoso | Mapa interativo Leaflet: pins customizados, clusters, preview ao hover | Mapa funcional |
-| Ter 04/07 | Lindoso | Página de detalhe do imóvel: galeria, specs, formulário de interesse | Detalhe completo |
-| Qua 05/07 | Luan | Supabase Auth: login email/senha, perfis Admin e Agent (RLS) | Auth funcionando |
-| Qui 06/07 | Luan | Continuação cadastro: campos específicos horse farm (cocheiras, arena, pasto) | Campos especializados |
+| Ter 04/07 | Lindoso | Página de detalhe do imóvel: galeria, specs, formulário de interesse | ✅ Detalhe completo |
+| Qua 05/07 | Luan | Supabase Auth: login email/senha, perfis Admin e Agent (RLS) | ✅ Auth funcionando |
+| Qui 06/07 | Luan | Continuação cadastro: campos específicos horse farm (cocheiras, arena, pasto) | ✅ Campos especializados |
 | Sex 07/07 | Lindoso | Favoritar imóveis (localStorage + Supabase), compartilhar link | Favoritos ✅ |
 
 **Tarefas Claude esta semana:**
-- Integrar Leaflet com Next.js (SSR disabled para o mapa)
-- Gerar campos especializados: `<HorseFarmFields>`, `<FarmFields>`, `<LotFields>`
-- Configurar Supabase RLS policies para Admin vs Agent
-- Criar contexto de autenticação `<AuthProvider>`
+- [ ] Integrar Leaflet com Next.js (SSR disabled para o mapa)
+- [x] Gerar campos especializados: `<HorseFarmFields>`, `<FarmFields>`, `<LotFields>`
+- [x] Configurar Supabase RLS policies para Admin vs Agent
+- [x] Criar contexto de autenticação `<AuthProvider>`
 
 ---
 
@@ -107,17 +107,17 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 10/07 | Luan | Upload múltiplo de fotos: Supabase Storage, compressão automática (Sharp) | Upload funcional |
+| Seg 10/07 | Luan | Upload múltiplo de fotos: Supabase Storage, compressão automática (Sharp) | ✅ Upload funcional |
 | Ter 11/07 | Luan | Geolocalização no cadastro: Google Maps Geocoding API + pin no mapa | Geo funcional |
 | Qua 12/07 | Lindoso | Polimento visual: animações de entrada, skeleton loading, estados vazios | UX refinada |
 | Qui 13/07 | Lucas + Luan | Code review módulos 03 e 04 + testes manuais completos | QA feito |
 | Sex 14/07 | Lucas | Deploy preview módulos 03 e 04 + relatório semanal ao cliente | Módulos 03 e 04 ✅ |
 
 **Tarefas Claude esta semana:**
-- Gerar função de compressão de imagem com Sharp no Next.js
-- Criar componente `<ImageUploader>` com drag-and-drop
-- Revisar todas as API Routes com tratamento de erro consistente
-- Gerar testes básicos com Jest/Testing Library
+- [x] Gerar função de compressão de imagem com Sharp no Next.js
+- [x] Criar componente `<ImageUploader>` com drag-and-drop
+- [x] Revisar todas as API Routes com tratamento de erro consistente
+- [ ] Gerar testes básicos com Jest/Testing Library
 
 ---
 
@@ -126,17 +126,17 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 17/07 | Lindoso | Dashboard admin: KPIs (imóveis, leads, conversões), layout dark | Dashboard visual |
-| Ter 18/07 | Lindoso | CRUD de imóveis no admin: listagem, edição inline, gestão de fotos | CRUD completo |
+| Seg 17/07 | Lindoso | Dashboard admin: KPIs (imóveis, leads, conversões), layout dark | ✅ Dashboard visual |
+| Ter 18/07 | Lindoso | CRUD de imóveis no admin: listagem, edição inline, gestão de fotos | ✅ CRUD completo |
 | Qua 19/07 | Lindoso | Gestão de lançamentos e campanhas no admin | Lançamentos admin |
 | Qui 20/07 | Luan | Início integração SimplyRETS: autenticação, primeiro fetch de listings | API conectada |
 | Sex 21/07 | Lucas | Review + interface mobile para agentes em campo | Módulo 05 ✅ |
 
 **Tarefas Claude esta semana:**
-- Gerar layout do dashboard com gráficos (Recharts)
-- Criar componentes de tabela com sort/filter para o admin
-- Documentar endpoints SimplyRETS relevantes para o projeto
-- Gerar wrapper `simplyrets.service.ts` para consumir a API
+- [x] Gerar layout do dashboard com gráficos (Recharts)
+- [x] Criar componentes de tabela com sort/filter para o admin
+- [ ] Documentar endpoints SimplyRETS relevantes para o projeto
+- [ ] Gerar wrapper `simplyrets.service.ts` para consumir a API
 
 ---
 
@@ -152,10 +152,10 @@
 | Sex 28/07 | Lucas | Testes da integração MLS + documentação do módulo | Módulo 06 ✅ |
 
 **Tarefas Claude esta semana:**
-- Gerar Edge Function Supabase para sync MLS (TypeScript)
-- Criar mapeamento de tipos: MLS fields → schema 4Rivers
-- Revisar conformidade com regras do Stellar MLS
-- Gerar documentação técnica do módulo 06
+- [ ] Gerar Edge Function Supabase para sync MLS (TypeScript)
+- [ ] Criar mapeamento de tipos: MLS fields → schema 4Rivers
+- [ ] Revisar conformidade com regras do Stellar MLS
+- [ ] Gerar documentação técnica do módulo 06
 
 ---
 
@@ -164,17 +164,17 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 31/07 | Luan + Lindoso | Pipeline Kanban: colunas Novo → Contato → Proposta → Fechado (drag-and-drop) | Kanban funcional |
-| Ter 01/08 | Luan | Perfis de clientes: histórico de interações, imóveis de interesse | Perfis completos |
+| Seg 31/07 | Luan + Lindoso | Pipeline Kanban: colunas Novo → Contato → Proposta → Fechado (drag-and-drop) | ✅ Kanban funcional |
+| Ter 01/08 | Luan | Perfis de clientes: histórico de interações, imóveis de interesse | ✅ Perfis completos |
 | Qua 02/08 | Lindoso | Aba de campanhas de lançamento + métricas por agente | Campanhas ativas |
 | Qui 03/08 | Luan | Pipeline de captação: formulários → Supabase → alerta Resend para agente | Notificação email |
 | Sex 04/08 | Luan | E-mail de confirmação automático para o lead (template 4Rivers) | Módulos 07 e 08 ✅ |
 
 **Tarefas Claude esta semana:**
-- Gerar Kanban com `@dnd-kit` (drag-and-drop acessível)
-- Schema SQL: tabelas `clients`, `interactions`, `pipeline_stages`
-- Configurar Resend: templates HTML de email com logo 4Rivers
-- Criar API Route para trigger de notificação por email
+- [ ] Gerar Kanban com `@dnd-kit` (drag-and-drop acessível)
+- [x] Schema SQL: tabelas `clients`, `interactions`, `pipeline_stages`
+- [ ] Configurar Resend: templates HTML de email com logo 4Rivers
+- [ ] Criar API Route para trigger de notificação por email
 
 ---
 
@@ -190,10 +190,10 @@
 | Sex 11/08 | Lucas | Deploy final + screencast de 20min para o Jales + relatório de entrega | 🚀 GO LIVE ✅ |
 
 **Tarefas Claude esta semana:**
-- Gerar função de export Excel com `exceljs`
-- Criar scripts de testes E2E com Playwright
-- Checklist de segurança: RLS, env vars, rate limiting
-- Gerar roteiro do screencast de treinamento
+- [ ] Gerar função de export Excel com `exceljs`
+- [ ] Criar scripts de testes E2E com Playwright
+- [ ] Checklist de segurança: RLS, env vars, rate limiting
+- [ ] Gerar roteiro do screencast de treinamento
 
 ---
 
