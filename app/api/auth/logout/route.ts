@@ -1,13 +1,10 @@
+// app/api/auth/logout/route.ts
+
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { clearAuthCookie } from '@/lib/auth'
 
 export async function POST() {
-  try {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    return NextResponse.json({ data: { message: 'Logged out successfully' } })
-  } catch (err) {
-    console.error('[AUTH/LOGOUT]', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+  const response = NextResponse.json({ success: true })
+  clearAuthCookie(response)
+  return response
 }

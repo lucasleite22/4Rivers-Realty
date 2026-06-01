@@ -1,112 +1,97 @@
-// ============================================================
-// GET    /api/properties/[id]  — Public property detail
-// PATCH  /api/properties/[id]  — Update property (admin auth)
-// DELETE /api/properties/[id]  — Delete property (admin auth)
-// ============================================================
+// app/api/properties/[id]/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
-import { deleteAllPropertyImages } from '@/lib/supabase/storage'
-import type { PropertyWithImages } from '@/types/properties'
+import prisma from '@/lib/prisma'
+import { requireAuth, AuthError } from '@/lib/auth'
+import { Prisma } from '@prisma/client'
 
-type Params = { params: { id: string } }
+// ── GET /api/properties/[id] ─────────────────
 
-// ── GET ───────────────────────────────────────────────────────
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const property = await prisma.property.findUnique({
+    where: { id: params.id },
+    include: { images: { orderBy: { sortOrder: 'asc' } } },
+  })
 
-export async function GET(_req: NextRequest, { params }: Params) {
-  const supabase = createClient()
-
-  const { data, error } = await supabase
-    .from('properties')
-    .select('*, images:property_images(*)')
-    .eq('id', params.id)
-    .single()
-
-  if (error || !data) {
+  if (!property) {
     return NextResponse.json({ error: 'Property not found' }, { status: 404 })
-  }
-
-  const images = (data.images ?? []).sort(
-    (a: any, b: any) => a.sort_order - b.sort_order
-  )
-  const cover = images.find((i: any) => i.is_cover) ?? images[0] ?? null
-  const property: PropertyWithImages = {
-    ...data,
-    images,
-    cover_image_url: cover?.url ?? null,
   }
 
   return NextResponse.json(property)
 }
 
-// ── PATCH ─────────────────────────────────────────────────────
+// ── PATCH /api/properties/[id] ───────────────
 
-const updateSchema = z.object({
-  title:       z.string().min(1).optional(),
-  type:        z.enum(['horse_farm','ranch','residential','commercial','land']).optional(),
-  price_usd:   z.number().positive().nullable().optional(),
-  acreage:     z.number().positive().nullable().optional(),
-  county:      z.string().nullable().optional(),
-  city:        z.string().nullable().optional(),
-  address:     z.string().nullable().optional(),
-  description: z.string().nullable().optional(),
-  status:      z.enum(['active','sold','under_contract']).optional(),
-  featured:    z.boolean().optional(),
-  stables:     z.number().int().min(0).nullable().optional(),
-  arenas:      z.number().int().min(0).nullable().optional(),
-  pastures:    z.number().int().min(0).nullable().optional(),
-})
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await requireAuth(req)
+    const body = await req.json()
 
-export async function PATCH(req: NextRequest, { params }: Params) {
-  const supabase = createClient()
+    const data: Prisma.PropertyUpdateInput = {}
+    if (body.title !== undefined) data.title = body.title
+    if (body.type !== undefined) data.type = body.type
+    if (body.priceUsd !== undefined) data.priceUsd = new Prisma.Decimal(body.priceUsd)
+    if (body.acreage !== undefined) data.acreage = new Prisma.Decimal(body.acreage)
+    if (body.county !== undefined) data.county = body.county
+    if (body.city !== undefined) data.city = body.city
+    if (body.address !== undefined) data.address = body.address
+    if (body.description !== undefined) data.description = body.description
+    if (body.status !== undefined) {
+      data.status = body.status
+      if (body.status === 'SOLD') {
+        await prisma.dashboardEvent.create({
+          data: {
+            type: 'PROPERTY_SOLD',
+            entityId: params.id,
+            entityType: 'Property',
+            metadata: { status: 'SOLD' },
+          },
+        })
+      }
+    }
+    if (body.featured !== undefined) data.featured = body.featured
+    if (body.showOnPortal !== undefined) data.showOnPortal = body.showOnPortal
+    if (body.stables !== undefined) data.stables = body.stables
+    if (body.arenas !== undefined) data.arenas = body.arenas
+    if (body.pastures !== undefined) data.pastures = body.pastures
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const property = await prisma.property.update({
+      where: { id: params.id },
+      data,
+      include: { images: { orderBy: { sortOrder: 'asc' } } },
+    })
 
-  const body = await req.json()
-  const parsed = updateSchema.safeParse(body)
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Validation failed', details: parsed.error.flatten() },
-      { status: 422 }
-    )
+    return NextResponse.json(property)
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return NextResponse.json({ error: err.message }, { status: err.status })
+    }
+    console.error('[PATCH /api/properties/[id]]', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  const { data, error } = await supabase
-    .from('properties')
-    .update(parsed.data)
-    .eq('id', params.id)
-    .select()
-    .single()
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  return NextResponse.json(data)
 }
 
-// ── DELETE ────────────────────────────────────────────────────
+// ── DELETE /api/properties/[id] ──────────────
 
-export async function DELETE(_req: NextRequest, { params }: Params) {
-  const supabase = createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  // 1. Remove all images from storage
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    await deleteAllPropertyImages(params.id)
-  } catch (e: any) {
-    console.warn('Storage cleanup error (continuing):', e.message)
+    await requireAuth(req)
+    await prisma.property.delete({ where: { id: params.id } })
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return NextResponse.json({ error: err.message }, { status: err.status })
+    }
+    console.error('[DELETE /api/properties/[id]]', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  // 2. Delete the property (cascade deletes property_images rows)
-  const { error } = await supabase
-    .from('properties')
-    .delete()
-    .eq('id', params.id)
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  return new NextResponse(null, { status: 204 })
 }

@@ -1,145 +1,90 @@
-// ============================================================
-// POST   /api/properties/[id]/images  — Upload image (admin)
-// DELETE /api/properties/[id]/images  — Delete image (admin)
-// ============================================================
+// app/api/properties/[id]/images/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
-import { uploadPropertyImage, deletePropertyImage } from '@/lib/supabase/storage'
-import type { ImageUploadResult } from '@/types/properties'
+import prisma from '@/lib/prisma'
+import { requireAuth, AuthError } from '@/lib/auth'
+import { saveUploadedFile, deleteUploadedFile } from '@/lib/upload'
 
-type Params = { params: { id: string } }
+// ── POST /api/properties/[id]/images — upload ─
 
-// ── POST — upload ─────────────────────────────────────────────
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await requireAuth(req)
 
-export async function POST(req: NextRequest, { params }: Params) {
-  const supabase = createClient()
+    const formData = await req.formData()
+    const file = formData.get('file') as File | null
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!file) {
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 })
+    }
 
-  // Expect multipart/form-data with a "file" field
-  const formData = await req.formData()
-  const file = formData.get('file') as File | null
-  if (!file) {
-    return NextResponse.json({ error: 'No file provided' }, { status: 400 })
-  }
+    // Validate type
+    if (!file.type.startsWith('image/')) {
+      return NextResponse.json({ error: 'File must be an image' }, { status: 400 })
+    }
 
-  // Validate mime type
-  const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-  if (!allowed.includes(file.type)) {
-    return NextResponse.json(
-      { error: 'Only JPEG, PNG, WebP, and GIF images are allowed' },
-      { status: 415 }
-    )
-  }
+    const url = await saveUploadedFile(file, params.id)
 
-  // Max 10 MB
-  if (file.size > 10 * 1024 * 1024) {
-    return NextResponse.json({ error: 'File exceeds 10 MB limit' }, { status: 413 })
-  }
-
-  // 1. Upload to Supabase Storage
-  const { url } = await uploadPropertyImage(file, params.id)
-
-  // 2. Count existing images to set sort_order
-  const { count } = await supabase
-    .from('property_images')
-    .select('id', { count: 'exact', head: true })
-    .eq('property_id', params.id)
-
-  const sortOrder = count ?? 0
-
-  // 3. Determine if this should be the cover (first image)
-  const isCover = sortOrder === 0
-
-  // 4. Insert into property_images table
-  const { data, error } = await supabase
-    .from('property_images')
-    .insert({
-      property_id: params.id,
-      url,
-      is_cover:   isCover,
-      sort_order: sortOrder,
+    // Determine sort order
+    const lastImage = await prisma.propertyImage.findFirst({
+      where: { propertyId: params.id },
+      orderBy: { sortOrder: 'desc' },
     })
-    .select()
-    .single()
+    const sortOrder = (lastImage?.sortOrder ?? -1) + 1
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    // First image is cover by default
+    const isFirst = sortOrder === 0
 
-  const result: ImageUploadResult = {
-    id:         data.id,
-    url:        data.url,
-    is_cover:   data.is_cover,
-    sort_order: data.sort_order,
+    const image = await prisma.propertyImage.create({
+      data: {
+        propertyId: params.id,
+        url,
+        isCover: isFirst,
+        sortOrder,
+      },
+    })
+
+    return NextResponse.json(image, { status: 201 })
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return NextResponse.json({ error: err.message }, { status: err.status })
+    }
+    console.error('[POST /api/properties/[id]/images]', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  return NextResponse.json(result, { status: 201 })
 }
 
-// ── DELETE — remove image ─────────────────────────────────────
+// ── DELETE /api/properties/[id]/images?imageId= ─
 
-const deleteSchema = z.object({
-  image_id: z.string().uuid(),
-})
-
-export async function DELETE(req: NextRequest, { params }: Params) {
-  const supabase = createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const body = await req.json()
-  const parsed = deleteSchema.safeParse(body)
-  if (!parsed.success) {
-    return NextResponse.json({ error: 'image_id is required' }, { status: 400 })
-  }
-
-  // Fetch image record
-  const { data: img, error: fetchError } = await supabase
-    .from('property_images')
-    .select('*')
-    .eq('id', parsed.data.image_id)
-    .eq('property_id', params.id)
-    .single()
-
-  if (fetchError || !img) {
-    return NextResponse.json({ error: 'Image not found' }, { status: 404 })
-  }
-
-  // 1. Remove from storage
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    await deletePropertyImage(img.url)
-  } catch (e: any) {
-    console.warn('Storage delete error (continuing):', e.message)
-  }
+    await requireAuth(req)
 
-  // 2. Remove from DB
-  const { error } = await supabase
-    .from('property_images')
-    .delete()
-    .eq('id', img.id)
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  // 3. If deleted image was the cover, promote next image
-  if (img.is_cover) {
-    const { data: next } = await supabase
-      .from('property_images')
-      .select('id')
-      .eq('property_id', params.id)
-      .order('sort_order', { ascending: true })
-      .limit(1)
-      .single()
-
-    if (next) {
-      await supabase
-        .from('property_images')
-        .update({ is_cover: true })
-        .eq('id', next.id)
+    const imageId = req.nextUrl.searchParams.get('imageId')
+    if (!imageId) {
+      return NextResponse.json({ error: 'imageId required' }, { status: 400 })
     }
-  }
 
-  return new NextResponse(null, { status: 204 })
+    const image = await prisma.propertyImage.findUnique({ where: { id: imageId } })
+    if (!image || image.propertyId !== params.id) {
+      return NextResponse.json({ error: 'Image not found' }, { status: 404 })
+    }
+
+    await deleteUploadedFile(image.url)
+    await prisma.propertyImage.delete({ where: { id: imageId } })
+
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return NextResponse.json({ error: err.message }, { status: err.status })
+    }
+    console.error('[DELETE /api/properties/[id]/images]', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }

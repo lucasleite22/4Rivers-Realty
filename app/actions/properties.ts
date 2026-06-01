@@ -1,31 +1,15 @@
 'use server'
 
 // ============================================================
-// 4River Realty — Property Server Actions
+// 4Rivers Realty — Property Server Actions (Prisma/MySQL)
 // ============================================================
 
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@/lib/supabase/server'
-import {
-  uploadPropertyImage,
-  deletePropertyImage,
-  deleteAllPropertyImages,
-} from '@/lib/supabase/storage'
-import type {
-  CreatePropertyData,
-  UpdatePropertyData,
-  PropertyStatus,
-  PropertyWithImages,
-} from '@/types/properties'
+import { Prisma } from '@prisma/client'
+import prisma from '@/lib/prisma'
+import { saveUploadedFile, deleteUploadedFile } from '@/lib/upload'
 
 // ── Helpers ───────────────────────────────────────────────────
-
-async function requireAdmin() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
-  return { supabase, user }
-}
 
 function revalidateProperties() {
   revalidatePath('/properties')
@@ -35,228 +19,137 @@ function revalidateProperties() {
 
 // ── createProperty ────────────────────────────────────────────
 
-/**
- * Create a new property, optionally uploading an array of image Files.
- *
- * @param data   - Property fields
- * @param images - Optional array of File objects (e.g. from a form upload)
- */
 export async function createProperty(
-  data: CreatePropertyData,
+  data: {
+    title: string
+    type: string
+    priceUsd: number
+    acreage: number
+    county: string
+    city: string
+    address: string
+    description: string
+    status?: string
+    featured?: boolean
+    showOnPortal?: boolean
+    stables?: number | null
+    arenas?: number | null
+    pastures?: number | null
+  },
   images?: File[]
-): Promise<PropertyWithImages> {
-  const { supabase } = await requireAdmin()
+) {
+  const property = await prisma.property.create({
+    data: {
+      title: data.title,
+      type: data.type as any,
+      priceUsd: new Prisma.Decimal(data.priceUsd),
+      acreage: new Prisma.Decimal(data.acreage),
+      county: data.county,
+      city: data.city,
+      address: data.address,
+      description: data.description,
+      status: (data.status as any) ?? 'ACTIVE',
+      featured: data.featured ?? true,
+      showOnPortal: data.showOnPortal ?? true,
+      stables: data.stables ?? null,
+      arenas: data.arenas ?? null,
+      pastures: data.pastures ?? null,
+    },
+  })
 
-  // 1. Insert property
-  const { data: property, error } = await supabase
-    .from('properties')
-    .insert(data)
-    .select()
-    .single()
-
-  if (error || !property) throw new Error(error?.message ?? 'Failed to create property')
-
-  // 2. Upload images if provided
   if (images && images.length > 0) {
     for (let i = 0; i < images.length; i++) {
-      const file = images[i]
-      const { url } = await uploadPropertyImage(file, property.id)
-
-      await supabase.from('property_images').insert({
-        property_id: property.id,
-        url,
-        is_cover:   i === 0,
-        sort_order: i,
+      const url = await saveUploadedFile(images[i], property.id)
+      await prisma.propertyImage.create({
+        data: { propertyId: property.id, url, isCover: i === 0, sortOrder: i },
       })
     }
   }
 
+  await prisma.dashboardEvent.create({
+    data: { type: 'PROPERTY_CREATED', entityId: property.id, entityType: 'Property', metadata: { title: property.title } },
+  })
+
   revalidateProperties()
 
-  // Return with images
-  const { data: full, error: fetchError } = await supabase
-    .from('properties')
-    .select('*, images:property_images(*)')
-    .eq('id', property.id)
-    .single()
-
-  if (fetchError || !full) throw new Error('Property created but could not be fetched')
-
-  const imgs = (full.images ?? []).sort((a: any, b: any) => a.sort_order - b.sort_order)
-  const cover = imgs.find((i: any) => i.is_cover) ?? imgs[0] ?? null
-
-  return { ...full, images: imgs, cover_image_url: cover?.url ?? null }
+  return prisma.property.findUnique({
+    where: { id: property.id },
+    include: { images: { orderBy: { sortOrder: 'asc' } } },
+  })
 }
 
 // ── updateProperty ────────────────────────────────────────────
 
-export async function updateProperty(
-  id: string,
-  data: UpdatePropertyData
-): Promise<void> {
-  const { supabase } = await requireAdmin()
-
-  const { error } = await supabase
-    .from('properties')
-    .update(data)
-    .eq('id', id)
-
-  if (error) throw new Error(error.message)
-
+export async function updateProperty(id: string, data: Prisma.PropertyUpdateInput) {
+  await prisma.property.update({ where: { id }, data })
   revalidatePath(`/properties/${id}`)
   revalidateProperties()
 }
 
 // ── deleteProperty ────────────────────────────────────────────
 
-export async function deleteProperty(id: string): Promise<void> {
-  const { supabase } = await requireAdmin()
-
-  // 1. Remove all images from storage
-  try {
-    await deleteAllPropertyImages(id)
-  } catch (e: any) {
-    console.warn('Storage cleanup warning:', e.message)
+export async function deleteProperty(id: string) {
+  const images = await prisma.propertyImage.findMany({ where: { propertyId: id } })
+  for (const img of images) {
+    await deleteUploadedFile(img.url)
   }
-
-  // 2. Delete property (cascade removes property_images rows)
-  const { error } = await supabase
-    .from('properties')
-    .delete()
-    .eq('id', id)
-
-  if (error) throw new Error(error.message)
-
+  await prisma.property.delete({ where: { id } })
   revalidateProperties()
 }
 
 // ── toggleFeatured ────────────────────────────────────────────
 
 export async function toggleFeatured(id: string): Promise<boolean> {
-  const { supabase } = await requireAdmin()
-
-  // Fetch current value
-  const { data: current, error: fetchError } = await supabase
-    .from('properties')
-    .select('featured')
-    .eq('id', id)
-    .single()
-
-  if (fetchError || !current) throw new Error('Property not found')
-
+  const current = await prisma.property.findUnique({ where: { id }, select: { featured: true } })
+  if (!current) throw new Error('Property not found')
   const newValue = !current.featured
-
-  const { error } = await supabase
-    .from('properties')
-    .update({ featured: newValue })
-    .eq('id', id)
-
-  if (error) throw new Error(error.message)
-
+  await prisma.property.update({ where: { id }, data: { featured: newValue } })
   revalidateProperties()
-
   return newValue
 }
 
 // ── updatePropertyStatus ──────────────────────────────────────
 
-export async function updatePropertyStatus(
-  id: string,
-  status: PropertyStatus
-): Promise<void> {
-  const { supabase } = await requireAdmin()
-
-  const { error } = await supabase
-    .from('properties')
-    .update({ status })
-    .eq('id', id)
-
-  if (error) throw new Error(error.message)
-
+export async function updatePropertyStatus(id: string, status: string) {
+  await prisma.property.update({ where: { id }, data: { status: status as any } })
+  if (status === 'SOLD') {
+    await prisma.dashboardEvent.create({
+      data: { type: 'PROPERTY_SOLD', entityId: id, entityType: 'Property' },
+    })
+  }
   revalidatePath(`/properties/${id}`)
   revalidateProperties()
 }
 
 // ── addPropertyImage ──────────────────────────────────────────
 
-/**
- * Upload and register a single image for an existing property.
- * Returns the new image record.
- */
-export async function addPropertyImage(
-  propertyId: string,
-  file: File
-): Promise<{ id: string; url: string; is_cover: boolean; sort_order: number }> {
-  const { supabase } = await requireAdmin()
-
-  const { url } = await uploadPropertyImage(file, propertyId)
-
-  const { count } = await supabase
-    .from('property_images')
-    .select('id', { count: 'exact', head: true })
-    .eq('property_id', propertyId)
-
-  const sortOrder = count ?? 0
-  const isCover   = sortOrder === 0
-
-  const { data, error } = await supabase
-    .from('property_images')
-    .insert({ property_id: propertyId, url, is_cover: isCover, sort_order: sortOrder })
-    .select()
-    .single()
-
-  if (error || !data) throw new Error(error?.message ?? 'Failed to insert image record')
-
+export async function addPropertyImage(propertyId: string, file: File) {
+  const url = await saveUploadedFile(file, propertyId)
+  const count = await prisma.propertyImage.count({ where: { propertyId } })
+  const image = await prisma.propertyImage.create({
+    data: { propertyId, url, isCover: count === 0, sortOrder: count },
+  })
   revalidatePath(`/properties/${propertyId}`)
-
-  return { id: data.id, url: data.url, is_cover: data.is_cover, sort_order: data.sort_order }
+  return image
 }
 
 // ── removePropertyImage ───────────────────────────────────────
 
-export async function removePropertyImage(
-  propertyId: string,
-  imageId: string
-): Promise<void> {
-  const { supabase } = await requireAdmin()
+export async function removePropertyImage(propertyId: string, imageId: string) {
+  const img = await prisma.propertyImage.findUnique({ where: { id: imageId } })
+  if (!img || img.propertyId !== propertyId) throw new Error('Image not found')
 
-  const { data: img, error: fetchErr } = await supabase
-    .from('property_images')
-    .select('*')
-    .eq('id', imageId)
-    .eq('property_id', propertyId)
-    .single()
-
-  if (fetchErr || !img) throw new Error('Image not found')
-
-  try {
-    await deletePropertyImage(img.url)
-  } catch (e: any) {
-    console.warn('Storage delete warning:', e.message)
-  }
-
-  const { error } = await supabase
-    .from('property_images')
-    .delete()
-    .eq('id', imageId)
-
-  if (error) throw new Error(error.message)
+  await deleteUploadedFile(img.url)
+  await prisma.propertyImage.delete({ where: { id: imageId } })
 
   // Promote next image as cover if needed
-  if (img.is_cover) {
-    const { data: next } = await supabase
-      .from('property_images')
-      .select('id')
-      .eq('property_id', propertyId)
-      .order('sort_order', { ascending: true })
-      .limit(1)
-      .single()
-
+  if (img.isCover) {
+    const next = await prisma.propertyImage.findFirst({
+      where: { propertyId },
+      orderBy: { sortOrder: 'asc' },
+    })
     if (next) {
-      await supabase
-        .from('property_images')
-        .update({ is_cover: true })
-        .eq('id', next.id)
+      await prisma.propertyImage.update({ where: { id: next.id }, data: { isCover: true } })
     }
   }
 
