@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
   const buffer = await exportPropertiesToBuffer(properties)
   const filename = `4rivers-properties-${new Date().toISOString().slice(0, 10)}.xlsx`
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'Content-Disposition': `attachment; filename="${filename}"`,

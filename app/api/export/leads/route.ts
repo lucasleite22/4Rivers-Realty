@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 
   const filename = `4rivers-leads-${new Date().toISOString().slice(0, 10)}.xlsx`
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'Content-Disposition': `attachment; filename="${filename}"`,
