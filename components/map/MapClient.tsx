@@ -59,7 +59,8 @@ function FitBounds({ properties }: { properties: PropertyWithImages[] }) {
 }
 
 // ── Price formatter ───────────────────────────────────────────
-function fmtPrice(n: number) {
+function fmtPrice(n: number | { toNumber(): number }) {
+  if (typeof n !== 'number') n = n.toNumber()
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`
   return `$${Math.round(n / 1000)}k`
 }
