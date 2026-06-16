@@ -14,9 +14,9 @@ const store = new Map<string, Window>()
 if (typeof setInterval !== 'undefined') {
   setInterval(() => {
     const now = Date.now()
-    for (const [key, w] of store) {
+    store.forEach((w, key) => {
       if (w.resetAt < now) store.delete(key)
-    }
+    })
   }, 60_000)
 }
 
