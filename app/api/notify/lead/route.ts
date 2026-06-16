@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { resend, FROM_ADDRESS, AGENT_EMAIL } from '@/lib/resend'
+import { getResend, FROM_ADDRESS, AGENT_EMAIL } from '@/lib/resend'
 import { newLeadAgentEmail } from '@/lib/email-templates/new-lead-agent'
 import { leadConfirmationEmail } from '@/lib/email-templates/lead-confirmation'
 import { requireAuth, AuthError } from '@/lib/auth'
@@ -14,27 +14,21 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const {
-      leadId,
-      leadName,
-      leadEmail,
-      leadPhone,
-      leadType,
-      leadOrigin,
-      propertyInterest,
-      budgetUsd,
-      notes,
-    } = body
+    const { leadName, leadEmail, leadPhone, leadType, leadOrigin, propertyInterest, budgetUsd, notes } = body
 
     if (!leadName) {
       return NextResponse.json({ error: 'leadName is required' }, { status: 400 })
+    }
+
+    const resend = getResend()
+    if (!resend) {
+      return NextResponse.json({ success: true, sent: 0, failed: 0, note: 'Email disabled — RESEND_API_KEY not set' })
     }
 
     const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://4riversrealty.com'}/admin/leads`
     const agentPhone = process.env.AGENT_PHONE ?? '(352) 555-0100'
 
     const results = await Promise.allSettled([
-      // 1 — Notify the agent
       resend.emails.send({
         from: FROM_ADDRESS,
         to: AGENT_EMAIL,
@@ -51,35 +45,25 @@ export async function POST(req: NextRequest) {
           adminUrl,
         }),
       }),
-
-      // 2 — Confirm to the lead (only if they provided an email)
       ...(leadEmail
-        ? [
-            resend.emails.send({
-              from: FROM_ADDRESS,
-              to: leadEmail,
-              subject: 'We received your message — 4Rivers Realty',
-              html: leadConfirmationEmail({
-                leadName,
-                propertyInterest: propertyInterest ?? null,
-                agentPhone,
-                agentEmail: AGENT_EMAIL,
-              }),
+        ? [resend.emails.send({
+            from: FROM_ADDRESS,
+            to: leadEmail,
+            subject: 'We received your message — 4Rivers Realty',
+            html: leadConfirmationEmail({
+              leadName,
+              propertyInterest: propertyInterest ?? null,
+              agentPhone,
+              agentEmail: AGENT_EMAIL,
             }),
-          ]
+          })]
         : []),
     ])
 
     const failed = results.filter((r) => r.status === 'rejected')
-    if (failed.length > 0) {
-      console.error('[notify/lead] Some emails failed:', failed)
-    }
+    if (failed.length > 0) console.error('[notify/lead] Some emails failed:', failed)
 
-    return NextResponse.json({
-      success: true,
-      sent: results.length - failed.length,
-      failed: failed.length,
-    })
+    return NextResponse.json({ success: true, sent: results.length - failed.length, failed: failed.length })
   } catch (err) {
     console.error('[POST /api/notify/lead]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
