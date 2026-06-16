@@ -8,13 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        navy: '#174079',
-        cyan: {
-          brand: '#00aeef',
-          light: '#33ccff',
-        },
-        'site-bg': '#f0f7fc',
-        dark: '#07162b',
+        'dark-navy': '#181B3A',
+        navy: '#252859',
+        'brand-blue': '#86ACDB',
+        'light-blue': '#B5CEEA',
+        'off-white': '#F8F9FC',
       },
       fontFamily: {
         cormorant: ['var(--font-cormorant)', 'Georgia', 'serif'],

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, MapPin, Ruler, Star, Shield, Award, Handshake, Users } from 'lucide-react'
+import { ArrowRight, MapPin, Ruler, Star, Award, Handshake, Users } from 'lucide-react'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 
 export const metadata: Metadata = {
@@ -114,7 +114,7 @@ function StarRating() {
   return (
     <div className="flex gap-0.5">
       {[...Array(5)].map((_, i) => (
-        <Star key={i} className="w-4 h-4 fill-[#00aeef] text-[#00aeef]" />
+        <Star key={i} className="w-4 h-4 fill-brand-blue text-brand-blue" />
       ))}
     </div>
   )
@@ -143,17 +143,16 @@ export default function HomePage() {
           className="object-cover object-center"
           priority
         />
-        {/* Navy overlay */}
-        <div className="absolute inset-0 bg-navy/70" />
+        <div className="absolute inset-0 bg-dark-navy/75" />
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <p className="font-barlow text-[#33ccff] text-sm font-semibold tracking-[0.3em] uppercase mb-6">
+          <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase mb-6">
             Ocala · North Central Florida
           </p>
           <h1 className="font-cormorant font-bold text-5xl sm:text-6xl md:text-7xl text-white leading-tight mb-6">
             Find Your Perfect Piece
             <br />
-            <span className="text-[#00aeef]">of Florida</span>
+            <span className="text-brand-blue">of Florida</span>
           </h1>
           <p className="font-barlow text-lg sm:text-xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed">
             Premium horse farms, ranches, and rural properties in Ocala and
@@ -162,13 +161,13 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/properties"
-              className="px-8 py-4 bg-[#00aeef] text-white font-barlow font-semibold rounded-md hover:bg-[#33ccff] transition-colors inline-flex items-center justify-center gap-2"
+              className="px-8 py-4 bg-navy text-white font-barlow font-semibold rounded-md hover:bg-brand-blue transition-colors inline-flex items-center justify-center gap-2"
             >
               View Properties <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/contact"
-              className="px-8 py-4 border-2 border-white text-white font-barlow font-semibold rounded-md hover:bg-white hover:text-navy transition-colors inline-flex items-center justify-center"
+              className="px-8 py-4 border-2 border-white/60 text-white font-barlow font-semibold rounded-md hover:bg-white hover:text-navy transition-colors inline-flex items-center justify-center"
             >
               Schedule a Consultation
             </Link>
@@ -176,21 +175,22 @@ export default function HomePage() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 animate-bounce">
-          <div className="w-px h-8 bg-white/30" />
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/40 animate-bounce">
+          <div className="w-px h-8 bg-white/20" />
         </div>
       </section>
 
       {/* ── Stats Bar ── */}
       <section className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <AnimatedSection stagger className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <p className="font-cormorant font-bold text-4xl text-navy">
+                <div className="w-8 h-0.5 bg-brand-blue mx-auto mb-4" />
+                <p className="font-cormorant font-bold text-4xl text-dark-navy">
                   {stat.value}
                 </p>
-                <p className="font-barlow text-sm text-gray-500 mt-1 tracking-wide">
+                <p className="font-barlow text-sm text-gray-400 mt-1 tracking-wide">
                   {stat.label}
                 </p>
               </div>
@@ -200,13 +200,13 @@ export default function HomePage() {
       </section>
 
       {/* ── Featured Properties ── */}
-      <section className="py-24 bg-site-bg">
+      <section className="py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <p className="font-barlow text-[#00aeef] text-sm font-semibold tracking-[0.3em] uppercase mb-3">
+          <div className="text-center mb-16">
+            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
               Exclusive Listings
             </p>
-            <h2 className="font-cormorant font-bold text-5xl text-navy">
+            <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
               Featured Properties
             </h2>
             <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
@@ -218,41 +218,41 @@ export default function HomePage() {
             {featuredProperties.map((prop) => (
               <article
                 key={prop.slug}
-                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow group border border-gray-100"
+                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group border border-gray-100"
               >
-                <div className="relative h-56 overflow-hidden">
+                <div className="relative h-60 overflow-hidden">
                   <Image
                     src={prop.image}
                     alt={prop.name}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <span className="absolute top-4 left-4 bg-navy text-white font-barlow text-xs font-semibold px-3 py-1 rounded-full">
+                  <span className="absolute top-4 left-4 bg-dark-navy text-white font-barlow text-xs font-semibold px-3 py-1 rounded-full">
                     {prop.type}
                   </span>
                 </div>
                 <div className="p-6">
-                  <h3 className="font-cormorant font-bold text-2xl text-navy">
+                  <h3 className="font-cormorant font-bold text-2xl text-dark-navy">
                     {prop.name}
                   </h3>
-                  <div className="flex items-center gap-1 text-gray-500 mt-1">
+                  <div className="flex items-center gap-1 text-gray-400 mt-1">
                     <MapPin className="w-3.5 h-3.5" />
                     <span className="font-barlow text-sm">{prop.city}, FL</span>
                   </div>
-                  <div className="flex items-center gap-4 mt-4 text-sm font-barlow text-gray-600">
+                  <div className="flex items-center gap-4 mt-4 text-sm font-barlow text-gray-500">
                     <span className="flex items-center gap-1">
-                      <Ruler className="w-3.5 h-3.5 text-[#00aeef]" />
+                      <Ruler className="w-3.5 h-3.5 text-brand-blue" />
                       {prop.acres} acres
                     </span>
                   </div>
                   <div className="flex items-center justify-between mt-5 pt-5 border-t border-gray-100">
-                    <span className="font-cormorant font-bold text-2xl text-navy">
+                    <span className="font-cormorant font-bold text-2xl text-dark-navy">
                       {formatPrice(prop.price)}
                     </span>
                     <Link
                       href="/properties"
-                      className="font-barlow text-sm font-semibold text-[#00aeef] hover:text-navy transition-colors flex items-center gap-1"
+                      className="font-barlow text-sm font-semibold text-brand-blue hover:text-navy transition-colors flex items-center gap-1"
                     >
                       View All <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
@@ -262,7 +262,7 @@ export default function HomePage() {
             ))}
           </AnimatedSection>
 
-          <AnimatedSection className="text-center mt-12" delay={0.3}>
+          <AnimatedSection className="text-center mt-14" delay={0.3}>
             <Link
               href="/properties"
               className="inline-flex items-center gap-2 px-8 py-4 border-2 border-navy text-navy font-barlow font-semibold rounded-md hover:bg-navy hover:text-white transition-colors"
@@ -274,13 +274,13 @@ export default function HomePage() {
       </section>
 
       {/* ── Why 4Rivers ── */}
-      <section className="py-24 bg-white">
+      <section className="py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <p className="font-barlow text-[#00aeef] text-sm font-semibold tracking-[0.3em] uppercase mb-3">
+          <div className="text-center mb-16">
+            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
               Our Difference
             </p>
-            <h2 className="font-cormorant font-bold text-5xl text-navy">
+            <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
               Why 4Rivers Realty
             </h2>
           </div>
@@ -289,12 +289,12 @@ export default function HomePage() {
             {whyCards.map((card) => (
               <div
                 key={card.title}
-                className="text-center p-8 rounded-xl border border-gray-100 hover:border-[#00aeef]/30 hover:shadow-md transition-all group"
+                className="text-center p-8 rounded-xl bg-white border border-gray-100 hover:border-brand-blue/30 hover:shadow-md transition-all duration-300 group"
               >
-                <div className="inline-flex items-center justify-center w-14 h-14 bg-site-bg text-[#00aeef] rounded-xl mb-5 group-hover:bg-[#00aeef] group-hover:text-white transition-colors">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-off-white text-brand-blue rounded-xl mb-5 group-hover:bg-navy group-hover:text-white transition-all duration-300">
                   {card.icon}
                 </div>
-                <h3 className="font-cormorant font-bold text-xl text-navy mb-3">
+                <h3 className="font-cormorant font-bold text-xl text-dark-navy mb-3">
                   {card.title}
                 </h3>
                 <p className="font-barlow text-sm text-gray-500 leading-relaxed">
@@ -307,13 +307,13 @@ export default function HomePage() {
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="py-24 bg-site-bg">
+      <section className="py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <p className="font-barlow text-[#00aeef] text-sm font-semibold tracking-[0.3em] uppercase mb-3">
+          <div className="text-center mb-16">
+            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
               Client Stories
             </p>
-            <h2 className="font-cormorant font-bold text-5xl text-navy">
+            <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
               What Our Clients Say
             </h2>
           </div>
@@ -322,22 +322,22 @@ export default function HomePage() {
             {testimonials.map((t) => (
               <div
                 key={t.name}
-                className="bg-white p-8 rounded-xl shadow-sm border border-gray-100"
+                className="bg-off-white p-8 rounded-xl border border-gray-100"
               >
                 <StarRating />
-                <blockquote className="font-cormorant text-xl text-navy/90 mt-5 leading-relaxed">
+                <blockquote className="font-cormorant text-xl text-dark-navy/90 mt-5 leading-relaxed">
                   "{t.quote}"
                 </blockquote>
-                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-100">
+                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-200">
                   <Image
-                    src={`https://ui-avatars.com/api/?name=${t.avatar}&background=174079&color=ffffff&size=48&bold=true`}
+                    src={`https://ui-avatars.com/api/?name=${t.avatar}&background=252859&color=ffffff&size=48&bold=true`}
                     alt={t.name}
                     width={48}
                     height={48}
                     className="rounded-full"
                   />
                   <div>
-                    <p className="font-barlow font-semibold text-navy text-sm">
+                    <p className="font-barlow font-semibold text-dark-navy text-sm">
                       {t.name}
                     </p>
                     <p className="font-barlow text-xs text-gray-400">
@@ -352,7 +352,7 @@ export default function HomePage() {
       </section>
 
       {/* ── List Your Property ── */}
-      <section className="py-24 bg-white">
+      <section className="py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="relative h-[420px] rounded-2xl overflow-hidden shadow-xl">
@@ -363,17 +363,17 @@ export default function HomePage() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-navy/30" />
+              <div className="absolute inset-0 bg-dark-navy/25" />
               <div className="absolute bottom-6 left-6 bg-white rounded-xl px-5 py-4 shadow-lg">
-                <p className="font-cormorant font-bold text-2xl text-navy">Free</p>
+                <p className="font-cormorant font-bold text-2xl text-dark-navy">Free</p>
                 <p className="font-barlow text-sm text-gray-500">Property evaluation</p>
               </div>
             </div>
             <div>
-              <p className="font-barlow text-[#00aeef] text-sm font-semibold tracking-[0.3em] uppercase mb-4">
+              <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
                 Property Owners
               </p>
-              <h2 className="font-cormorant font-bold text-5xl text-navy leading-tight mb-6">
+              <h2 className="font-cormorant font-bold text-5xl text-dark-navy leading-tight mb-6">
                 Want to Sell
                 <br />Your Property?
               </h2>
@@ -388,14 +388,14 @@ export default function HomePage() {
                   'Experienced negotiation and closing support',
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-3 font-barlow text-sm text-gray-600">
-                    <span className="w-5 h-5 rounded-full bg-[#00aeef]/10 text-[#00aeef] flex items-center justify-center flex-shrink-0 text-xs font-bold">✓</span>
+                    <span className="w-5 h-5 rounded-full bg-brand-blue/15 text-brand-blue flex items-center justify-center flex-shrink-0 text-xs font-bold">✓</span>
                     {item}
                   </li>
                 ))}
               </ul>
               <Link
                 href="/list-property"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-navy text-white font-barlow font-semibold rounded-md hover:bg-[#00aeef] transition-colors"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-dark-navy text-white font-barlow font-semibold rounded-md hover:bg-brand-blue transition-colors"
               >
                 List My Property <ArrowRight className="w-4 h-4" />
               </Link>
@@ -405,19 +405,22 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-24 bg-navy">
+      <section className="py-28 bg-dark-navy">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase mb-6">
+            Start Your Journey
+          </p>
           <h2 className="font-cormorant font-bold text-5xl text-white mb-6">
             Ready to Find Your Dream Property?
           </h2>
-          <p className="font-barlow text-white/70 text-lg mb-10 leading-relaxed">
+          <p className="font-barlow text-white/60 text-lg mb-10 leading-relaxed">
             Whether you're looking for a working horse farm, a peaceful ranch
             retreat, or raw land to build your vision — we're here to guide you
             every step of the way.
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-10 py-4 bg-[#00aeef] text-white font-barlow font-semibold rounded-md hover:bg-[#33ccff] transition-colors text-lg"
+            className="inline-flex items-center gap-2 px-10 py-4 bg-brand-blue text-dark-navy font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors text-lg"
           >
             Get in Touch <ArrowRight className="w-5 h-5" />
           </Link>

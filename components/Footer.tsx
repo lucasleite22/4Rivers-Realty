@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 function InstagramIcon() {
   return (
@@ -19,26 +20,25 @@ function FacebookIcon() {
 function LinkedInIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 23.2 24 24 23.227V1.729C24 .774 23.2 0 22.222 0h.003z" />
     </svg>
   )
 }
 
 export default function Footer() {
   return (
-    <footer className="bg-dark text-white">
+    <footer className="bg-dark-navy text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex flex-col leading-none mb-4">
-              <span className="font-cormorant font-bold text-3xl text-white tracking-wide">
-                4Rivers
-              </span>
-              <span className="font-barlow text-xs font-semibold tracking-[0.25em] uppercase text-[#00aeef]">
-                Realty
-              </span>
-            </div>
+            <Image
+              src="/images/logo-white.png"
+              alt="4Rivers Realty"
+              width={160}
+              height={60}
+              className="h-14 w-auto object-contain mb-4"
+            />
             <p className="font-barlow text-gray-400 text-sm mt-3 italic">
               Where Land Meets Lifestyle
             </p>
@@ -51,21 +51,21 @@ export default function Footer() {
             <div className="flex gap-4 mt-6">
               <a
                 href="#"
-                className="text-gray-400 hover:text-[#00aeef] transition-colors"
+                className="text-gray-400 hover:text-brand-blue transition-colors"
                 aria-label="Instagram"
               >
                 <InstagramIcon />
               </a>
               <a
                 href="#"
-                className="text-gray-400 hover:text-[#00aeef] transition-colors"
+                className="text-gray-400 hover:text-brand-blue transition-colors"
                 aria-label="Facebook"
               >
                 <FacebookIcon />
               </a>
               <a
                 href="#"
-                className="text-gray-400 hover:text-[#00aeef] transition-colors"
+                className="text-gray-400 hover:text-brand-blue transition-colors"
                 aria-label="LinkedIn"
               >
                 <LinkedInIcon />
@@ -88,7 +88,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="font-barlow text-sm text-gray-400 hover:text-[#00aeef] transition-colors"
+                    className="font-barlow text-sm text-gray-400 hover:text-brand-blue transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -111,7 +111,7 @@ export default function Footer() {
               <li>
                 <a
                   href="tel:+13525550100"
-                  className="hover:text-[#00aeef] transition-colors"
+                  className="hover:text-brand-blue transition-colors"
                 >
                   (352) 555-0100
                 </a>
@@ -119,7 +119,7 @@ export default function Footer() {
               <li>
                 <a
                   href="mailto:info@4riversrealty.com"
-                  className="hover:text-[#00aeef] transition-colors"
+                  className="hover:text-brand-blue transition-colors"
                 >
                   info@4riversrealty.com
                 </a>
@@ -135,7 +135,7 @@ export default function Footer() {
 
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="font-barlow text-xs text-gray-500">
-            © 2024 4Rivers Realty LLC. All rights reserved.
+            © 2025 4Rivers Realty LLC. All rights reserved.
           </p>
           <p className="font-barlow text-xs text-gray-600">
             Licensed Real Estate Brokerage · Florida

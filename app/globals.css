@@ -19,7 +19,7 @@ html {
   left: 1rem;
   z-index: 9999;
   padding: 0.5rem 1rem;
-  background: #174079;
+  background: #252859;
   color: #fff;
   font-family: var(--font-barlow);
   font-size: 0.875rem;
@@ -33,20 +33,20 @@ html {
 
 /* Consistent focus ring across all interactive elements */
 :focus-visible {
-  outline: 2px solid #00aeef;
+  outline: 2px solid #86ACDB;
   outline-offset: 2px;
   border-radius: 2px;
 }
 
 body {
-  background-color: #f0f7fc;
-  color: #07162b;
+  background-color: #ffffff;
+  color: #181B3A;
   font-family: var(--font-barlow);
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-cyan-brand text-white font-semibold rounded-md hover:bg-cyan-light transition-colors duration-200 font-barlow;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-navy text-white font-semibold rounded-md hover:bg-brand-blue transition-colors duration-200 font-barlow;
   }
 
   .btn-secondary {
@@ -58,10 +58,10 @@ body {
   }
 
   .section-title {
-    @apply font-cormorant text-4xl md:text-5xl font-bold text-navy leading-tight;
+    @apply font-cormorant text-4xl md:text-5xl font-bold text-dark-navy leading-tight;
   }
 
   .section-subtitle {
-    @apply font-barlow text-lg text-gray-600 mt-4 max-w-2xl;
+    @apply font-barlow text-lg text-gray-500 mt-4 max-w-2xl;
   }
 }

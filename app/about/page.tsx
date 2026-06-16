@@ -69,9 +69,9 @@ export default function AboutPage() {
           className="object-cover object-center"
           priority
         />
-        <div className="absolute inset-0 bg-navy/65" />
+        <div className="absolute inset-0 bg-dark-navy/65" />
         <div className="relative z-10 text-center px-4">
-          <p className="font-barlow text-[#33ccff] text-sm font-semibold tracking-[0.3em] uppercase mb-4">
+          <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
             Our Story
           </p>
           <h1 className="font-cormorant font-bold text-5xl sm:text-6xl text-white">
@@ -81,14 +81,14 @@ export default function AboutPage() {
       </section>
 
       {/* ── Our Story ── */}
-      <section className="py-24 bg-white">
+      <section className="py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <p className="font-barlow text-[#00aeef] text-sm font-semibold tracking-[0.3em] uppercase mb-4">
+              <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
                 Who We Are
               </p>
-              <h2 className="font-cormorant font-bold text-5xl text-navy leading-tight mb-6">
+              <h2 className="font-cormorant font-bold text-5xl text-dark-navy leading-tight mb-6">
                 Rooted in Florida,
                 <br />
                 Passionate About Land
@@ -116,7 +116,7 @@ export default function AboutPage() {
               </div>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 mt-8 px-8 py-4 bg-navy text-white font-barlow font-semibold rounded-md hover:bg-[#00aeef] transition-colors"
+                className="inline-flex items-center gap-2 mt-8 px-8 py-4 bg-dark-navy text-white font-barlow font-semibold rounded-md hover:bg-brand-blue transition-colors"
               >
                 Talk to Our Team <ArrowRight className="w-4 h-4" />
               </Link>
@@ -130,9 +130,8 @@ export default function AboutPage() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
-              {/* Accent card */}
               <div className="absolute bottom-6 left-6 bg-white rounded-xl p-5 shadow-lg max-w-[200px]">
-                <p className="font-cormorant font-bold text-3xl text-navy">20+</p>
+                <p className="font-cormorant font-bold text-3xl text-dark-navy">20+</p>
                 <p className="font-barlow text-sm text-gray-500 mt-1">
                   Years serving North Central Florida
                 </p>
@@ -143,13 +142,13 @@ export default function AboutPage() {
       </section>
 
       {/* ── Team ── */}
-      <section className="py-24 bg-site-bg">
+      <section className="py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <p className="font-barlow text-[#00aeef] text-sm font-semibold tracking-[0.3em] uppercase mb-3">
+          <div className="text-center mb-16">
+            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
               The People Behind 4Rivers
             </p>
-            <h2 className="font-cormorant font-bold text-5xl text-navy">
+            <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
               Meet Our Team
             </h2>
             <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
@@ -166,7 +165,7 @@ export default function AboutPage() {
               >
                 <div className="relative h-48 bg-navy flex items-center justify-center">
                   <Image
-                    src={`https://ui-avatars.com/api/?name=${member.initials}&background=174079&color=ffffff&size=120&bold=true&font-size=0.4`}
+                    src={`https://ui-avatars.com/api/?name=${member.initials}&background=252859&color=ffffff&size=120&bold=true&font-size=0.4`}
                     alt={member.name}
                     width={100}
                     height={100}
@@ -174,10 +173,10 @@ export default function AboutPage() {
                   />
                 </div>
                 <div className="p-7">
-                  <h3 className="font-cormorant font-bold text-2xl text-navy">
+                  <h3 className="font-cormorant font-bold text-2xl text-dark-navy">
                     {member.name}
                   </h3>
-                  <p className="font-barlow text-sm font-semibold text-[#00aeef] mt-1 tracking-wide">
+                  <p className="font-barlow text-sm font-semibold text-brand-blue mt-1 tracking-wide">
                     {member.role}
                   </p>
                   <p className="font-barlow text-sm text-gray-500 mt-4 leading-relaxed">
@@ -191,13 +190,13 @@ export default function AboutPage() {
       </section>
 
       {/* ── Values ── */}
-      <section className="py-24 bg-white">
+      <section className="py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <p className="font-barlow text-[#00aeef] text-sm font-semibold tracking-[0.3em] uppercase mb-3">
+          <div className="text-center mb-16">
+            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
               What We Stand For
             </p>
-            <h2 className="font-cormorant font-bold text-5xl text-navy">
+            <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
               Our Values
             </h2>
           </div>
@@ -206,12 +205,12 @@ export default function AboutPage() {
             {values.map((v) => (
               <div
                 key={v.title}
-                className="text-center px-8 py-10 rounded-2xl bg-site-bg hover:shadow-md transition-shadow"
+                className="text-center px-8 py-10 rounded-2xl bg-off-white hover:shadow-md transition-shadow"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-navy text-[#00aeef] rounded-2xl mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-navy text-brand-blue rounded-2xl mb-6">
                   {v.icon}
                 </div>
-                <h3 className="font-cormorant font-bold text-2xl text-navy mb-4">
+                <h3 className="font-cormorant font-bold text-2xl text-dark-navy mb-4">
                   {v.title}
                 </h3>
                 <p className="font-barlow text-sm text-gray-500 leading-relaxed">
@@ -224,17 +223,17 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-20 bg-navy">
+      <section className="py-20 bg-dark-navy">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="font-cormorant font-bold text-4xl text-white mb-5">
             Let's Find Your Property Together
           </h2>
-          <p className="font-barlow text-white/70 text-lg mb-8">
+          <p className="font-barlow text-white/60 text-lg mb-8">
             Reach out to our team and start the conversation today.
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-10 py-4 bg-[#00aeef] text-white font-barlow font-semibold rounded-md hover:bg-[#33ccff] transition-colors"
+            className="inline-flex items-center gap-2 px-10 py-4 bg-brand-blue text-dark-navy font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors"
           >
             Contact Us <ArrowRight className="w-4 h-4" />
           </Link>
