@@ -20,8 +20,8 @@ export default function PropertiesPage() {
       </section>
 
       <section className="max-w-6xl mx-auto px-4 py-10">
-        <PropertyFilters />
         <Suspense fallback={<PropertyGridSkeleton />}>
+          <PropertyFilters />
           <PropertyGrid />
         </Suspense>
       </section>
