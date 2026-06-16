@@ -79,7 +79,7 @@ export interface LeadExportFilters {
 export async function exportLeadsToBuffer(
   leads: Lead[],
   filters: LeadExportFilters = {}
-): Promise<Buffer> {
+): Promise<ArrayBuffer> {
   const wb = new ExcelJS.Workbook()
   wb.creator = '4Rivers Realty'
   wb.created = new Date()
@@ -138,14 +138,14 @@ export async function exportLeadsToBuffer(
     to:   { row: 4, column: sheet.columns.length },
   }
 
-  return wb.xlsx.writeBuffer() as Promise<Buffer>
+  return wb.xlsx.writeBuffer()
 }
 
 // ── Export Properties ─────────────────────────────────────────
 
 export async function exportPropertiesToBuffer(
   properties: Property[]
-): Promise<Buffer> {
+): Promise<ArrayBuffer> {
   const wb = new ExcelJS.Workbook()
   wb.creator = '4Rivers Realty'
   wb.created = new Date()
@@ -202,7 +202,7 @@ export async function exportPropertiesToBuffer(
     to:   { row: 4, column: sheet.columns.length },
   }
 
-  return wb.xlsx.writeBuffer() as Promise<Buffer>
+  return wb.xlsx.writeBuffer()
 }
 
 // ── Helpers ───────────────────────────────────────────────────
