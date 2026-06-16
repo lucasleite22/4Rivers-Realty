@@ -6,8 +6,16 @@ import prisma from '@/lib/prisma'
 import { signToken, setAuthCookie } from '@/lib/auth'
 import { rateLimit, getIp } from '@/lib/rateLimit'
 
+const DEMO_MODE = process.env.DEMO_MODE === 'true'
+
+const DEMO_USER = {
+  id: 'demo-admin',
+  email: 'demo@4riversrealty.com',
+  name: 'Demo Admin',
+  role: 'SUPER_ADMIN',
+}
+
 export async function POST(req: NextRequest) {
-  // 5 attempts per IP per 15 minutes — brute-force protection
   const { allowed, resetAt } = rateLimit(`login:${getIp(req)}`, 5, 15 * 60_000)
   if (!allowed) {
     return NextResponse.json(
@@ -26,6 +34,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
 
+    // ── Demo mode: bypass database entirely ──────────────────────────────────
+    if (DEMO_MODE) {
+      const token = await signToken(DEMO_USER)
+      const response = NextResponse.json({ user: DEMO_USER })
+      setAuthCookie(response, token)
+      return response
+    }
+
+    // ── Production: check database ───────────────────────────────────────────
     const user = await prisma.user.findUnique({ where: { email } })
 
     if (!user || !user.active) {
