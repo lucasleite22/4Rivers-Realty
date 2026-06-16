@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
     })
   } catch (err) {
     console.error('[GET /api/properties]', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ data: [], meta: { total: 0, page: 1, limit: 20, pages: 0 } })
   }
 }
 

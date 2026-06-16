@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: err.message }, { status: err.status })
     }
     console.error('[GET /api/leads]', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ data: [], meta: { total: 0, page: 1, limit: 20, totalPages: 0 } })
   }
 }
 
