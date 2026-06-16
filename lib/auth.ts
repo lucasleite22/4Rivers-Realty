@@ -6,10 +6,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from './prisma'
 
 const rawSecret = process.env.JWT_SECRET ?? 'change-me-in-production'
-if (process.env.NODE_ENV === 'production' && rawSecret === 'change-me-in-production') {
-  throw new Error('JWT_SECRET env var must be set in production')
-}
+// Validation moved to runtime (signToken/verifyToken) so it doesn't block the build phase
 const JWT_SECRET = new TextEncoder().encode(rawSecret)
+
+function assertSecret() {
+  if (process.env.NODE_ENV === 'production' && rawSecret === 'change-me-in-production') {
+    throw new Error('JWT_SECRET env var must be set in production')
+  }
+}
 const COOKIE_NAME = '4rivers_session'
 const TOKEN_TTL = '7d'
 
@@ -28,6 +32,7 @@ export async function signToken(user: {
   name: string
   role: string
 }): Promise<string> {
+  assertSecret()
   return new SignJWT({
     email: user.email,
     name: user.name,
