@@ -1,65 +1,58 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
+// app/api/auth/login/route.ts
 
-const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-})
+import { NextRequest, NextResponse } from 'next/server'
+import { compare } from 'bcryptjs'
+import prisma from '@/lib/prisma'
+import { signToken, setAuthCookie } from '@/lib/auth'
+import { rateLimit, getIp } from '@/lib/rateLimit'
 
 export async function POST(req: NextRequest) {
+  // 5 attempts per IP per 15 minutes — brute-force protection
+  const { allowed, resetAt } = rateLimit(`login:${getIp(req)}`, 5, 15 * 60_000)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many login attempts — please wait a few minutes.' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(Math.ceil((resetAt - Date.now()) / 1000)) },
+      }
+    )
+  }
+
   try {
-    const body = await req.json()
-    const parsed = LoginSchema.safeParse(body)
+    const { email, password } = await req.json()
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: 'Invalid input', details: parsed.error.flatten() },
-        { status: 400 }
-      )
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
 
-    const { email, password } = parsed.data
-    const supabase = createClient()
+    const user = await prisma.user.findUnique({ where: { email } })
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    if (!user || !user.active) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+    }
+
+    const valid = await compare(password, user.password)
+    if (!valid) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+    }
+
+    const token = await signToken({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
     })
 
-    if (error) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      )
-    }
-
-    // Fetch CRM profile
-    const { data: profile } = await supabase
-      .from('users')
-      .select('id, email, name, role, active')
-      .eq('id', data.user.id)
-      .single()
-
-    if (!profile?.active) {
-      await supabase.auth.signOut()
-      return NextResponse.json(
-        { error: 'Account is inactive' },
-        { status: 403 }
-      )
-    }
-
-    return NextResponse.json({
-      data: {
-        user: profile,
-        session: {
-          access_token: data.session?.access_token,
-          expires_at: data.session?.expires_at,
-        },
-      },
+    const response = NextResponse.json({
+      user: { id: user.id, email: user.email, name: user.name, role: user.role },
     })
+
+    setAuthCookie(response, token)
+
+    return response
   } catch (err) {
-    console.error('[AUTH/LOGIN]', err)
+    console.error('[POST /api/auth/login]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

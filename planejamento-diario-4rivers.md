@@ -16,13 +16,42 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Sex 05/06 | Lucas | Setup do projeto: criar repo, estrutura Next.js, Tailwind, Supabase project, variáveis de ambiente | Repo criado, projeto rodando localmente |
-| Seg 09/06 (início semana real) | Lindoso | Layout base: NavBar, Footer, sistema de fontes (Cormorant + Barlow), paleta de cores do branding | Componentes base |
+| Sex 05/06 | Lucas | Setup do projeto: criar repo, estrutura Next.js, Tailwind, Prisma+MySQL, variáveis de ambiente | ✅ Repo criado, projeto rodando localmente |
+| Seg 09/06 (início semana real) | Lindoso | Layout base: NavBar, Footer, sistema de fontes (Cormorant + Barlow), paleta de cores do branding | ✅ Componentes base |
 
 **Tarefas Claude desta semana:**
-- Gerar estrutura de pastas do projeto Next.js + Supabase
-- Criar `tailwind.config.js` com as cores e fontes da 4Rivers
-- Scaffolding dos componentes: `<Navbar>`, `<Footer>`, `<HeroSection>`
+- [x] Gerar estrutura de pastas do projeto Next.js + Prisma
+- [x] Criar `tailwind.config.js` com as cores e fontes da 4Rivers
+- [x] Scaffolding dos componentes: `<Navbar>`, `<Footer>`, `<HeroSection>`
+- [x] Checklist de segurança: rate limiting, JWT, headers HTTP
+- [x] Configurar Jest + Testing Library com testes básicos
+- [x] Setup local com XAMPP + MySQL (doc: `COMO-RODAR-LOCAL.md`)
+- [x] Corrigir todos os links quebrados do site (Navbar, Footer, páginas)
+- [x] Criar `PublicShell` — Navbar/Footer não aparecem em `/admin` e `/auth`
+- [x] Criar layout do admin com sidebar (`app/admin/layout.tsx`)
+
+---
+
+## ⚠️ BRANDING PENDENTE — Aguardando designer
+> Aplicar assim que o designer entregar os assets finais. Bloqueia o merge de Semana 2.
+
+**🎨 Cores**
+- [ ] Atualizar paleta em `tailwind.config.js` (navy, cyan.brand, cyan.light, site-bg, dark) com valores finais do branding
+- [ ] Substituir todos os hex hardcoded inline (`text-[#00aeef]`, `bg-[#174079]`, etc.) pelos tokens Tailwind
+
+**🔤 Tipografia**
+- [ ] Verificar/substituir fontes em `layout.tsx` (Cormorant Garamond + Barlow) se o designer definir fontes diferentes
+
+**🖼️ Logo**
+- [ ] Mover `Logo Azul.png` e `Logo branca_.png` para `public/images/` e atualizar Navbar e Footer
+- [ ] Adicionar `favicon.ico` e `icon.png` em `public/` e registrar em `layout.tsx`
+
+**📸 Imagens placeholder**
+- [ ] Substituir imagens Unsplash por fotos reais da 4Rivers
+- [ ] Substituir avatares `ui-avatars.com` (About, depoimentos) por fotos reais
+
+**✍️ Copy**
+- [ ] Confirmar telefone `(352) 555-0100` e email `info@4riversrealty.com` com o cliente Jales
 
 ---
 
@@ -31,17 +60,11 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 12/06 | Lindoso | Página Home: hero com busca, seção de estatísticas, seção de destaques | Home completa |
-| Ter 13/06 | Lindoso | Página Sobre: história, equipe, valores da empresa | Página Sobre |
-| Qua 14/06 | Lindoso | Página Contato: formulário + mapa Google Maps embed | Página Contato |
-| Qui 15/06 | Lucas + Lindoso | SEO: meta tags, Open Graph, sitemap.xml, robots.txt | SEO configurado |
-| Sex 16/06 | Lindoso | Animações (Framer Motion), micro-interações, responsividade mobile | Módulo 01 ✅ |
-
-**Tarefas Claude esta semana:**
-- Gerar componentes React para cada seção do Home
-- Criar schema de meta tags dinâmicas com Next.js `<Head>`
-- Gerar sitemap.xml e configurar next-sitemap
-- Revisar responsividade com breakpoints mobile/tablet/desktop
+| Seg 12/06 | Lindoso | Página Home: hero com busca, seção de estatísticas, seção de destaques | ✅ Home completa |
+| Ter 13/06 | Lindoso | Página Sobre: história, equipe, valores da empresa | ✅ Página Sobre |
+| Qua 14/06 | Lindoso | Página Contato: formulário + mapa Google Maps embed | ✅ Página Contato |
+| Qui 15/06 | Lucas + Lindoso | SEO: meta tags, Open Graph, sitemap.xml, robots.txt | ✅ SEO configurado |
+| Sex 16/06 | Lindoso | Animações (Framer Motion), micro-interações, responsividade mobile | ✅ Módulo 01 completo |
 
 ---
 
@@ -51,35 +74,23 @@
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
 | Seg 19/06 | Lindoso | Layout da landing: hero de lançamento, galeria de fotos/vídeo | Layout base |
-| Ter 20/06 | Lindoso | Contador regressivo animado (React) + seção de especificações | Countdown funcional |
-| Qua 21/06 | Luan | Formulário de captação integrado ao Supabase (tabela `leads`) | Lead salvo no banco |
-| Qui 22/06 | Lindoso | Botão CTA WhatsApp flutuante + otimização mobile | CTA mobile |
-| Sex 23/06 | Lucas | Code review geral + deploy de preview (Vercel) | Módulo 02 ✅ |
-
-**Tarefas Claude esta semana:**
-- Gerar componente `<CountdownTimer>` em React
-- Criar schema SQL da tabela `leads` no Supabase
-- Gerar API Route Next.js para salvar lead (`/api/leads`)
-- Revisar acessibilidade e performance (Lighthouse)
+| Ter 20/06 | Lindoso | Contador regressivo animado (React) + seção de especificações | ✅ Countdown funcional |
+| Qua 21/06 | Luan | Formulário de captação integrado ao Prisma (tabela `leads`) | ✅ Lead salvo no banco |
+| Qui 22/06 | Lindoso | Botão CTA WhatsApp flutuante + otimização mobile | ✅ `<WhatsAppCTA>` no layout global |
+| Sex 23/06 | Lucas | Code review geral + deploy de preview | ✅ Módulo 02 completo |
 
 ---
 
 ## SEMANA 4 — 26/06 a 30/06
-**Módulo 03: Portal de Listagem (início) + Módulo 04: Cadastro (início)**
+**Módulo 03: Portal de Listagem + Módulo 04: Cadastro (início)**
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 26/06 | Luan | Schema SQL: tabelas `properties`, `property_images`, `property_types` | Banco modelado |
-| Ter 27/06 | Lindoso | Grid de cards de imóveis: visualização lista e quadro (toggle) | Grid responsivo |
-| Qua 28/06 | Lindoso | Filtros avançados: tipo, preço, acreagem, condado (URL params) | Filtros funcionando |
-| Qui 29/06 | Luan | API Routes: `GET /api/properties` com paginação e filtros | API funcionando |
-| Sex 30/06 | Lindoso | Início formulário multi-etapas de cadastro de propriedades | Step 1 e 2 prontos |
-
-**Tarefas Claude esta semana:**
-- Gerar schema SQL completo de properties com campos específicos para farms/horse farms
-- Criar hook `useProperties()` com React Query
-- Gerar componente `<PropertyCard>` e `<PropertyGrid>`
-- Criar componente `<MultiStepForm>` com validação Zod
+| Seg 26/06 | Luan | Schema Prisma: `properties`, `property_images`, enums de tipo e status | ✅ Banco modelado |
+| Ter 27/06 | Lindoso | Grid de cards de imóveis: visualização lista e quadro (toggle) | ✅ Grid responsivo |
+| Qua 28/06 | Lindoso | Filtros avançados: tipo, preço, acreagem, condado (URL params) | ✅ Filtros funcionando |
+| Qui 29/06 | Luan | API Routes: `GET /api/properties` com paginação e filtros | ✅ API funcionando |
+| Sex 30/06 | Lindoso | Formulário multi-etapas de cadastro de propriedades | ✅ Steps prontos |
 
 ---
 
@@ -89,16 +100,10 @@
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
 | Seg 03/07 | Lindoso | Mapa interativo Leaflet: pins customizados, clusters, preview ao hover | Mapa funcional |
-| Ter 04/07 | Lindoso | Página de detalhe do imóvel: galeria, specs, formulário de interesse | Detalhe completo |
-| Qua 05/07 | Luan | Supabase Auth: login email/senha, perfis Admin e Agent (RLS) | Auth funcionando |
-| Qui 06/07 | Luan | Continuação cadastro: campos específicos horse farm (cocheiras, arena, pasto) | Campos especializados |
-| Sex 07/07 | Lindoso | Favoritar imóveis (localStorage + Supabase), compartilhar link | Favoritos ✅ |
-
-**Tarefas Claude esta semana:**
-- Integrar Leaflet com Next.js (SSR disabled para o mapa)
-- Gerar campos especializados: `<HorseFarmFields>`, `<FarmFields>`, `<LotFields>`
-- Configurar Supabase RLS policies para Admin vs Agent
-- Criar contexto de autenticação `<AuthProvider>`
+| Ter 04/07 | Lindoso | Página de detalhe do imóvel: galeria, specs, formulário de interesse | ✅ Detalhe completo |
+| Qua 05/07 | Luan | Auth custom JWT (jose): login, sessão cookie `4rivers_session`, roles Admin/Agent | ✅ Auth funcionando |
+| Qui 06/07 | Luan | Campos específicos horse farm (cocheiras, arena, pasto) | ✅ Campos especializados |
+| Sex 07/07 | Lindoso | Favoritar imóveis (localStorage), compartilhar link | ✅ Favoritos |
 
 ---
 
@@ -107,17 +112,11 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 10/07 | Luan | Upload múltiplo de fotos: Supabase Storage, compressão automática (Sharp) | Upload funcional |
+| Seg 10/07 | Luan | Upload múltiplo de fotos: `lib/upload.ts` + `/api/properties/[id]/images` | ✅ Upload funcional |
 | Ter 11/07 | Luan | Geolocalização no cadastro: Google Maps Geocoding API + pin no mapa | Geo funcional |
-| Qua 12/07 | Lindoso | Polimento visual: animações de entrada, skeleton loading, estados vazios | UX refinada |
-| Qui 13/07 | Lucas + Luan | Code review módulos 03 e 04 + testes manuais completos | QA feito |
-| Sex 14/07 | Lucas | Deploy preview módulos 03 e 04 + relatório semanal ao cliente | Módulos 03 e 04 ✅ |
-
-**Tarefas Claude esta semana:**
-- Gerar função de compressão de imagem com Sharp no Next.js
-- Criar componente `<ImageUploader>` com drag-and-drop
-- Revisar todas as API Routes com tratamento de erro consistente
-- Gerar testes básicos com Jest/Testing Library
+| Qua 12/07 | Lindoso | Polimento visual: skeleton loading, estados vazios | ✅ UX refinada |
+| Qui 13/07 | Lucas + Luan | Code review módulos 03 e 04 + testes manuais | ✅ QA feito |
+| Sex 14/07 | Lucas | Deploy preview módulos 03 e 04 + relatório semanal ao cliente | ✅ Módulos 03 e 04 |
 
 ---
 
@@ -126,17 +125,11 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 17/07 | Lindoso | Dashboard admin: KPIs (imóveis, leads, conversões), layout dark | Dashboard visual |
-| Ter 18/07 | Lindoso | CRUD de imóveis no admin: listagem, edição inline, gestão de fotos | CRUD completo |
+| Seg 17/07 | Lindoso | Dashboard admin: KPIs reais (imóveis, leads, showings, offers, overdue) | ✅ Dashboard com dados reais |
+| Ter 18/07 | Lindoso | CRUD completo de imóveis no admin: listagem, detalhe/edição, fotos, delete | ✅ CRUD completo |
 | Qua 19/07 | Lindoso | Gestão de lançamentos e campanhas no admin | Lançamentos admin |
 | Qui 20/07 | Luan | Início integração SimplyRETS: autenticação, primeiro fetch de listings | API conectada |
-| Sex 21/07 | Lucas | Review + interface mobile para agentes em campo | Módulo 05 ✅ |
-
-**Tarefas Claude esta semana:**
-- Gerar layout do dashboard com gráficos (Recharts)
-- Criar componentes de tabela com sort/filter para o admin
-- Documentar endpoints SimplyRETS relevantes para o projeto
-- Gerar wrapper `simplyrets.service.ts` para consumir a API
+| Sex 21/07 | Lucas | Review + interface mobile para agentes em campo | ✅ Módulo 05 |
 
 ---
 
@@ -146,35 +139,29 @@
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
 | Seg 24/07 | Luan | Mapeamento de campos: MLS → banco 4Rivers (normalização) | Mapeamento documentado |
-| Ter 25/07 | Luan | Edge Function Supabase: sync automático a cada 4 horas | Cron funcionando |
+| Ter 25/07 | Luan | Edge Function para sync automático a cada 4 horas | Cron funcionando |
 | Qua 26/07 | Luan | Feed unificado: imóveis MLS + próprios com filtros simultâneos | Feed unificado |
 | Qui 27/07 | Lindoso | Exibição de conformidade MLS (atribuição obrigatória) nas listagens | Conformidade ✅ |
-| Sex 28/07 | Lucas | Testes da integração MLS + documentação do módulo | Módulo 06 ✅ |
+| Sex 28/07 | Lucas | Testes da integração MLS + documentação do módulo | ✅ Módulo 06 |
 
 **Tarefas Claude esta semana:**
-- Gerar Edge Function Supabase para sync MLS (TypeScript)
-- Criar mapeamento de tipos: MLS fields → schema 4Rivers
-- Revisar conformidade com regras do Stellar MLS
-- Gerar documentação técnica do módulo 06
+- [ ] Gerar Edge Function para sync MLS (TypeScript)
+- [x] Criar mapeamento de tipos: MLS fields → schema 4Rivers
+- [ ] Revisar conformidade com regras do Stellar MLS
+- [ ] Gerar documentação técnica do módulo 06
 
 ---
 
 ## SEMANA 9 — 31/07 a 04/08
-**Módulo 07: CRM + Módulo 08: Captação de Leads (início)**
+**Módulo 07: CRM + Módulo 08: Captação de Leads**
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 31/07 | Luan + Lindoso | Pipeline Kanban: colunas Novo → Contato → Proposta → Fechado (drag-and-drop) | Kanban funcional |
-| Ter 01/08 | Luan | Perfis de clientes: histórico de interações, imóveis de interesse | Perfis completos |
-| Qua 02/08 | Lindoso | Aba de campanhas de lançamento + métricas por agente | Campanhas ativas |
-| Qui 03/08 | Luan | Pipeline de captação: formulários → Supabase → alerta Resend para agente | Notificação email |
-| Sex 04/08 | Luan | E-mail de confirmação automático para o lead (template 4Rivers) | Módulos 07 e 08 ✅ |
-
-**Tarefas Claude esta semana:**
-- Gerar Kanban com `@dnd-kit` (drag-and-drop acessível)
-- Schema SQL: tabelas `clients`, `interactions`, `pipeline_stages`
-- Configurar Resend: templates HTML de email com logo 4Rivers
-- Criar API Route para trigger de notificação por email
+| Seg 31/07 | Luan + Lindoso | Pipeline Kanban 7 colunas com @dnd-kit + DragOverlay | ✅ Kanban funcional |
+| Ter 01/08 | Luan | Modal de detalhes do lead: edição inline, stage selector, notas | ✅ Modal completo |
+| Qua 02/08 | Lindoso | Log de atividades do lead: timeline, add entry, download TXT | ✅ Activity log |
+| Qui 03/08 | Luan | Pipeline de captação: /api/contact + Resend (notif. agente + confirmação lead) | ✅ Notificação email |
+| Sex 04/08 | Luan | Templates de email HTML (new-lead-agent + lead-confirmation) | ✅ Templates prontos |
 
 ---
 
@@ -183,17 +170,107 @@
 
 | Dia | Responsável | Sessão no Claude | Entregável |
 |-----|-------------|------------------|------------|
-| Seg 07/08 | Luan | Exportação Excel/CSV com filtros de data, origem e status (xlsx.js) | Export funcional |
+| Seg 07/08 | Luan | Exportação Excel/CSV leads e properties (ExcelJS, xlsx estilizado) | ✅ Export funcional |
 | Ter 08/08 | Lucas | Testes E2E com Playwright: fluxos críticos (busca, lead, login admin) | Testes passando |
 | Qua 09/08 | Lucas | Otimizações de performance: lazy loading, image optimization, bundle size | Lighthouse 90+ |
-| Qui 10/08 | Lucas | Setup produção: domínio, variáveis de ambiente Vercel, Supabase prod | Infra pronta |
+| Qui 10/08 | Lucas | Setup produção: domínio, variáveis de ambiente Hostinger, MySQL prod | Infra pronta |
 | Sex 11/08 | Lucas | Deploy final + screencast de 20min para o Jales + relatório de entrega | 🚀 GO LIVE ✅ |
 
 **Tarefas Claude esta semana:**
-- Gerar função de export Excel com `exceljs`
-- Criar scripts de testes E2E com Playwright
-- Checklist de segurança: RLS, env vars, rate limiting
-- Gerar roteiro do screencast de treinamento
+- [ ] Criar scripts de testes E2E com Playwright
+- [ ] Gerar roteiro do screencast de treinamento
+
+---
+
+## ✅ IMPLEMENTADO — Sprint 09/06/2026
+
+### Módulo 05 — Admin Panel
+
+| Funcionalidade | Arquivos-chave | Status |
+|----------------|----------------|--------|
+| Dashboard com KPIs reais (active props, leads, showings, offers, closed, overdue) + feed de eventos | `app/admin/page.tsx`, `app/api/dashboard/stats/route.ts` | ✅ |
+| Tabela de propriedades com busca, badges de tipo/status/source, export Excel | `app/admin/properties/page.tsx` | ✅ |
+| Página de detalhe/edição de propriedade: galeria com thumbnails clicáveis, edição inline, visibilidade, danger zone | `app/admin/properties/[id]/page.tsx` | ✅ |
+| Formulário de criação de propriedade com uploader de imagens (drop zone + grid de previews, até 20 fotos) | `app/admin/properties/new/page.tsx` | ✅ |
+| Painel de submissões de clientes: filtros por status, cards com fotos, contato, botão "Approve → Create Listing" | `app/admin/submissions/page.tsx` | ✅ |
+| Badge de pendentes no sidebar (Submissions) atualizado ao carregar o admin | `app/admin/layout.tsx` | ✅ |
+| Tag de origem nas propriedades: **Agent** (azul) · **MLS** (roxo) · **Client** (âmbar) | `app/admin/properties/page.tsx`, `[id]/page.tsx` | ✅ |
+| Campo `source` no schema Prisma (`PropertySource` enum: AGENT/MLS/CLIENT, default AGENT) | `prisma/schema.prisma` | ✅ |
+
+> **DB pendente:** `ALTER TABLE properties ADD COLUMN source VARCHAR(20) NOT NULL DEFAULT 'AGENT';` + `npx prisma generate`
+
+---
+
+### Módulo 07 — CRM
+
+| Funcionalidade | Arquivos-chave | Status |
+|----------------|----------------|--------|
+| Fix DnD Kanban: listeners no grip handle apenas, `isDragging` ref previne click após drag, `pointerWithin` collision detection | `components/crm/KanbanCard.tsx`, `KanbanBoard.tsx` | ✅ |
+| Modal de detalhes do lead: tabs Details / Activity Log, edição inline de todos os campos | `components/crm/LeadDetailModal.tsx` | ✅ |
+| Tag de origem legível no Kanban: Website · Referral · Zillow · Realtor.com · Instagram · MLS · Other | `components/crm/KanbanCard.tsx` | ✅ |
+| Log de atividades: timeline visual, formulário para registrar Call/Email/Showing/Offer/Note | `LeadDetailModal.tsx`, `app/api/leads/[id]/activities/route.ts` | ✅ |
+| Auto-log de mudanças de stage: toda vez que card é arrastado entre colunas, cria `LeadActivity` automaticamente | `app/api/leads/[id]/stage/route.ts` | ✅ |
+| Download do log em `.txt`: lead info + histórico completo de atividades formatado | `LeadDetailModal.tsx` (client-side blob) | ✅ |
+
+---
+
+### Módulo 08 — Captação de Leads
+
+| Funcionalidade | Arquivos-chave | Status |
+|----------------|----------------|--------|
+| Página `/list-property`: hero, workflow 4 etapas, formulário de vendedor + upload de até 8 fotos com drop zone e previews | `app/list-property/page.tsx` | ✅ |
+| Endpoint de submissão com imagens: multipart FormData, salva lead SELLER + imagens em `/uploads/leads/[id]/` | `app/api/list-property/route.ts`, `lib/upload.ts` | ✅ |
+| Aprovação de submissão: converte lead SELLER em Property (`source=CLIENT`), importa imagens, auto-log de atividade | `app/api/admin/approve-submission/route.ts` | ✅ |
+
+---
+
+## 🔲 BACKLOG — Pendentes prioritários
+
+| # | Tarefa | Módulo | Observação |
+|---|--------|--------|------------|
+| 1 | Rodar `ALTER TABLE properties ADD COLUMN source VARCHAR(20) NOT NULL DEFAULT 'AGENT'` no phpMyAdmin | DB | Desbloqueia tags de origem |
+| 2 | Rodar `npx prisma generate` após o ALTER TABLE | DB | Desbloqueia Prisma client atualizado |
+| 3 | Edge Function / cron job para sync SimplyRETS (4h) | M06 | Semana 8 |
+| 4 | Conformidade Stellar MLS (atribuição obrigatória nas listagens) | M06 | Semana 8 |
+| 5 | Documentação técnica módulo 06 | M06 | Semana 8 |
+| 6 | Testes E2E com Playwright | M10 | Semana 10 |
+| 7 | Roteiro do screencast de treinamento para Jales | M10 | Semana 10 |
+| 8 | Setup Hostinger produção + variáveis de ambiente | M10 | Semana 10 |
+| 9 | Todos os itens BRANDING PENDENTE | M01 | Aguardando designer |
+
+---
+
+## Stack de Referência
+
+| Camada | Tecnologia |
+|--------|-----------|
+| Front-end | Next.js 14 (App Router) + TypeScript |
+| Estilo | Tailwind CSS + Framer Motion |
+| ORM | Prisma ORM |
+| Banco (local) | MySQL via XAMPP · banco: `4rivers_realty` |
+| Banco (produção) | MySQL Hostinger |
+| Auth | JWT customizado com `jose` · cookie: `4rivers_session` |
+| Storage de arquivos | Sistema de arquivos local → `public/uploads/` |
+| Mapa | Leaflet.js + react-leaflet |
+| MLS | SimplyRETS API (Marion + Sumter County) |
+| Email | Resend · remetente: `notifications@4riversrealty.com` |
+| Deploy | Hostinger (produção) |
+| Export | ExcelJS (xlsx estilizado) |
+| Testes | Jest + Testing Library · Playwright (E2E, pendente) |
+| DnD | @dnd-kit (Kanban) |
+| Rate Limiting | In-memory sliding window (`lib/rateLimit.ts`) |
+
+---
+
+## Credenciais de Desenvolvimento
+
+| Recurso | Valor |
+|---------|-------|
+| Admin login | `lucas@4riversrealty.com` / `admin2024` |
+| Agent login | `lindoso@4riversrealty.com` / `agent2024` |
+| Dev server | `http://localhost:3000` |
+| phpMyAdmin | `http://localhost/phpmyadmin` |
+| DB local | `mysql://root:@localhost:3306/4rivers_realty` |
 
 ---
 
@@ -205,24 +282,6 @@
 | Durante código | Debug/implementação | "Estou implementando [feature] no módulo [X]. Aqui está meu código atual: [código]. O problema é..." |
 | Toda sexta | Code review | "Aqui está o PR desta semana. Revise a arquitetura, segurança e qualidade do código:" |
 | Toda sexta | Relatório cliente | "Gere um relatório de progresso da semana [X] para enviar ao Jales. Concluímos: [lista]" |
-
----
-
-## Stack de Referência
-
-| Camada | Tecnologia |
-|--------|-----------|
-| Front-end | Next.js 14 (App Router) + TypeScript |
-| Estilo | Tailwind CSS + Framer Motion |
-| Banco | Supabase (PostgreSQL + RLS) |
-| Auth | Supabase Auth |
-| Storage | Supabase Storage |
-| Mapa | Leaflet.js |
-| MLS | SimplyRETS API |
-| Email | Resend |
-| Deploy | Vercel (front) + Supabase (back) |
-| Export | ExcelJS |
-| Testes | Jest + Playwright |
 
 ---
 

@@ -1,6 +1,29 @@
+# Sistema operacional
 .DS_Store
 Thumbs.db
-*.log
+
+# Dependências
 node_modules/
+
+# Build Next.js
+.next/
+out/
+
+# Variáveis de ambiente (NUNCA commitar)
 .env
-*.lock
+.env.local
+.env.production
+
+# Uploads de usuários (arquivos de clientes não vão pro git)
+public/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Arquivos de design (ficam no OneDrive, não no repo)
+*.pdf
+"Logo Azul.png"
+"Logo Azul_.png"
+"Logo branca_.png"
+"Logo branca-_.png"

@@ -1,160 +1,122 @@
-// ============================================================
-// GET  /api/properties  — Public listing with filters + pagination
-// POST /api/properties  — Create property (admin auth required)
-// ============================================================
+export const dynamic = 'force-dynamic'
+
+// app/api/properties/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
-import { buildPublicPropertyQuery } from '@/lib/supabase/property-query'
-import type { PropertyListResponse, PropertyWithImages } from '@/types/properties'
+import prisma from '@/lib/prisma'
+import { requireAuth, AuthError } from '@/lib/auth'
+import { Prisma } from '@prisma/client'
 
-// ── Query param schema ────────────────────────────────────────
-
-const filterSchema = z.object({
-  search:      z.string().optional(),
-  type:        z.enum(['horse_farm','ranch','residential','commercial','land']).optional(),
-  status:      z.enum(['active','sold','under_contract']).optional(),
-  featured:    z.coerce.boolean().optional(),
-  price_min:   z.coerce.number().min(0).optional(),
-  price_max:   z.coerce.number().min(0).optional(),
-  acreage_min: z.coerce.number().min(0).optional(),
-  acreage_max: z.coerce.number().min(0).optional(),
-  county:      z.string().optional(),
-  city:        z.string().optional(),
-  sort_by:     z.enum(['price_usd','acreage','created_at','title']).optional(),
-  sort_dir:    z.enum(['asc','desc']).optional(),
-  page:        z.coerce.number().int().min(1).default(1),
-  limit:       z.coerce.number().int().min(1).max(100).default(12),
-})
-
-// ── GET ───────────────────────────────────────────────────────
+// ── GET /api/properties — public ─────────────
 
 export async function GET(req: NextRequest) {
-  const params = Object.fromEntries(req.nextUrl.searchParams)
-  const parsed = filterSchema.safeParse(params)
+  try {
+    const { searchParams } = req.nextUrl
 
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Invalid query parameters', details: parsed.error.flatten() },
-      { status: 400 }
-    )
-  }
+    const where: Prisma.PropertyWhereInput = {}
 
-  const filter = parsed.data
-  const supabase = createClient()
+    const type = searchParams.get('type')
+    const status = searchParams.get('status')
+    const county = searchParams.get('county')
+    const featured = searchParams.get('featured')
+    const showOnPortal = searchParams.get('showOnPortal')
+    const minPrice = searchParams.get('minPrice')
+    const maxPrice = searchParams.get('maxPrice')
+    const minAcreage = searchParams.get('minAcreage')
+    const search = searchParams.get('search')
+    const page = Math.max(1, Number(searchParams.get('page') ?? 1))
+    const limit = Math.min(50, Math.max(1, Number(searchParams.get('limit') ?? 20)))
 
-  const page  = filter.page
-  const limit = filter.limit
-  const from  = (page - 1) * limit
-  const to    = from + limit - 1
+    if (type) where.type = type as any
+    if (status) where.status = status as any
+    if (county) where.county = { contains: county }
+    if (featured === 'true') where.featured = true
+    if (showOnPortal === 'true') where.showOnPortal = true
 
-  let query = supabase
-    .from('properties')
-    .select('*, images:property_images(*)', { count: 'exact' })
+    if (minPrice || maxPrice) {
+      where.priceUsd = {}
+      if (minPrice) where.priceUsd.gte = new Prisma.Decimal(minPrice)
+      if (maxPrice) where.priceUsd.lte = new Prisma.Decimal(maxPrice)
+    }
 
-  // Default to active-only for unauthenticated (public) requests
-  if (!filter.status) {
-    query = query.eq('status', 'active')
-  } else {
-    query = query.eq('status', filter.status)
-  }
+    if (minAcreage) {
+      where.acreage = { gte: new Prisma.Decimal(minAcreage) }
+    }
 
-  if (filter.type)        query = query.eq('type', filter.type)
-  if (filter.featured !== undefined) query = query.eq('featured', filter.featured)
-  if (filter.county)      query = query.ilike('county', `%${filter.county}%`)
-  if (filter.city)        query = query.ilike('city', `%${filter.city}%`)
-  if (filter.price_min !== undefined) query = query.gte('price_usd', filter.price_min)
-  if (filter.price_max !== undefined) query = query.lte('price_usd', filter.price_max)
-  if (filter.acreage_min !== undefined) query = query.gte('acreage', filter.acreage_min)
-  if (filter.acreage_max !== undefined) query = query.lte('acreage', filter.acreage_max)
+    if (search) {
+      where.OR = [
+        { title: { contains: search } },
+        { city: { contains: search } },
+        { county: { contains: search } },
+        { address: { contains: search } },
+        { description: { contains: search } },
+      ]
+    }
 
-  if (filter.search) {
-    query = query.textSearch('search_vector', filter.search, {
-      type: 'websearch',
-      config: 'english',
+    const [total, properties] = await Promise.all([
+      prisma.property.count({ where }),
+      prisma.property.findMany({
+        where,
+        include: { images: { orderBy: { sortOrder: 'asc' } } },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ])
+
+    return NextResponse.json({
+      data: properties,
+      meta: { total, page, limit, pages: Math.ceil(total / limit) },
     })
+  } catch (err) {
+    console.error('[GET /api/properties]', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  // Sort
-  const sortBy  = filter.sort_by  ?? 'created_at'
-  const sortDir = filter.sort_dir ?? 'desc'
-  query = query.order(sortBy, { ascending: sortDir === 'asc' })
-
-  // Pagination
-  query = query.range(from, to)
-
-  const { data, count, error } = await query
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-
-  const properties = (data ?? []).map(normalizePropImages)
-  const total = count ?? 0
-
-  const response: PropertyListResponse = {
-    data:        properties,
-    total,
-    page,
-    limit,
-    total_pages: Math.ceil(total / limit),
-  }
-
-  return NextResponse.json(response)
 }
 
-// ── POST ──────────────────────────────────────────────────────
-
-const createSchema = z.object({
-  title:       z.string().min(1),
-  type:        z.enum(['horse_farm','ranch','residential','commercial','land']),
-  price_usd:   z.number().positive().nullable().optional(),
-  acreage:     z.number().positive().nullable().optional(),
-  county:      z.string().nullable().optional(),
-  city:        z.string().nullable().optional(),
-  address:     z.string().nullable().optional(),
-  description: z.string().nullable().optional(),
-  status:      z.enum(['active','sold','under_contract']).default('active'),
-  featured:    z.boolean().default(false),
-  stables:     z.number().int().min(0).nullable().optional(),
-  arenas:      z.number().int().min(0).nullable().optional(),
-  pastures:    z.number().int().min(0).nullable().optional(),
-})
+// ── POST /api/properties — auth required ─────
 
 export async function POST(req: NextRequest) {
-  const supabase = createClient()
+  try {
+    await requireAuth(req)
 
-  // Auth guard
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const body = await req.json()
 
-  const body = await req.json()
-  const parsed = createSchema.safeParse(body)
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Validation failed', details: parsed.error.flatten() },
-      { status: 422 }
-    )
+    const property = await prisma.property.create({
+      data: {
+        title: body.title,
+        type: body.type,
+        priceUsd: new Prisma.Decimal(body.priceUsd),
+        acreage: new Prisma.Decimal(body.acreage),
+        county: body.county,
+        city: body.city,
+        address: body.address,
+        description: body.description,
+        status: body.status ?? 'ACTIVE',
+        featured: body.featured ?? true,
+        showOnPortal: body.showOnPortal ?? true,
+        stables: body.stables ?? null,
+        arenas: body.arenas ?? null,
+        pastures: body.pastures ?? null,
+      },
+      include: { images: true },
+    })
+
+    await prisma.dashboardEvent.create({
+      data: {
+        type: 'PROPERTY_CREATED',
+        entityId: property.id,
+        entityType: 'Property',
+        metadata: { title: property.title },
+      },
+    })
+
+    return NextResponse.json(property, { status: 201 })
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return NextResponse.json({ error: err.message }, { status: err.status })
+    }
+    console.error('[POST /api/properties]', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  const { data, error } = await supabase
-    .from('properties')
-    .insert(parsed.data)
-    .select()
-    .single()
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  return NextResponse.json(data, { status: 201 })
-}
-
-// ── Util ──────────────────────────────────────────────────────
-
-function normalizePropImages(row: any): PropertyWithImages {
-  const images = (row.images ?? []).sort(
-    (a: any, b: any) => a.sort_order - b.sort_order
-  )
-  const cover = images.find((i: any) => i.is_cover) ?? images[0] ?? null
-  return { ...row, images, cover_image_url: cover?.url ?? null }
 }

@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4Rivers Realty — Formulário de Conteúdo do Site</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f6f9;
+      color: #1a1a2e;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #174079 0%, #0d2a52 100%);
+      color: white;
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .header-logo {
+      width: 64px;
+      height: 64px;
+      background: #00aeef;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 900;
+      color: white;
+      flex-shrink: 0;
+    }
+    .header-text h1 { font-size: 26px; font-weight: 700; letter-spacing: 0.5px; }
+    .header-text p { font-size: 14px; opacity: 0.75; margin-top: 4px; }
+
+    /* ── Intro banner ── */
+    .intro {
+      background: #e8f4fd;
+      border-left: 4px solid #00aeef;
+      padding: 20px 48px;
+      font-size: 14px;
+      color: #174079;
+    }
+    .intro strong { font-weight: 600; }
+
+    /* ── Container ── */
+    .container {
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Section header ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 48px 0 20px;
+    }
+    .section-number {
+      width: 36px;
+      height: 36px;
+      background: #174079;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #174079;
+    }
+    .section-header .section-sub {
+      font-size: 13px;
+      color: #666;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 28px 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 16px;
+    }
+
+    /* ── Field ── */
+    .field { margin-bottom: 22px; }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 6px;
+    }
+    label .required { color: #e53e3e; margin-left: 3px; }
+    label .hint {
+      font-weight: 400;
+      color: #718096;
+      font-size: 12px;
+      display: block;
+      margin-top: 2px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    textarea,
+    select {
+      width: 100%;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #1a1a2e;
+      background: #fafafa;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="url"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #00aeef;
+      background: white;
+    }
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* ── Row grid ── */
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── Checkbox group ── */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 400;
+      color: #374151;
+      cursor: pointer;
+      background: #f3f4f6;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      padding: 8px 14px;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .checkbox-group input[type="checkbox"] { width: 16px; height: 16px; accent-color: #00aeef; }
+    .checkbox-group label:has(input:checked) {
+      background: #e8f4fd;
+      border-color: #00aeef;
+      color: #174079;
+    }
+
+    /* ── Agent block ── */
+    .agent-block {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 16px;
+      background: #f9fbfd;
+    }
+    .agent-block h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #174079;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    /* ── Values list ── */
+    .values-list { display: flex; flex-direction: column; gap: 12px; }
+    .value-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .value-item input[type="text"] { font-weight: 600; }
+
+    /* ── Image section ── */
+    .img-section {
+      background: white;
+      border-radius: 12px;
+      padding: 28px 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 16px;
+    }
+
+    .img-category {
+      font-size: 16px;
+      font-weight: 700;
+      color: #174079;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f4fd;
+    }
+
+    .img-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .img-item:last-child { border-bottom: none; }
+
+    .img-check {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      accent-color: #00aeef;
+      margin-top: 2px;
+    }
+
+    .img-info { flex: 1; }
+    .img-name { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+    .img-spec {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+    .img-spec strong { color: #e53e3e; }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .badge-req { background: #fee2e2; color: #b91c1c; }
+    .badge-opt { background: #f0fdf4; color: #16a34a; }
+    .badge-brand { background: #fef3c7; color: #92400e; }
+
+    .img-upload-note {
+      background: #f0fdf4;
+      border: 1.5px dashed #86efac;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #166534;
+      margin-top: 16px;
+    }
+
+    /* ── Contact info ── */
+    .contact-banner {
+      background: linear-gradient(135deg, #174079, #0d2a52);
+      color: white;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .contact-banner h3 { font-size: 18px; }
+    .contact-banner p { font-size: 14px; opacity: 0.85; }
+    .contact-banner .contacts { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 8px; }
+    .contact-banner .contact-item { font-size: 14px; }
+    .contact-banner .contact-item span { opacity: 0.6; display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── Botão PDF ── */
+    .pdf-btn {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #174079, #0d2a52);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(23,64,121,0.45);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .pdf-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(23,64,121,0.55);
+    }
+    .pdf-btn:active { transform: translateY(0); }
+    .pdf-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+    .pdf-tip {
+      position: fixed;
+      bottom: 86px;
+      right: 32px;
+      z-index: 998;
+      background: #1a1a2e;
+      color: #ccc;
+      font-size: 12px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      max-width: 240px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .pdf-btn:hover + .pdf-tip,
+    .pdf-tip:hover { opacity: 1; }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; }
+      .pdf-btn, .pdf-tip { display: none !important; }
+      .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .intro { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .contact-banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .section-number { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .card, .img-section { box-shadow: none; border: 1px solid #e2e8f0; }
+      .container { padding-bottom: 20px; }
+      input, textarea, select {
+        border: 1px solid #ccc !important;
+        background: white !important;
+      }
+      .agent-block { break-inside: avoid; }
+      .img-item { break-inside: avoid; }
+    }
+
+    @media (max-width: 600px) {
+      .header { padding: 24px; }
+      .intro { padding: 16px 24px; }
+      .card, .img-section { padding: 20px; }
+      .row-2, .row-3 { grid-template-columns: 1fr; }
+      .value-item { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════ -->
+<div class="header">
+  <div class="header-logo">4R</div>
+  <div class="header-text">
+    <h1>4Rivers Realty — Formulário de Conteúdo do Site</h1>
+    <p>Preencha este formulário para popularmos as páginas Sobre, Time, Missão e Valores do seu novo portal.</p>
+  </div>
+</div>
+
+<div class="intro">
+  <strong>Como funciona:</strong> responda o máximo que puder em português ou inglês — nossa equipe traduz e adapta o texto para o site. Campos marcados com <span style="color:#e53e3e;">*</span> são essenciais para o lançamento. Os demais podem ser complementados depois.
+</div>
+
+<!-- ══════════════════════════════════════════════
+     CONTAINER
+════════════════════════════════════════════════ -->
+<div class="container">
+
+
+  <!-- ─────────────────────────────────────────
+       SEÇÃO 1 — DADOS BÁSICOS DA EMPRESA
+  ───────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <div>
+      <h2>Dados Básicos da Empresa</h2>
+      <div class="section-sub">Informações institucionais que aparecem em rodapé, contato e meta tags SEO</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row-2">
+      <div class="field">
+        <label>Nome oficial da empresa <span class="required">*</span></label>
+        <input type="text" placeholder="Ex: 4Rivers Realty LLC" />
+      </div>
+      <div class="field">
+        <label>Ano de fundação <span class="required">*</span></label>
+        <input type="text" placeholder="Ex: 2019" />
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="field">
+        <label>Telefone principal <span class="required">*</span>
+          <span class="hint">Número que aparecerá no site (formato US)</span>
+        </label>
+        <input type="tel" placeholder="Ex: (352) 555-0100" />
+      </div>
+      <div class="field">
+        <label>E-mail de contato <span class="required">*</span></label>
+        <input type="email" placeholder="Ex: info@4riversrealty.com" />
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="field">
+        <label>Endereço do escritório
+          <span class="hint">Rua, cidade, estado, CEP</span>
+        </label>
+        <input type="text" placeholder="Ex: 1234 SW 17th St, Ocala, FL 34471" />
+      </div>
+      <div class="field">
+        <label>Horário de atendimento</label>
+        <input type="text" placeholder="Ex: Mon–Fri 8am–6pm · Sat 9am–4pm" />
+      </div>
+    </div>
+
+    <div class="row-3">
+      <div class="field">
+        <label>Instagram</label>
+        <input type="url" placeholder="https://instagram.com/..." />
+      </div>
+      <div class="field">
+        <label>Facebook</label>
+        <input type="url" placeholder="https://facebook.com/..." />
+      </div>
+      <div class="field">
+        <label>LinkedIn</label>
+        <input type="url" placeholder="https://linkedin.com/company/..." />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Link do perfil no Zillow / Realtor.com (se tiver)</label>
+      <input type="url" placeholder="https://www.zillow.com/profile/..." />
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────
+       SEÇÃO 2 — HISTÓRIA DA EMPRESA
+  ───────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <div>
+      <h2>História da Empresa</h2>
+      <div class="section-sub">Usada na página "About Us" — narrativa que cria conexão com o cliente</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>Como a 4Rivers começou? <span class="required">*</span>
+        <span class="hint">Conte a origem — quem fundou, qual era a visão inicial, o que motivou criar a empresa</span>
+      </label>
+      <textarea rows="5" placeholder="Ex: A 4Rivers nasceu em 2019 quando o fundador Jales, depois de 10 anos trabalhando em grandes imobiliárias de Miami, decidiu..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Por que o nome "4Rivers"?
+        <span class="hint">Se houver uma história por trás do nome, conte — os clientes adoram esse tipo de detalhe</span>
+      </label>
+      <textarea rows="3" placeholder="Ex: O nome representa os quatro rios que cortam a região de Ocala e Sumter County, referência ao amor pela natureza local..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Qual é o principal diferencial da 4Rivers em relação à concorrência? <span class="required">*</span>
+        <span class="hint">O que vocês fazem que outras imobiliárias não fazem?</span>
+      </label>
+      <textarea rows="4" placeholder="Ex: Somos especialistas em horse farms e propriedades rurais — um nicho que grandes imobiliárias ignoram. Nossos agentes vivem e trabalham na região há mais de 15 anos..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Área de atuação geográfica <span class="required">*</span></label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" checked /> Marion County</label>
+        <label><input type="checkbox" checked /> Sumter County</label>
+        <label><input type="checkbox" /> Alachua County</label>
+        <label><input type="checkbox" /> Citrus County</label>
+        <label><input type="checkbox" /> Levy County</label>
+        <label><input type="checkbox" /> Outro: <input type="text" style="width:100px;padding:2px 6px;margin-left:4px;" /></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tipos de propriedade que vocês trabalham <span class="required">*</span></label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" checked /> Horse Farms</label>
+        <label><input type="checkbox" checked /> Residential</label>
+        <label><input type="checkbox" checked /> Land / Acreage</label>
+        <label><input type="checkbox" /> Commercial</label>
+        <label><input type="checkbox" /> Luxury Homes</label>
+        <label><input type="checkbox" /> Investment Properties</label>
+        <label><input type="checkbox" /> New Construction</label>
+        <label><input type="checkbox" /> Vacation Rentals</label>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────
+       SEÇÃO 3 — MISSÃO, VISÃO E VALORES
+  ───────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <div>
+      <h2>Missão, Visão e Valores</h2>
+      <div class="section-sub">Aparecem em destaque na página Sobre e podem ser usados em materiais de marketing</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>Missão <span class="required">*</span>
+        <span class="hint">O que a empresa faz e para quem — 1 a 2 frases objetivas. Ex: "Conectar famílias ao imóvel ideal na região de Ocala, com transparência e expertise local."</span>
+      </label>
+      <textarea rows="3" placeholder="Nossa missão é..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Visão <span class="required">*</span>
+        <span class="hint">Onde a empresa quer chegar em 5–10 anos. Ex: "Ser a imobiliária de referência em horse farms na Flórida Central."</span>
+      </label>
+      <textarea rows="3" placeholder="Nossa visão é..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Valores da empresa <span class="required">*</span>
+        <span class="hint">Liste de 4 a 6 valores. Coloque o nome do valor e uma frase curta explicando</span>
+      </label>
+
+      <div class="values-list">
+        <div class="value-item">
+          <input type="text" placeholder="Ex: Integridade" />
+          <input type="text" placeholder="Ex: Agimos com honestidade em cada transação, sem exceções." />
+        </div>
+        <div class="value-item">
+          <input type="text" placeholder="Ex: Expertise Local" />
+          <input type="text" placeholder="Ex: Conhecemos cada condado, cada bairro, cada propriedade." />
+        </div>
+        <div class="value-item">
+          <input type="text" placeholder="Ex: Compromisso" />
+          <input type="text" placeholder="Ex: Só fechamos quando o cliente está 100% satisfeito." />
+        </div>
+        <div class="value-item">
+          <input type="text" placeholder="Valor 4" />
+          <input type="text" placeholder="Descrição do valor 4" />
+        </div>
+        <div class="value-item">
+          <input type="text" placeholder="Valor 5 (opcional)" />
+          <input type="text" placeholder="Descrição do valor 5" />
+        </div>
+        <div class="value-item">
+          <input type="text" placeholder="Valor 6 (opcional)" />
+          <input type="text" placeholder="Descrição do valor 6" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────
+       SEÇÃO 4 — NÚMEROS E CONQUISTAS
+  ───────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <div>
+      <h2>Números e Conquistas</h2>
+      <div class="section-sub">Estatísticas para o banner "By the Numbers" na Home e na página Sobre</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row-3">
+      <div class="field">
+        <label>Imóveis vendidos / fechados <span class="required">*</span></label>
+        <input type="text" placeholder="Ex: 200+ properties sold" />
+      </div>
+      <div class="field">
+        <label>Anos de experiência / no mercado <span class="required">*</span></label>
+        <input type="text" placeholder="Ex: 8+ years" />
+      </div>
+      <div class="field">
+        <label>Volume total transacionado</label>
+        <input type="text" placeholder="Ex: $50M+ in sales" />
+      </div>
+    </div>
+
+    <div class="row-3">
+      <div class="field">
+        <label>Clientes atendidos</label>
+        <input type="text" placeholder="Ex: 400+ clients" />
+      </div>
+      <div class="field">
+        <label>Condados / cidades atendidas</label>
+        <input type="text" placeholder="Ex: 5 counties" />
+      </div>
+      <div class="field">
+        <label>Avaliação / rating (se tiver)</label>
+        <input type="text" placeholder="Ex: 4.9★ no Zillow" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Prêmios, certificações ou reconhecimentos
+        <span class="hint">Licenças, associações (NAR, FAR, Stellar MLS), prêmios do setor</span>
+      </label>
+      <textarea rows="3" placeholder="Ex: Member of National Association of Realtors · Stellar MLS certified · Top Producer Award 2023 – Marion County Board of Realtors"></textarea>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────
+       SEÇÃO 5 — EQUIPE
+  ───────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <div>
+      <h2>Equipe</h2>
+      <div class="section-sub">Fotos e bios dos agentes — página "Our Team" e cards no site</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p style="font-size:13px;color:#718096;margin-bottom:20px;">Preencha um bloco para cada membro da equipe que deve aparecer no site. Adicione mais blocos se precisar.</p>
+
+    <!-- Agente 1 -->
+    <div class="agent-block">
+      <h4>Agente / Corretor 1</h4>
+      <div class="row-2">
+        <div class="field">
+          <label>Nome completo <span class="required">*</span></label>
+          <input type="text" />
+        </div>
+        <div class="field">
+          <label>Cargo / Título <span class="required">*</span></label>
+          <input type="text" placeholder="Ex: Founder & Realtor · Listing Agent" />
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>E-mail profissional</label>
+          <input type="email" />
+        </div>
+        <div class="field">
+          <label>Telefone / WhatsApp</label>
+          <input type="tel" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Número de licença (License #)</label>
+        <input type="text" placeholder="Ex: FL-SL3523456" />
+      </div>
+      <div class="field">
+        <label>Especialidades
+          <span class="hint">Ex: Horse farms, luxury homes, first-time buyers, investment properties</span>
+        </label>
+        <input type="text" />
+      </div>
+      <div class="field">
+        <label>Bio curta (aparece no card — 2 a 3 frases)
+          <span class="hint">Escreva em inglês se possível. Podemos traduzir/adaptar.</span>
+        </label>
+        <textarea rows="3" placeholder="Ex: Born and raised in Ocala, I've spent the last 12 years helping families find their dream homes across Marion and Sumter counties..."></textarea>
+      </div>
+      <div class="field">
+        <label>Link do perfil pessoal (Zillow, LinkedIn, Instagram)</label>
+        <input type="url" placeholder="https://..." />
+      </div>
+    </div>
+
+    <!-- Agente 2 -->
+    <div class="agent-block">
+      <h4>Agente / Corretor 2</h4>
+      <div class="row-2">
+        <div class="field">
+          <label>Nome completo</label>
+          <input type="text" />
+        </div>
+        <div class="field">
+          <label>Cargo / Título</label>
+          <input type="text" placeholder="Ex: Buyer's Agent · Property Manager" />
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>E-mail profissional</label>
+          <input type="email" />
+        </div>
+        <div class="field">
+          <label>Telefone / WhatsApp</label>
+          <input type="tel" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Número de licença</label>
+        <input type="text" />
+      </div>
+      <div class="field">
+        <label>Especialidades</label>
+        <input type="text" />
+      </div>
+      <div class="field">
+        <label>Bio curta</label>
+        <textarea rows="3"></textarea>
+      </div>
+      <div class="field">
+        <label>Link do perfil pessoal</label>
+        <input type="url" placeholder="https://..." />
+      </div>
+    </div>
+
+    <!-- Agente 3 -->
+    <div class="agent-block">
+      <h4>Agente / Corretor 3</h4>
+      <div class="row-2">
+        <div class="field">
+          <label>Nome completo</label>
+          <input type="text" />
+        </div>
+        <div class="field">
+          <label>Cargo / Título</label>
+          <input type="text" />
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>E-mail profissional</label>
+          <input type="email" />
+        </div>
+        <div class="field">
+          <label>Número de licença</label>
+          <input type="text" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Bio curta</label>
+        <textarea rows="3"></textarea>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────
+       SEÇÃO 6 — DEPOIMENTOS
+  ───────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="section-number">6</div>
+    <div>
+      <h2>Depoimentos de Clientes</h2>
+      <div class="section-sub">Usados na Home, na página Sobre e como prova social</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p style="font-size:13px;color:#718096;margin-bottom:20px;">Cole aqui depoimentos de clientes satisfeitos (mínimo 3). Se preferir, cole o link do Google Reviews / Zillow Reviews que coletamos diretamente.</p>
+
+    <div class="field">
+      <label>Link Google Reviews ou Zillow Reviews</label>
+      <input type="url" placeholder="https://g.page/r/..." />
+    </div>
+
+    <div class="field">
+      <label>Depoimento 1 — texto completo</label>
+      <textarea rows="3" placeholder="&#34;We found our dream horse farm thanks to 4Rivers! Jales was incredibly knowledgeable and patient throughout the entire process...&#34; — John & Mary S., Ocala, FL"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Depoimento 2 — texto completo</label>
+      <textarea rows="3"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Depoimento 3 — texto completo</label>
+      <textarea rows="3"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Observação sobre fotos dos clientes
+        <span class="hint">Temos permissão para usar fotos dos clientes junto aos depoimentos? (Sim / Não / Precisamos verificar)</span>
+      </label>
+      <select>
+        <option value="">— Selecione —</option>
+        <option>Sim, temos autorização para usar fotos</option>
+        <option>Não — usar avatares genéricos</option>
+        <option>Precisamos verificar com cada cliente</option>
+      </select>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────
+       SEÇÃO 7 — PÁGINA CONTATO
+  ───────────────────────────────────────────── -->
+  <div class="section-header">
+    <div class="section-number">7</div>
+    <div>
+      <h2>Página de Contato</h2>
+      <div class="section-sub">Dados para o formulário e mapa da página Contact</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row-2">
+      <div class="field">
+        <label>Endereço completo para Google Maps <span class="required">*</span></label>
+        <input type="text" placeholder="Ex: 1234 SW 17th St, Ocala, FL 34471" />
+      </div>
+      <div class="field">
+        <label>WhatsApp Business (para o botão flutuante) <span class="required">*</span>
+          <span class="hint">Com código do país, sem espaços: +15555551234</span>
+        </label>
+        <input type="tel" placeholder="+1 (352) 555-0100" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Mensagem padrão do botão WhatsApp
+        <span class="hint">Texto pré-preenchido quando o cliente clica no botão. Em inglês.</span>
+      </label>
+      <input type="text" placeholder="Ex: Hi! I found your website and I'm interested in a property." />
+    </div>
+
+    <div class="field">
+      <label>E-mail que recebe os formulários do site <span class="required">*</span>
+        <span class="hint">Para onde as mensagens do formulário de contato devem ir</span>
+      </label>
+      <input type="email" placeholder="Ex: jales@4riversrealty.com" />
+    </div>
+
+    <div class="field">
+      <label>Informações adicionais que devem aparecer na página de Contato</label>
+      <textarea rows="3" placeholder="Ex: Atendemos também por agendamento fora do horário comercial · Falamos português e espanhol · Visitas às propriedades mediante agendamento"></textarea>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       PARTE 2 — SOLICITAÇÃO DE IMAGENS
+  ════════════════════════════════════════════════ -->
+
+  <div style="margin-top:60px;margin-bottom:8px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="flex:1;height:2px;background:linear-gradient(90deg,#174079,#00aeef);border-radius:2px;"></div>
+      <div style="font-size:18px;font-weight:800;color:#174079;white-space:nowrap;padding:0 16px;">PARTE 2 — IMAGENS NECESSÁRIAS PARA O SITE</div>
+      <div style="flex:1;height:2px;background:linear-gradient(90deg,#00aeef,#174079);border-radius:2px;"></div>
+    </div>
+    <p style="font-size:13px;color:#718096;margin-top:12px;text-align:center;">Marque as imagens que você já tem e as que ainda precisa providenciar. Envie os arquivos para lucas.leite@edifico.com.br.</p>
+  </div>
+
+
+  <!-- ── BRANDING ── -->
+  <div class="img-section">
+    <div class="img-category">🎨 Identidade Visual / Branding</div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Logo principal — versão azul (fundo claro)</div>
+        <div class="img-spec">Formato: <strong>PNG com fundo transparente</strong> · Tamanho mínimo: 800px de largura · Uso: Navbar, rodapé, documentos</div>
+      </div>
+      <span class="badge badge-req">OBRIGATÓRIO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Logo principal — versão branca (fundo escuro)</div>
+        <div class="img-spec">Formato: <strong>PNG com fundo transparente</strong> · Uso: hero com fundo navy, rodapé dark</div>
+      </div>
+      <span class="badge badge-req">OBRIGATÓRIO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Favicon / ícone do site</div>
+        <div class="img-spec">Formato: <strong>.ico ou .png 512×512px</strong> · Aparece na aba do navegador e ao salvar na tela do celular</div>
+      </div>
+      <span class="badge badge-req">OBRIGATÓRIO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Logo mark / símbolo isolado (sem texto)</div>
+        <div class="img-spec">Formato: PNG transparente · Uso: avatares, ícones pequenos, app icon</div>
+      </div>
+      <span class="badge badge-opt">OPCIONAL</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Paleta de cores oficial (brand guidelines)</div>
+        <div class="img-spec">Códigos HEX das cores principais · Se não tiver arquivo, anote os códigos no campo abaixo</div>
+      </div>
+      <span class="badge badge-brand">BRANDING</span>
+    </div>
+
+    <div class="field" style="margin-top:12px;">
+      <label>Anotações sobre cores / branding</label>
+      <textarea rows="2" placeholder="Ex: Azul navy: #174079 · Azul cyan: #00aeef · Branco: #ffffff · Fundo claro: #f8f9fa"></textarea>
+    </div>
+  </div>
+
+
+  <!-- ── EQUIPE ── -->
+  <div class="img-section">
+    <div class="img-category">👥 Fotos da Equipe</div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Foto profissional de cada agente (individual)</div>
+        <div class="img-spec">Formato: JPG/PNG · Tamanho mínimo: <strong>600×600px</strong> · Fundo neutro ou externo limpo · Traje profissional · 1 foto por agente</div>
+      </div>
+      <span class="badge badge-req">OBRIGATÓRIO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Foto em grupo da equipe completa</div>
+        <div class="img-spec">Formato: JPG/PNG · Tamanho mínimo: <strong>1200×800px</strong> · Uso: banner da página Sobre</div>
+      </div>
+      <span class="badge badge-opt">RECOMENDADO</span>
+    </div>
+
+    <div class="field" style="margin-top:12px;">
+      <label>Quantos agentes serão listados no site?</label>
+      <input type="text" placeholder="Ex: 3 agentes" />
+    </div>
+  </div>
+
+
+  <!-- ── ESCRITÓRIO ── -->
+  <div class="img-section">
+    <div class="img-category">🏢 Escritório / Sede</div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Fachada externa do escritório</div>
+        <div class="img-spec">Formato: JPG · Tamanho mínimo: <strong>1200×800px</strong> · Dia com boa iluminação natural</div>
+      </div>
+      <span class="badge badge-opt">RECOMENDADO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Ambiente interno do escritório</div>
+        <div class="img-spec">Formato: JPG · 2 a 3 fotos mostrando o ambiente de trabalho</div>
+      </div>
+      <span class="badge badge-opt">OPCIONAL</span>
+    </div>
+  </div>
+
+
+  <!-- ── HERO / BANNERS ── -->
+  <div class="img-section">
+    <div class="img-category">🌅 Hero Sections / Banners</div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Hero da Home — foto aérea ou panorâmica da região</div>
+        <div class="img-spec">Formato: JPG · Tamanho: <strong>1920×1080px mínimo</strong> · Tema: Ocala, campo, horse farm, pôr do sol · Será escurecida levemente pelo overlay</div>
+      </div>
+      <span class="badge badge-req">OBRIGATÓRIO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Hero da página Sobre — imagem de equipe ou propriedade icônica</div>
+        <div class="img-spec">Formato: JPG · Tamanho: <strong>1920×600px ou maior</strong></div>
+      </div>
+      <span class="badge badge-req">OBRIGATÓRIO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Hero da Landing Page de Lançamento</div>
+        <div class="img-spec">Formato: JPG · Foto da propriedade ou loteamento sendo lançado · <strong>1920×1080px</strong></div>
+      </div>
+      <span class="badge badge-opt">SE HOUVER LANÇAMENTO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Imagem Open Graph (compartilhamento em redes sociais)</div>
+        <div class="img-spec">Formato: JPG · Exato: <strong>1200×630px</strong> · Aparece quando o link do site é compartilhado no WhatsApp, Facebook etc.</div>
+      </div>
+      <span class="badge badge-req">OBRIGATÓRIO</span>
+    </div>
+  </div>
+
+
+  <!-- ── PROPRIEDADES ── -->
+  <div class="img-section">
+    <div class="img-category">🏡 Fotos de Propriedades</div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Fotos de cada imóvel a ser cadastrado no portal</div>
+        <div class="img-spec">Formato: JPG · Mínimo <strong>800×600px</strong>, ideal 1200px · 5 a 20 fotos por imóvel · Exterior, interior, área externa, vista aérea quando disponível</div>
+      </div>
+      <span class="badge badge-req">OBRIGATÓRIO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">3 a 5 fotos de propriedades "destaque" para o banner da Home</div>
+        <div class="img-spec">As mais bonitas do portfólio · Proporção <strong>16:9</strong> · Serão exibidas em destaque assim que o portal abrir</div>
+      </div>
+      <span class="badge badge-req">OBRIGATÓRIO</span>
+    </div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Foto de horse farm (cocheiras, arena, pasto)</div>
+        <div class="img-spec">Para a seção "Especialidades" · Pelo menos 1 boa foto de uma propriedade equestre</div>
+      </div>
+      <span class="badge badge-opt">RECOMENDADO</span>
+    </div>
+
+    <div class="field" style="margin-top:12px;">
+      <label>Quantas propriedades serão cadastradas no lançamento?</label>
+      <input type="text" placeholder="Ex: 12 propriedades prontas para cadastro" />
+    </div>
+  </div>
+
+
+  <!-- ── DEPOIMENTOS ── -->
+  <div class="img-section">
+    <div class="img-category">💬 Fotos para Depoimentos</div>
+
+    <div class="img-item">
+      <input type="checkbox" class="img-check" />
+      <div class="img-info">
+        <div class="img-name">Foto de perfil de cada cliente que deu depoimento (se autorizado)</div>
+        <div class="img-spec">Formato: JPG/PNG · <strong>300×300px mínimo</strong> · Rosto visível · Se não autorizado, usaremos avatares gerados automaticamente</div>
+      </div>
+      <span class="badge badge-opt">SE AUTORIZADO</span>
+    </div>
+  </div>
+
+
+  <!-- ── NOTAS ── -->
+  <div class="img-section">
+    <div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:8px;padding:16px 20px;font-size:13px;color:#78350f;">
+      <strong>⚠️ Dica importante:</strong> Imagens de pelo menos <strong>1200px de largura</strong> garantem qualidade em monitores 4K e evitam retrabalho. Envie sempre no maior tamanho disponível — nossa equipe faz o redimensionamento automático.
+    </div>
+
+    <div class="img-upload-note" style="margin-top:12px;">
+      <strong>📤 Como enviar as imagens:</strong><br />
+      Crie uma pasta no Google Drive, Dropbox ou WeTransfer e compartilhe o link com <strong>lucas.leite@edifico.com.br</strong>.<br />
+      Nomeie as pastas assim: <code>01-Logo</code> · <code>02-Equipe</code> · <code>03-Imoveis</code> · <code>04-Hero</code>
+    </div>
+
+    <div class="field" style="margin-top:16px;">
+      <label>Link da pasta com as imagens (quando estiver pronto)</label>
+      <input type="url" placeholder="https://drive.google.com/..." />
+    </div>
+
+    <div class="field">
+      <label>Observações sobre as imagens</label>
+      <textarea rows="3" placeholder="Ex: Já tenho as fotos das propriedades, mas as fotos da equipe serão tiradas na semana que vem..."></textarea>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────────
+       CONTATO / ENVIO
+  ───────────────────────────────────────────── -->
+  <div class="contact-banner">
+    <h3>Dúvidas? Fale com a equipe Edifico</h3>
+    <p>Responda o que puder e envie de volta — preenchimento parcial já ajuda muito. Podemos completar juntos por chamada se preferir.</p>
+    <div class="contacts">
+      <div class="contact-item">
+        <span>Lead Técnico</span>
+        Lucas Leite
+      </div>
+      <div class="contact-item">
+        <span>E-mail</span>
+        lucas.leite@edifico.com.br
+      </div>
+      <div class="contact-item">
+        <span>Projeto</span>
+        4Rivers Realty Portal
+      </div>
+      <div class="contact-item">
+        <span>Prazo sugerido</span>
+        Até 16/06/2026 (Semana 2)
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+
+<!-- ── Botão Salvar PDF ── -->
+<button class="pdf-btn" onclick="window.print()">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h4a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+  </svg>
+  Salvar como PDF
+</button>
+<div class="pdf-tip">Na janela de impressão, selecione<br /><strong>"Salvar como PDF"</strong> como destino</div>
+
+</body>
+</html>

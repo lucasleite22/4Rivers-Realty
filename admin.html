@@ -41,7 +41,18 @@
 
     /* Input focus */
     input:focus,select:focus,textarea:focus { outline:none; border-color:#00aeef; box-shadow:0 0 0 3px #00aeef22; }
+
+    /* Leaflet admin maps */
+    .leaflet-container { z-index:1; font-family:inherit; }
+    #map-admin-pin { height:300px; border-radius:10px; overflow:hidden; }
+    #map-admin-boundary { height:280px; border-radius:10px; overflow:hidden; }
   </style>
+
+  <!-- Leaflet + Leaflet Draw -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
 </head>
 <body class="min-h-screen">
 
@@ -358,11 +369,18 @@
           <h1 class="text-2xl font-bold text-[#174079]">Properties</h1>
           <p class="text-gray-500 text-sm mt-0.5"><span x-text="properties.length"></span> listings</p>
         </div>
-        <button @click="openPropModal()"
-          class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-          Add Property
-        </button>
+        <div class="flex items-center gap-2">
+          <button @click="forceSyncToPortal()"
+            class="bg-[#00aeef] hover:bg-[#0098d4] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Sync to Portal
+          </button>
+          <button @click="openPropModal()"
+            class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add Property
+          </button>
+        </div>
       </div>
       <div class="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden">
         <table class="w-full text-sm">
@@ -373,6 +391,7 @@
               <th class="text-left px-4 py-3">Price</th>
               <th class="text-left px-4 py-3">Status</th>
               <th class="text-left px-4 py-3">Featured</th>
+              <th class="text-left px-4 py-3">Portal</th>
               <th class="text-left px-4 py-3">Actions</th>
             </tr>
           </thead>
@@ -394,6 +413,15 @@
                   <button @click="prop.featured=!prop.featured"
                     :class="prop.featured?'bg-[#00aeef] text-white':'bg-gray-100 text-gray-400'"
                     class="text-xs px-2 py-1 rounded-full font-medium transition" x-text="prop.featured?'★ Featured':'☆ Feature'"></button>
+                </td>
+                <td class="px-4 py-3">
+                  <button @click="prop.show_on_portal=!prop.show_on_portal; syncPortalVisibility()"
+                    :title="prop.show_on_portal ? 'Visible on portal' : 'Hidden from portal'"
+                    class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
+                    :class="prop.show_on_portal ? 'bg-[#00aeef]' : 'bg-gray-300'">
+                    <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform"
+                      :class="prop.show_on_portal ? 'translate-x-4' : 'translate-x-1'"></span>
+                  </button>
                 </td>
                 <td class="px-4 py-3">
                   <div class="flex gap-2">
@@ -674,6 +702,45 @@
           <label class="block text-xs font-medium text-gray-600 mb-1">Address *</label>
           <input x-model="propForm.address" type="text" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
         </div>
+
+        <!-- ── Property Location & Boundaries ── -->
+        <div class="col-span-2 border border-blue-100 rounded-xl p-4 bg-blue-50/30 space-y-4">
+          <h3 class="text-xs font-bold text-[#174079] uppercase tracking-wider">Property Location &amp; Boundaries</h3>
+
+          <!-- Pin Location -->
+          <div>
+            <p class="text-xs text-gray-500 mb-2">Click on the map to set the property location, or search by address.</p>
+            <div class="flex gap-2 mb-2">
+              <input type="text" x-ref="geocodeInput" placeholder="Search address…"
+                class="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"/>
+              <button type="button" @click="geocodeAddress()"
+                class="bg-[#174079] hover:bg-[#0f2f5a] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition">Search</button>
+            </div>
+            <div id="map-admin-pin"></div>
+            <div class="flex gap-3 mt-1 text-xs text-gray-400">
+              <span>Lat: <b x-text="propForm.lat || '—'"></b></span>
+              <span>Lng: <b x-text="propForm.lng || '—'"></b></span>
+            </div>
+          </div>
+
+          <!-- Draw Boundaries — hidden for Residential -->
+          <div x-show="propForm.type && propForm.type !== 'Single Family' && propForm.type !== 'Condo' && propForm.type !== 'Townhouse'">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs text-gray-500">Draw the property boundary polygon on the map.</p>
+              <div class="flex items-center gap-2">
+                <span x-show="adminAcresMapped" class="text-xs font-semibold text-[#174079]" x-text="adminAcresMapped + ' acres mapped'"></span>
+                <button type="button" @click="clearAdminBoundary()"
+                  x-show="propForm.polygon_coords"
+                  class="text-xs text-red-400 hover:text-red-600 font-semibold border border-red-200 rounded px-2 py-0.5 transition">Clear Boundary</button>
+                <button type="button" @click="enableAdminDraw()"
+                  x-show="!adminDrawActive"
+                  class="text-xs bg-[#00aeef] hover:bg-[#0098d4] text-white font-semibold px-3 py-1 rounded-lg transition">Draw Boundary</button>
+                <span x-show="adminDrawActive" class="text-xs text-[#00aeef] font-semibold animate-pulse">Drawing… click points on map</span>
+              </div>
+            </div>
+            <div id="map-admin-boundary"></div>
+          </div>
+        </div>
         <div>
           <label class="block text-xs font-medium text-gray-600 mb-1">Price *</label>
           <input x-model="propForm.price" type="text" placeholder="$850,000" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm transition" />
@@ -705,6 +772,17 @@
         <div class="col-span-2 flex items-center gap-2">
           <input x-model="propForm.featured" type="checkbox" id="featuredChk" class="w-4 h-4 accent-[#00aeef]" />
           <label for="featuredChk" class="text-sm text-gray-600">Mark as Featured</label>
+        </div>
+        <div class="col-span-2 flex items-center gap-3">
+          <span class="text-sm text-gray-600">Show on Portal</span>
+          <button type="button" @click="propForm.show_on_portal=!propForm.show_on_portal"
+            class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
+            :class="propForm.show_on_portal ? 'bg-[#00aeef]' : 'bg-gray-300'">
+            <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform"
+              :class="propForm.show_on_portal ? 'translate-x-4' : 'translate-x-1'"></span>
+          </button>
+          <span class="text-xs" :class="propForm.show_on_portal ? 'text-[#00aeef]' : 'text-gray-400'"
+            x-text="propForm.show_on_portal ? 'Visible' : 'Hidden'"></span>
         </div>
       </div>
       <button @click="saveProp()" class="w-full mt-5 bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg text-sm transition"
@@ -738,6 +816,13 @@
       <button @click="addUser()" class="w-full bg-[#174079] hover:bg-[#0f2f5a] text-white font-semibold py-2.5 rounded-lg text-sm transition">Add User</button>
     </div>
   </div>
+</div>
+
+<!-- Toast: Portal Synced -->
+<div x-show="portalSyncToast" x-cloak x-transition.opacity
+  class="fixed bottom-6 right-6 z-[100] bg-[#174079] text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-xl flex items-center gap-2">
+  <svg class="w-4 h-4 text-[#00aeef]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+  Portal updated!
 </div>
 
 <!-- ===================== ALPINE APP ===================== -->
@@ -927,15 +1012,25 @@ function app() {
 
     // Properties
     properties: [
-      { id:1, address:'523 Riverside Blvd, Fort Lauderdale, FL 33301', type:'Single Family', price:'$875,000', beds:4, baths:3, sqft:'2,850', status:'Active', featured:true },
-      { id:2, address:'1842 Waterfront Dr, Boca Raton, FL 33432', type:'Single Family', price:'$1,250,000', beds:5, baths:4, sqft:'4,100', status:'Pending', featured:true },
-      { id:3, address:'305 Maple Ave, Pembroke Pines, FL 33029', type:'Townhouse', price:'$349,000', beds:3, baths:2.5, sqft:'1,680', status:'Active', featured:false },
-      { id:4, address:'7701 Ocean Blvd #1204, Miami Beach, FL 33141', type:'Condo', price:'$995,000', beds:2, baths:2, sqft:'1,420', status:'Active', featured:false },
-      { id:5, address:'400 Weston Hills Dr, Weston, FL 33327', type:'Single Family', price:'$599,000', beds:4, baths:3, sqft:'2,200', status:'Active', featured:false },
-      { id:6, address:'2201 Palm Beach Lakes Blvd, West Palm Beach, FL 33409', type:'Commercial', price:'$1,800,000', beds:0, baths:2, sqft:'6,500', status:'Active', featured:false },
+      { id:1, address:'523 Riverside Blvd, Fort Lauderdale, FL 33301', type:'Single Family', price:'$875,000', beds:4, baths:3, sqft:'2,850', status:'Active', featured:true, show_on_portal:true },
+      { id:2, address:'1842 Waterfront Dr, Boca Raton, FL 33432', type:'Single Family', price:'$1,250,000', beds:5, baths:4, sqft:'4,100', status:'Pending', featured:true, show_on_portal:true },
+      { id:3, address:'305 Maple Ave, Pembroke Pines, FL 33029', type:'Townhouse', price:'$349,000', beds:3, baths:2.5, sqft:'1,680', status:'Active', featured:false, show_on_portal:true },
+      { id:4, address:'7701 Ocean Blvd #1204, Miami Beach, FL 33141', type:'Condo', price:'$995,000', beds:2, baths:2, sqft:'1,420', status:'Active', featured:false, show_on_portal:true },
+      { id:5, address:'400 Weston Hills Dr, Weston, FL 33327', type:'Single Family', price:'$599,000', beds:4, baths:3, sqft:'2,200', status:'Active', featured:false, show_on_portal:true },
+      { id:6, address:'2201 Palm Beach Lakes Blvd, West Palm Beach, FL 33409', type:'Commercial', price:'$1,800,000', beds:0, baths:2, sqft:'6,500', status:'Active', featured:false, show_on_portal:true },
     ],
     propModal: { open:false, editing:false, prop:null },
-    propForm: { address:'', price:'', type:'Single Family', beds:3, baths:2, sqft:'', status:'Active', featured:false },
+    propForm: { address:'', price:'', type:'Single Family', beds:3, baths:2, sqft:'', status:'Active', featured:false, show_on_portal:true, lat:null, lng:null, polygon_coords:null },
+    portalSyncToast: false,
+
+    // Admin map state
+    _adminPinMap: null,
+    _adminPinMarker: null,
+    _adminBoundaryMap: null,
+    _adminDrawControl: null,
+    _adminBoundaryLayer: null,
+    adminDrawActive: false,
+    adminAcresMapped: null,
 
     // Users
     users: [
@@ -951,7 +1046,18 @@ function app() {
     settingsSaved: false,
 
     // ---- Methods ----
-    init() {},
+    init() {
+      // Load portal visibility flags from localStorage and apply to properties
+      try {
+        const saved = localStorage.getItem('4rivers_portal_visibility');
+        if (saved) {
+          const flags = JSON.parse(saved);
+          this.properties.forEach(p => { if (flags[p.id] !== undefined) p.show_on_portal = flags[p.id]; });
+        }
+      } catch(e) {}
+      // Persist current state
+      this.syncPortalVisibility();
+    },
 
     login() {
       const match = this.credentials.find(c=>c.email.toLowerCase()===this.loginForm.email.toLowerCase()&&c.password===this.loginForm.password);
@@ -1001,16 +1107,31 @@ function app() {
     // Properties
     openPropModal(prop=null) {
       if(prop) { this.propModal.editing=true; this.propModal.prop=prop; this.propForm={...prop}; }
-      else { this.propModal.editing=false; this.propModal.prop=null; this.propForm={address:'',price:'',type:'Single Family',beds:3,baths:2,sqft:'',status:'Active',featured:false}; }
+      else { this.propModal.editing=false; this.propModal.prop=null; this.propForm={address:'',price:'',type:'Single Family',beds:3,baths:2,sqft:'',status:'Active',featured:false,show_on_portal:true,lat:null,lng:null,polygon_coords:null}; }
       this.propModal.open=true;
+      setTimeout(() => this.initAdminMaps(), 300);
     },
     saveProp() {
       if(!this.propForm.address||!this.propForm.price) return;
-      if(this.propModal.editing&&this.propModal.prop) Object.assign(this.propModal.prop,this.propForm);
-      else this.properties.push({...this.propForm,id:Date.now()});
+      const mapData = { lat: this.propForm.lat || null, lng: this.propForm.lng || null, polygon_coords: this.propForm.polygon_coords || null };
+      if(this.propModal.editing&&this.propModal.prop) Object.assign(this.propModal.prop, this.propForm, mapData);
+      else this.properties.push({...this.propForm,...mapData,id:Date.now()});
       this.propModal.open=false;
+      this.syncPortalVisibility();
     },
-    deleteProp(id) { if(confirm('Delete this property?')) this.properties=this.properties.filter(p=>p.id!==id); },
+    deleteProp(id) { if(confirm('Delete this property?')) { this.properties=this.properties.filter(p=>p.id!==id); this.syncPortalVisibility(); } },
+
+    // Portal sync
+    syncPortalVisibility() {
+      const flags = {};
+      this.properties.forEach(p => flags[p.id] = p.show_on_portal !== false);
+      localStorage.setItem('4rivers_portal_visibility', JSON.stringify(flags));
+    },
+    forceSyncToPortal() {
+      this.syncPortalVisibility();
+      this.portalSyncToast = true;
+      setTimeout(() => this.portalSyncToast = false, 2500);
+    },
 
     // Users
     openUserModal() { this.userForm={name:'',email:'',role:'Agent'}; this.userModal.open=true; },
@@ -1018,6 +1139,150 @@ function app() {
 
     // Settings
     saveSettings() { this.settingsSaved=true; setTimeout(()=>this.settingsSaved=false,3000); },
+
+    // ── Admin map ──────────────────────────────────────
+    initAdminMaps() {
+      // Destroy any existing instances
+      if (this._adminPinMap) { this._adminPinMap.remove(); this._adminPinMap = null; this._adminPinMarker = null; }
+      if (this._adminBoundaryMap) { this._adminBoundaryMap.remove(); this._adminBoundaryMap = null; this._adminDrawControl = null; this._adminBoundaryLayer = null; }
+      this.adminDrawActive = false;
+      this.adminAcresMapped = null;
+
+      const center = (this.propForm.lat && this.propForm.lng)
+        ? [+this.propForm.lat, +this.propForm.lng]
+        : [29.187, -82.140]; // Ocala default
+
+      setTimeout(() => {
+        // Pin map
+        const pinEl = document.getElementById('map-admin-pin');
+        if (pinEl) {
+          const pinMap = L.map('map-admin-pin', { scrollWheelZoom: false }).setView(center, 13);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          }).addTo(pinMap);
+          this._adminPinMap = pinMap;
+
+          if (this.propForm.lat && this.propForm.lng) {
+            this._adminPinMarker = L.marker(center, { draggable: true }).addTo(pinMap);
+            this._adminPinMarker.on('dragend', (e) => {
+              const ll = e.target.getLatLng();
+              this.propForm.lat = ll.lat.toFixed(6);
+              this.propForm.lng = ll.lng.toFixed(6);
+            });
+          }
+
+          pinMap.on('click', (e) => {
+            this.propForm.lat = e.latlng.lat.toFixed(6);
+            this.propForm.lng = e.latlng.lng.toFixed(6);
+            if (this._adminPinMarker) { this._adminPinMarker.setLatLng(e.latlng); }
+            else { this._adminPinMarker = L.marker(e.latlng, { draggable: true }).addTo(pinMap);
+              this._adminPinMarker.on('dragend', (ev) => {
+                const ll = ev.target.getLatLng();
+                this.propForm.lat = ll.lat.toFixed(6);
+                this.propForm.lng = ll.lng.toFixed(6);
+              });
+            }
+          });
+        }
+
+        // Boundary map (only for non-residential types)
+        const bndEl = document.getElementById('map-admin-boundary');
+        if (bndEl) {
+          const bndMap = L.map('map-admin-boundary', { scrollWheelZoom: false }).setView(center, 13);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          }).addTo(bndMap);
+          this._adminBoundaryMap = bndMap;
+
+          // If editing and has existing polygon
+          if (this.propForm.polygon_coords) {
+            try {
+              const coords = typeof this.propForm.polygon_coords === 'string'
+                ? JSON.parse(this.propForm.polygon_coords)
+                : this.propForm.polygon_coords;
+              this._adminBoundaryLayer = L.polygon(coords, {
+                color: '#00aeef', weight: 2, fillColor: '#174079', fillOpacity: 0.18
+              }).addTo(bndMap);
+              bndMap.fitBounds(this._adminBoundaryLayer.getBounds(), { padding: [20, 20] });
+              this.adminAcresMapped = this.calcAcres(coords);
+            } catch(e) {}
+          }
+        }
+      }, 200);
+    },
+
+    enableAdminDraw() {
+      if (!this._adminBoundaryMap) return;
+      this.adminDrawActive = true;
+      const drawnItems = new L.FeatureGroup().addTo(this._adminBoundaryMap);
+      const drawCtrl = new L.Control.Draw({
+        draw: { polygon: { shapeOptions: { color: '#00aeef', fillColor: '#174079', fillOpacity: 0.18 } }, polyline: false, rectangle: false, circle: false, circlemarker: false, marker: false },
+        edit: { featureGroup: drawnItems }
+      });
+      this._adminBoundaryMap.addControl(drawCtrl);
+      this._adminDrawControl = drawCtrl;
+      this._adminBoundaryMap.on(L.Draw.Event.CREATED, (e) => {
+        if (this._adminBoundaryLayer) { this._adminBoundaryMap.removeLayer(this._adminBoundaryLayer); }
+        this._adminBoundaryLayer = e.layer;
+        drawnItems.addLayer(e.layer);
+        const latlngs = e.layer.getLatLngs()[0].map(ll => [ll.lat, ll.lng]);
+        this.propForm.polygon_coords = JSON.stringify(latlngs);
+        this.adminAcresMapped = this.calcAcres(latlngs);
+        this.adminDrawActive = false;
+      });
+    },
+
+    clearAdminBoundary() {
+      if (this._adminBoundaryLayer && this._adminBoundaryMap) {
+        this._adminBoundaryMap.removeLayer(this._adminBoundaryLayer);
+        this._adminBoundaryLayer = null;
+      }
+      this.propForm.polygon_coords = null;
+      this.adminAcresMapped = null;
+    },
+
+    calcAcres(latlngs) {
+      // Shoelace formula → sq degrees → approx acres (1 sq degree ≈ 7,741,440,000 sq ft at 29°N)
+      if (!latlngs || latlngs.length < 3) return 0;
+      let area = 0;
+      const n = latlngs.length;
+      for (let i = 0; i < n; i++) {
+        const [lat1, lng1] = latlngs[i];
+        const [lat2, lng2] = latlngs[(i + 1) % n];
+        area += lng1 * lat2 - lng2 * lat1;
+      }
+      area = Math.abs(area) / 2;
+      // Convert sq degrees to sq meters: ~111111 m/deg lat, ~97000 m/deg lng at 29°N
+      const sqMeters = area * 111111 * 97000;
+      const acres = sqMeters / 4046.856;
+      return Math.round(acres * 10) / 10;
+    },
+
+    async geocodeAddress() {
+      const q = this.$refs.geocodeInput?.value;
+      if (!q) return;
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (data && data[0]) {
+          const lat = parseFloat(data[0].lat), lng = parseFloat(data[0].lon);
+          this.propForm.lat = lat.toFixed(6);
+          this.propForm.lng = lng.toFixed(6);
+          if (this._adminPinMap) {
+            this._adminPinMap.setView([lat, lng], 14);
+            if (this._adminPinMarker) { this._adminPinMarker.setLatLng([lat, lng]); }
+            else { this._adminPinMarker = L.marker([lat, lng], { draggable: true }).addTo(this._adminPinMap);
+              this._adminPinMarker.on('dragend', (e) => {
+                const ll = e.target.getLatLng();
+                this.propForm.lat = ll.lat.toFixed(6);
+                this.propForm.lng = ll.lng.toFixed(6);
+              });
+            }
+            if (this._adminBoundaryMap) { this._adminBoundaryMap.setView([lat, lng], 14); }
+          }
+        }
+      } catch(e) { console.warn('Geocode failed', e); }
+    },
   };
 }
 </script>
