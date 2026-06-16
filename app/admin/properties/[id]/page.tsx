@@ -62,7 +62,7 @@ const SOURCE_TAG: Record<string, { label: string; color: string }> = {
 const INPUT = 'w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white placeholder-white/30 focus:outline-none focus:border-cyan-500/50'
 const LABEL = 'font-barlow text-xs font-semibold text-white/40 uppercase tracking-widest block mb-1.5'
 
-function fmt(price: string) {
+function fmt(price: string | number | { toString(): string }) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(price))
 }
 

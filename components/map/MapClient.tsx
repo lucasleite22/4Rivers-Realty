@@ -123,7 +123,7 @@ export default function MapClient({
                 {prop.title}
               </p>
               <p className="text-gray-500 text-xs mt-0.5">
-                {prop.city}, {prop.county} County · {prop.acreage} ac
+                {prop.city}, {prop.county} County · {Number(prop.acreage)} ac
               </p>
               <p className="font-cormorant font-bold text-lg text-navy mt-1">
                 {fmtPrice(prop.priceUsd)}

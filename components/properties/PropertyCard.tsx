@@ -20,7 +20,7 @@ export default function PropertyCard({ property }: Props) {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
-  }).format(property.priceUsd)
+  }).format(Number(property.priceUsd))
 
   return (
     <Link
@@ -49,7 +49,7 @@ export default function PropertyCard({ property }: Props) {
         </p>
         <div className="flex items-center justify-between mt-3">
           <span className="font-cormorant text-2xl text-navy">{price}</span>
-          <span className="font-barlow text-sm text-gray-400">{property.acreage} ac</span>
+          <span className="font-barlow text-sm text-gray-400">{Number(property.acreage)} ac</span>
         </div>
       </div>
     </Link>
