@@ -60,7 +60,7 @@ export default function AboutPage() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="relative h-[60vh] min-h-[480px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[72vh] min-h-[560px] flex items-center justify-center overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1553284965-5dd02352d7c8?w=1600&q=85"
           alt="Horses grazing on a Florida pasture"
@@ -69,14 +69,34 @@ export default function AboutPage() {
           className="object-cover object-center"
           priority
         />
-        <div className="absolute inset-0 bg-dark-navy/65" />
-        <div className="relative z-10 text-center px-4">
-          <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
-            Our Story
-          </p>
-          <h1 className="font-cormorant font-bold text-5xl sm:text-6xl text-white">
-            About 4Rivers Realty
-          </h1>
+        <div className="absolute inset-0 bg-dark-navy/70" />
+        <div className="relative z-10 flex flex-col items-center text-center px-4 gap-7">
+          {/* Logo em destaque */}
+          <Image
+            src="/images/logo-horizontal-white.png"
+            alt="4Rivers Realty"
+            width={380}
+            height={112}
+            className="h-24 sm:h-28 w-auto object-contain"
+            priority
+          />
+
+          {/* Separador decorativo */}
+          <div className="flex items-center gap-3">
+            <div className="h-px w-16 bg-brand-blue" />
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
+            <div className="h-px w-16 bg-brand-blue" />
+          </div>
+
+          {/* Headline */}
+          <div>
+            <h1 className="font-cormorant font-bold text-4xl sm:text-5xl text-white tracking-wide">
+              Our Story
+            </h1>
+            <p className="font-barlow text-white/55 text-sm tracking-[0.35em] uppercase mt-3">
+              Rooted in Florida · Passionate About Land
+            </p>
+          </div>
         </div>
       </section>
 
