@@ -28,8 +28,8 @@ function createCustomIcon() {
     html: `
       <div style="
         width:32px;height:32px;
-        background:#174079;
-        border:3px solid #00aeef;
+        background:#252859;
+        border:3px solid #86ACDB;
         border-radius:50% 50% 50% 0;
         transform:rotate(-45deg);
         box-shadow:0 2px 8px rgba(0,0,0,0.35);
@@ -131,7 +131,7 @@ export default function MapClient({
               </p>
               <Link
                 href={`/properties/${prop.id}`}
-                className="block mt-2 text-center bg-navy text-white text-xs font-semibold py-1.5 rounded hover:bg-[#00aeef] transition-colors"
+                className="block mt-2 text-center bg-navy text-white text-xs font-semibold py-1.5 rounded hover:bg-brand-blue transition-colors"
               >
                 View Details
               </Link>

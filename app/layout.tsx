@@ -32,6 +32,12 @@ export const metadata: Metadata = {
     'ranches for sale Ocala',
     '4Rivers Realty',
   ],
+  icons: {
+    icon: '/images/logo-icon.png',
+    shortcut: '/images/logo-icon.png',
+    apple: '/images/logo-icon.png',
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
     type: 'website',
     locale: 'en_US',

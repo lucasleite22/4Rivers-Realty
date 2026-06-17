@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
-import PropertyGrid from '@/components/properties/PropertyGrid'
 import PropertyFilters from '@/components/properties/PropertyFilters'
+import PropertiesViewToggle from '@/components/properties/PropertiesViewToggle'
 
 export const metadata = {
   title: 'Properties | 4Rivers Realty',
@@ -9,11 +9,14 @@ export const metadata = {
 
 export default function PropertiesPage() {
   return (
-    <main className="min-h-screen bg-site-bg">
-      <section className="bg-navy pt-28 pb-16 px-4">
+    <main className="min-h-screen bg-white">
+      <section className="bg-dark-navy pt-28 pb-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <h1 className="font-cormorant text-4xl text-white mb-2">Properties</h1>
-          <p className="font-barlow text-cyan-brand">
+          <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
+            Our Listings
+          </p>
+          <h1 className="font-cormorant text-4xl text-white">Properties</h1>
+          <p className="font-barlow text-white/60 mt-2">
             Ocala &amp; Sumter County, Florida
           </p>
         </div>
@@ -22,7 +25,7 @@ export default function PropertiesPage() {
       <section className="max-w-6xl mx-auto px-4 py-10">
         <Suspense fallback={<PropertyGridSkeleton />}>
           <PropertyFilters />
-          <PropertyGrid />
+          <PropertiesViewToggle />
         </Suspense>
       </section>
     </main>
