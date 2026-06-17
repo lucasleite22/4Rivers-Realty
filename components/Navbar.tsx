@@ -45,9 +45,9 @@ export default function Navbar() {
           <Image
             src={transparent ? '/images/logo-horizontal-white.png' : '/images/logo-horizontal-blue.png'}
             alt="4Rivers Realty"
-            width={140}
-            height={48}
-            className="h-10 w-auto object-contain"
+            width={220}
+            height={64}
+            className="h-14 w-auto object-contain"
             priority
           />
         </Link>
