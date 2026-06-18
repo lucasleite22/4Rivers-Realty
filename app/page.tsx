@@ -72,7 +72,7 @@ const circleFeatures = [
     description: 'Free valuation and a direct line to our network of qualified buyers.',
   },
   {
-    image: 'https://images.unsplash.com/photo-1472745433479-4556f22e32c2?w=500&q=80',
+    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=80',
     title: 'Work With Locals',
     description: '20+ years on this land — brokers who know every road and creek.',
   },
