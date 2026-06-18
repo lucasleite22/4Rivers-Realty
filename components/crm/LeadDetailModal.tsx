@@ -75,7 +75,7 @@ interface Props {
   onStageChange?: (leadId: string, newStatus: LeadStatus) => Promise<void>
 }
 
-const INPUT = 'w-full px-3 py-2.5 rounded-lg border border-gray-200 font-barlow text-sm text-navy focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20'
+const INPUT = 'w-full px-3 py-2.5 rounded-lg border border-gray-200 font-barlow text-sm text-navy focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20'
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -270,7 +270,7 @@ export default function LeadDetailModal({ lead, onClose, onUpdate, onStageChange
               key={id}
               onClick={() => setTab(id)}
               className={`flex items-center gap-1.5 px-1 py-3 mr-6 font-barlow text-sm font-semibold border-b-2 transition-colors
-                ${tab === id ? 'border-cyan-500 text-navy' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                ${tab === id ? 'border-brand-blue text-navy' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
               <Icon className="w-4 h-4" />
               {label}
@@ -391,7 +391,7 @@ export default function LeadDetailModal({ lead, onClose, onUpdate, onStageChange
               {!showAddForm ? (
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="flex items-center gap-2 w-full px-4 py-3 border-2 border-dashed border-gray-200 rounded-xl font-barlow text-sm text-gray-400 hover:border-cyan-500/50 hover:text-cyan-600 transition-colors mb-5"
+                  className="flex items-center gap-2 w-full px-4 py-3 border-2 border-dashed border-gray-200 rounded-xl font-barlow text-sm text-gray-400 hover:border-brand-blue/50 hover:text-light-blue transition-colors mb-5"
                 >
                   <Plus className="w-4 h-4" />
                   Log a call, email, showing or note…
@@ -432,7 +432,7 @@ export default function LeadDetailModal({ lead, onClose, onUpdate, onStageChange
                     <button
                       onClick={addActivity}
                       disabled={addingActivity}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-navy text-white font-barlow text-sm font-semibold rounded-lg hover:bg-cyan-600 transition disabled:opacity-60"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-navy text-white font-barlow text-sm font-semibold rounded-lg hover:bg-light-blue transition disabled:opacity-60"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
                       {addingActivity ? 'Saving…' : 'Save Entry'}
@@ -501,7 +501,7 @@ export default function LeadDetailModal({ lead, onClose, onUpdate, onStageChange
               <button
                 onClick={downloadLog}
                 disabled={activities.length === 0}
-                className="flex items-center gap-2 px-5 py-2.5 bg-navy text-white font-barlow font-semibold text-sm rounded-lg hover:bg-cyan-600 transition disabled:opacity-40"
+                className="flex items-center gap-2 px-5 py-2.5 bg-navy text-white font-barlow font-semibold text-sm rounded-lg hover:bg-light-blue transition disabled:opacity-40"
               >
                 <Download className="w-4 h-4" />
                 Download Log (.txt)
@@ -515,7 +515,7 @@ export default function LeadDetailModal({ lead, onClose, onUpdate, onStageChange
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-6 py-2.5 bg-navy text-white font-barlow font-semibold text-sm rounded-lg hover:bg-cyan-600 transition-colors disabled:opacity-60"
+                className="flex items-center gap-2 px-6 py-2.5 bg-navy text-white font-barlow font-semibold text-sm rounded-lg hover:bg-light-blue transition-colors disabled:opacity-60"
               >
                 <Save className="w-4 h-4" />
                 {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save Changes'}

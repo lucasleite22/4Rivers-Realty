@@ -118,7 +118,7 @@ function formatPrice(n: number) {
 
 function BadgeColor({ badge }: { badge: string }) {
   const styles: Record<string, string> = {
-    'New Launch': 'bg-[#00aeef] text-white',
+    'New Launch': 'bg-brand-blue text-white',
     'Just Listed': 'bg-green-500 text-white',
     'Coming Soon': 'bg-navy text-white',
   }
@@ -138,8 +138,8 @@ export default function LaunchesPage() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-4 h-4 text-[#33ccff]" />
-                <p className="font-barlow text-[#33ccff] text-sm font-semibold tracking-[0.3em] uppercase">
+                <Sparkles className="w-4 h-4 text-light-blue" />
+                <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase">
                   Exclusivo
                 </p>
               </div>
@@ -152,7 +152,7 @@ export default function LaunchesPage() {
             </div>
             <Link
               href="/properties"
-              className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 border-2 border-white/30 text-white font-barlow font-semibold text-sm rounded-md hover:border-[#00aeef] hover:text-[#00aeef] transition-colors"
+              className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 border-2 border-white/30 text-white font-barlow font-semibold text-sm rounded-md hover:border-brand-blue hover:text-brand-blue transition-colors"
             >
               Ver todo o portfólio <ArrowRight className="w-4 h-4" />
             </Link>
@@ -182,7 +182,7 @@ export default function LaunchesPage() {
       <section className="bg-navy/5 border-b border-navy/10 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-8">
           <div>
-            <p className="font-barlow text-sm font-semibold tracking-[0.3em] uppercase text-cyan-brand mb-1">
+            <p className="font-barlow text-sm font-semibold tracking-[0.3em] uppercase text-brand-blue mb-1">
               Next Launch
             </p>
             <h2 className="font-cormorant font-bold text-3xl text-navy">
@@ -200,7 +200,7 @@ export default function LaunchesPage() {
       </section>
 
       {/* ── Grid ── */}
-      <section className="py-16 bg-site-bg">
+      <section className="py-16 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {launches.map((prop) => (
@@ -254,7 +254,7 @@ export default function LaunchesPage() {
                   <div className="grid grid-cols-2 gap-2 mb-6">
                     {prop.highlights.map((h) => (
                       <div key={h} className="flex items-center gap-1.5 font-barlow text-xs text-gray-500">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#00aeef] flex-shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand-blue flex-shrink-0" />
                         {h}
                       </div>
                     ))}
@@ -273,7 +273,7 @@ export default function LaunchesPage() {
                     </div>
                     <Link
                       href={prop.price ? `/properties` : '/contact'}
-                      className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-navy text-white font-barlow font-semibold text-sm rounded-lg hover:bg-[#00aeef] transition-colors"
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-navy text-white font-barlow font-semibold text-sm rounded-lg hover:bg-brand-blue transition-colors"
                     >
                       {prop.price ? 'Details' : 'Notify Me'}
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -289,7 +289,7 @@ export default function LaunchesPage() {
       {/* ── CTA ── */}
       <section className="py-20 bg-navy">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <Sparkles className="w-8 h-8 text-[#00aeef] mx-auto mb-6" />
+          <Sparkles className="w-8 h-8 text-brand-blue mx-auto mb-6" />
           <h2 className="font-cormorant font-bold text-4xl text-white mb-5">
             Quer ser notificado dos próximos lançamentos?
           </h2>
@@ -298,7 +298,7 @@ export default function LaunchesPage() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-10 py-4 bg-[#00aeef] text-white font-barlow font-semibold rounded-md hover:bg-[#33ccff] transition-colors"
+            className="inline-flex items-center gap-2 px-10 py-4 bg-brand-blue text-white font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors"
           >
             Receber Alertas <ArrowRight className="w-4 h-4" />
           </Link>

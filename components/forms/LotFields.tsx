@@ -64,7 +64,7 @@ export default function LotFields({ value, onChange }: Props) {
           type="checkbox"
           checked={data.pool}
           onChange={(e) => update('pool', e.target.checked)}
-          className="accent-cyan-brand"
+          className="accent-brand-blue"
         />
         Has Pool
       </label>
@@ -82,4 +82,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const inputCls =
-  'w-full border border-navy/20 rounded-lg px-3 py-2 font-barlow text-navy focus:outline-none focus:border-cyan-brand'
+  'w-full border border-navy/20 rounded-lg px-3 py-2 font-barlow text-navy focus:outline-none focus:border-brand-blue'

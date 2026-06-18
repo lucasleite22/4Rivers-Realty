@@ -75,9 +75,9 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-cormorant font-semibold text-lg text-white mb-4">
+            <h3 className="font-cormorant font-semibold text-lg text-white mb-4">
               Quick Links
-            </h4>
+            </h3>
             <ul className="space-y-2">
               {[
                 { href: '/properties', label: 'Properties' },
@@ -99,9 +99,9 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-cormorant font-semibold text-lg text-white mb-4">
+            <h3 className="font-cormorant font-semibold text-lg text-white mb-4">
               Contact Us
-            </h4>
+            </h3>
             <ul className="space-y-3 font-barlow text-sm text-gray-400">
               <li className="leading-relaxed">
                 Ocala, FL 34470

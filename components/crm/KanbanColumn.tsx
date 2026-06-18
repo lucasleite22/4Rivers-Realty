@@ -20,7 +20,7 @@ export default function KanbanColumn({ id, title, leads, color, onCardClick }: P
     <div
       ref={setNodeRef}
       className={`flex flex-col min-h-[200px] rounded-xl transition-colors
-        ${isOver ? 'bg-cyan-brand/5 ring-2 ring-cyan-brand/30' : 'bg-navy/5'}`}
+        ${isOver ? 'bg-brand-blue/5 ring-2 ring-brand-blue/30' : 'bg-navy/5'}`}
     >
       {/* Column header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-navy/10">

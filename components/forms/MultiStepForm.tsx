@@ -46,7 +46,7 @@ export default function MultiStepForm() {
       <div className="flex gap-2 mb-8">
         {STEPS.map((label, i) => (
           <div key={label} className="flex-1">
-            <div className={`h-1 rounded-full ${i <= step ? 'bg-cyan-brand' : 'bg-navy/20'}`} />
+            <div className={`h-1 rounded-full ${i <= step ? 'bg-brand-blue' : 'bg-navy/20'}`} />
             <p className={`font-barlow text-xs mt-1 ${i === step ? 'text-navy' : 'text-gray-400'}`}>
               {label}
             </p>
@@ -151,4 +151,4 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
 }
 
 const inputCls =
-  'w-full border border-navy/20 rounded-lg px-3 py-2 font-barlow text-navy focus:outline-none focus:border-cyan-brand'
+  'w-full border border-navy/20 rounded-lg px-3 py-2 font-barlow text-navy focus:outline-none focus:border-brand-blue'

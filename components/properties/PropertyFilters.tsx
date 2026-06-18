@@ -37,9 +37,9 @@ export default function PropertyFilters() {
   )
 
   const selectCls =
-    'font-barlow text-sm border border-navy/20 rounded-lg px-3 py-2 bg-white text-navy focus:outline-none focus:border-cyan-brand w-full sm:w-auto'
+    'font-barlow text-sm border border-navy/20 rounded-lg px-3 py-2 bg-white text-navy focus:outline-none focus:border-brand-blue w-full sm:w-auto'
   const inputCls =
-    'font-barlow text-sm border border-navy/20 rounded-lg px-3 py-2 bg-white text-navy focus:outline-none focus:border-cyan-brand w-full sm:w-32'
+    'font-barlow text-sm border border-navy/20 rounded-lg px-3 py-2 bg-white text-navy focus:outline-none focus:border-brand-blue w-full sm:w-32'
 
   return (
     <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3">

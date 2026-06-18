@@ -182,6 +182,21 @@
 
 ---
 
+## ✅ IMPLEMENTADO — Sprint 16/06/2026
+
+### Deploy & Infraestrutura
+
+| Entregável | Detalhes | Status |
+|------------|----------|--------|
+| Questionário de conteúdo para o cliente | `questionario-cliente-4rivers.html` — 7 seções (dados, história, M/V/V, números, equipe, depoimentos, contato) + checklist de imagens com specs técnicas + botão "Salvar como PDF" | ✅ |
+| Repositório GitHub | `github.com/lucasleite22/4Rivers-Realty` (privado) — 108 arquivos, histórico limpo | ✅ |
+| Deploy Vercel (preview para cliente) | URL ativa em demo mode — sem banco de dados necessário | ✅ |
+| Modo demo | Login bypass (`DEMO_MODE=true`) — banner "Ambiente de Demonstração", botão "Access Demo →", JWT sem DB | ✅ |
+| Fixes de build (10 PRs) | resend missing, leaflet missing, Decimal→Number, Buffer→Uint8Array, jest tsconfig exclude, prisma generate, JWT runtime, Resend lazy, Suspense/useSearchParams, API empty-on-error | ✅ |
+| API resilience para demo | Todas as rotas críticas retornam dados vazios (não 500) quando DB indisponível | ✅ |
+
+---
+
 ## ✅ IMPLEMENTADO — Sprint 09/06/2026
 
 ### Módulo 05 — Admin Panel
@@ -224,19 +239,37 @@
 
 ---
 
+## ✅ IMPLEMENTADO — Sprint 18/06/2026
+
+| Entregável | Detalhes | Status |
+|------------|----------|--------|
+| Banco de dados real em produção | TiDB Cloud Serverless conectado no Vercel, `DEMO_MODE` removido, seed aplicado | ✅ |
+| Marca em evidência | Logo maior no Navbar, sidebar do admin e hero do About com o logo oficial; favicon + manifest | ✅ |
+| Fix de contraste no login | Substituídas classes mortas (`cyan-brand`, `bg-dark`) pelos tokens atuais | ✅ |
+| Página de detalhe do imóvel | Galeria, specs, descrição, mapa e formulário de interesse (antes era um stub) | ✅ |
+| Mapa interativo em `/properties` | Toggle Grid/Mapa com pins customizados na paleta atual | ✅ |
+| Testes E2E Playwright | 5 specs: home, properties, auth, admin, contact | ✅ |
+| Limpeza de cores legadas em todo o app | `cyan-brand`, `#00aeef`, `#33ccff`, `bg-site-bg`, `cyan-500/600` substituídos pelos tokens da marca em CRM/Kanban, formulários multi-etapa, launches, list-property, admin properties | ✅ |
+| Auditoria Lighthouse | Performance 95 · Acessibilidade 95 · Boas Práticas 100 · SEO 100 (home) — heading-order corrigido no Footer | ✅ |
+| Roteiro de screencast de treinamento | `roteiro-screencast-4rivers.md` — 20min, cobre site público + admin completo | ✅ |
+
+> **Pendente de decisão do cliente:** contraste do `text-brand-blue` em textos pequenos ("eyebrows") está abaixo do mínimo AA — é uma cor de marca usada em várias páginas, não deve ser alterada sem validação visual.
+
+---
+
 ## 🔲 BACKLOG — Pendentes prioritários
 
 | # | Tarefa | Módulo | Observação |
 |---|--------|--------|------------|
-| 1 | Rodar `ALTER TABLE properties ADD COLUMN source VARCHAR(20) NOT NULL DEFAULT 'AGENT'` no phpMyAdmin | DB | Desbloqueia tags de origem |
-| 2 | Rodar `npx prisma generate` após o ALTER TABLE | DB | Desbloqueia Prisma client atualizado |
-| 3 | Edge Function / cron job para sync SimplyRETS (4h) | M06 | Semana 8 |
-| 4 | Conformidade Stellar MLS (atribuição obrigatória nas listagens) | M06 | Semana 8 |
-| 5 | Documentação técnica módulo 06 | M06 | Semana 8 |
-| 6 | Testes E2E com Playwright | M10 | Semana 10 |
-| 7 | Roteiro do screencast de treinamento para Jales | M10 | Semana 10 |
-| 8 | Setup Hostinger produção + variáveis de ambiente | M10 | Semana 10 |
-| 9 | Todos os itens BRANDING PENDENTE | M01 | Aguardando designer |
+| 1 | Enviar questionário-cliente-4rivers.html para o Jales e aguardar resposta | M01 | Popula páginas Sobre, Time, M/V/V |
+| 2 | Edge Function / cron job para sync SimplyRETS (4h) | M06 | Aguardando credenciais SimplyRETS |
+| 3 | Conformidade Stellar MLS (atribuição obrigatória nas listagens) | M06 | Depende do item 2 |
+| 4 | Documentação técnica módulo 06 | M06 | Depende do item 2 |
+| 5 | Fotos reais (hoje são Unsplash/ui-avatars) | M01 | Aguardando cliente |
+| 6 | Telefone/email reais no Contato | M01 | Aguardando cliente |
+| 7 | Decisão de contraste do `brand-blue` em textos pequenos | M01 | Aguardando validação visual do cliente |
+| 8 | Migrar para Hostinger (se o cliente preferir ao Vercel+TiDB atual) | M10 | Hoje já está em produção real no Vercel |
+| 9 | Gravar o screencast seguindo o roteiro já pronto | M10 | Roteiro em `roteiro-screencast-4rivers.md` |
 
 ---
 

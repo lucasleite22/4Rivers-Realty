@@ -79,7 +79,7 @@ export default function AdminPropertiesPage() {
             Export
           </button>
           <Link href="/admin/properties/new"
-            className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-dark font-barlow font-semibold text-sm rounded-lg hover:opacity-90 transition">
+            className="flex items-center gap-2 px-4 py-2 bg-brand-blue text-dark-navy font-barlow font-semibold text-sm rounded-lg hover:opacity-90 transition">
             <Plus className="w-4 h-4" />
             New Property
           </Link>
@@ -93,7 +93,7 @@ export default function AdminPropertiesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by title, city or county…"
-          className="w-full max-w-sm px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white placeholder-white/30 focus:outline-none focus:border-cyan-500/50"
+          className="w-full max-w-sm px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-blue/50"
         />
       </div>
 

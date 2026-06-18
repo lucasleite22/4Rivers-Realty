@@ -100,7 +100,7 @@ export default function CountdownTimer({
   return (
     <div className={`flex flex-col items-center gap-4 ${className}`}>
       {label && (
-        <p className="font-barlow text-sm font-semibold tracking-[0.3em] uppercase text-cyan-brand">
+        <p className="font-barlow text-sm font-semibold tracking-[0.3em] uppercase text-brand-blue">
           {label}
         </p>
       )}

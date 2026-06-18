@@ -74,8 +74,8 @@ export default function KanbanCard({ lead, onClick }: Props) {
       style={style}
       {...attributes}
       className={`relative bg-white rounded-xl p-4 shadow-sm border border-gray-100
-        hover:border-cyan-brand/40 hover:shadow-md transition-all select-none
-        ${isDragging ? 'ring-2 ring-cyan-brand shadow-xl z-50 cursor-grabbing' : 'cursor-grab'}`}
+        hover:border-brand-blue/40 hover:shadow-md transition-all select-none
+        ${isDragging ? 'ring-2 ring-brand-blue shadow-xl z-50 cursor-grabbing' : 'cursor-grab'}`}
       onClick={handleClick}
       role="button"
       tabIndex={0}
@@ -109,7 +109,7 @@ export default function KanbanCard({ lead, onClick }: Props) {
             href={`tel:${lead.phone}`}
             onPointerDown={stop}
             onClick={stop}
-            className="flex items-center gap-1 font-barlow text-xs text-gray-500 hover:text-cyan-brand transition-colors"
+            className="flex items-center gap-1 font-barlow text-xs text-gray-500 hover:text-brand-blue transition-colors"
             aria-label={`Call ${lead.name}`}
           >
             <Phone className="w-3 h-3" />
@@ -121,7 +121,7 @@ export default function KanbanCard({ lead, onClick }: Props) {
             href={`mailto:${lead.email}`}
             onPointerDown={stop}
             onClick={stop}
-            className="flex items-center gap-1 font-barlow text-xs text-gray-500 hover:text-cyan-brand transition-colors"
+            className="flex items-center gap-1 font-barlow text-xs text-gray-500 hover:text-brand-blue transition-colors"
             aria-label={`Email ${lead.name}`}
           >
             <Mail className="w-3 h-3" />

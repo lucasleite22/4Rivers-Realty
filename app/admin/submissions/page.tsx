@@ -252,7 +252,7 @@ export default function SubmissionsPage() {
                         <button
                           onClick={() => approve(lead.id)}
                           disabled={approvingId === lead.id}
-                          className="flex items-center gap-1.5 px-4 py-2 bg-cyan-500 text-dark font-barlow font-semibold text-sm rounded-lg hover:opacity-90 transition disabled:opacity-50"
+                          className="flex items-center gap-1.5 px-4 py-2 bg-brand-blue text-dark-navy font-barlow font-semibold text-sm rounded-lg hover:opacity-90 transition disabled:opacity-50"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
                           {approvingId === lead.id ? 'Creating…' : 'Approve → Create Listing'}

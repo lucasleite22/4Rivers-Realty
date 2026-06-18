@@ -133,7 +133,7 @@ export default function ListPropertyPage() {
           <h1 className="font-cormorant font-bold text-5xl sm:text-6xl text-white leading-tight mb-5">
             List Your Property
             <br />
-            <span className="text-[#00aeef]">with 4Rivers Realty</span>
+            <span className="text-brand-blue">with 4Rivers Realty</span>
           </h1>
           <p className="font-barlow text-white/70 text-lg max-w-2xl mx-auto">
             We connect horse farms, ranches, and rural properties with qualified buyers across North Central Florida. Submit your property and our team takes care of the rest.
@@ -145,7 +145,7 @@ export default function ListPropertyPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <p className="font-barlow text-[#00aeef] text-sm font-semibold tracking-[0.3em] uppercase mb-3">
+            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
               Simple Process
             </p>
             <h2 className="font-cormorant font-bold text-4xl text-navy">
@@ -174,7 +174,7 @@ export default function ListPropertyPage() {
       </section>
 
       {/* Form */}
-      <section className="py-20 bg-site-bg">
+      <section className="py-20 bg-off-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-10">
             <h2 className="font-cormorant font-bold text-3xl text-navy mb-2">
@@ -208,23 +208,23 @@ export default function ListPropertyPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2">
                     <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">
-                      Full Name <span className="text-[#00aeef]">*</span>
+                      Full Name <span className="text-brand-blue">*</span>
                     </label>
                     <input required value={form.name} onChange={(e) => set('name', e.target.value)}
                       placeholder="John Smith"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20" />
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
                   </div>
                   <div>
-                    <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Email <span className="text-[#00aeef]">*</span></label>
+                    <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Email <span className="text-brand-blue">*</span></label>
                     <input required type="email" value={form.email} onChange={(e) => set('email', e.target.value)}
                       placeholder="john@example.com"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20" />
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
                   </div>
                   <div>
-                    <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Phone <span className="text-[#00aeef]">*</span></label>
+                    <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Phone <span className="text-brand-blue">*</span></label>
                     <input required type="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)}
                       placeholder="(352) 000-0000"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20" />
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
                   </div>
                 </div>
               </div>
@@ -234,9 +234,9 @@ export default function ListPropertyPage() {
                 <p className="font-barlow text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Property Details</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Property Type <span className="text-[#00aeef]">*</span></label>
+                    <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Property Type <span className="text-brand-blue">*</span></label>
                     <select required value={form.propertyType} onChange={(e) => set('propertyType', e.target.value)}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy bg-white focus:outline-none focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20">
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy bg-white focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20">
                       <option value="">Select type…</option>
                       {['Horse Farm', 'Ranch', 'Residential', 'Commercial', 'Land'].map((t) => (
                         <option key={t} value={t}>{t}</option>
@@ -247,31 +247,31 @@ export default function ListPropertyPage() {
                     <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">County</label>
                     <input value={form.county} onChange={(e) => set('county', e.target.value)}
                       placeholder="e.g. Marion County"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20" />
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Property Address <span className="text-[#00aeef]">*</span></label>
+                    <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Property Address <span className="text-brand-blue">*</span></label>
                     <input required value={form.address} onChange={(e) => set('address', e.target.value)}
                       placeholder="Street address or parcel description"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20" />
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
                   </div>
                   <div>
                     <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Total Acreage</label>
                     <input type="number" min="0" value={form.acreage} onChange={(e) => set('acreage', e.target.value)}
                       placeholder="e.g. 50"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20" />
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
                   </div>
                   <div>
                     <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Asking Price (USD)</label>
                     <input type="number" min="0" value={form.askingPrice} onChange={(e) => set('askingPrice', e.target.value)}
                       placeholder="e.g. 1500000"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20" />
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
                   </div>
                   <div className="sm:col-span-2">
                     <label className="font-barlow text-sm font-semibold text-navy block mb-1.5">Additional Details</label>
                     <textarea rows={4} value={form.notes} onChange={(e) => set('notes', e.target.value)}
                       placeholder="Describe the property — improvements, infrastructure, water, road access, timeline, etc."
-                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-[#00aeef] focus:ring-2 focus:ring-[#00aeef]/20 resize-none" />
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 font-barlow text-sm text-navy placeholder-gray-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 resize-none" />
                   </div>
                 </div>
               </div>
@@ -284,14 +284,14 @@ export default function ListPropertyPage() {
                 {/* Drop zone */}
                 {previews.length < 8 && (
                   <div
-                    className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center cursor-pointer hover:border-[#00aeef]/60 hover:bg-[#00aeef]/5 transition-colors"
+                    className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center cursor-pointer hover:border-brand-blue/60 hover:bg-brand-blue/5 transition-colors"
                     onClick={() => fileInputRef.current?.click()}
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => { e.preventDefault(); handleFiles(e.dataTransfer.files) }}
                   >
                     <Upload className="w-7 h-7 text-gray-300 mx-auto mb-2" />
                     <p className="font-barlow text-sm text-gray-400">
-                      <span className="font-semibold text-[#00aeef]">Click to upload</span> or drag and drop
+                      <span className="font-semibold text-brand-blue">Click to upload</span> or drag and drop
                     </p>
                     <input
                       ref={fileInputRef}
@@ -329,7 +329,7 @@ export default function ListPropertyPage() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="aspect-square rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center hover:border-[#00aeef]/60 transition-colors"
+                        className="aspect-square rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center hover:border-brand-blue/60 transition-colors"
                       >
                         <ImageIcon className="w-5 h-5 text-gray-300" />
                       </button>
@@ -341,7 +341,7 @@ export default function ListPropertyPage() {
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full py-4 bg-navy text-white font-barlow font-semibold rounded-lg hover:bg-[#00aeef] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-navy text-white font-barlow font-semibold rounded-lg hover:bg-brand-blue transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {status === 'loading' ? 'Submitting…' : (<>Submit Property <ArrowRight className="w-4 h-4" /></>)}
               </button>

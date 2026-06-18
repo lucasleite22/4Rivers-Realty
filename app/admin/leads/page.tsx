@@ -39,7 +39,7 @@ export default function AdminLeadsPage() {
         </div>
         <button
           onClick={downloadExport}
-          className="flex items-center gap-2 px-4 py-2 bg-cyan-brand text-dark font-barlow font-semibold text-sm rounded-lg hover:opacity-90 transition"
+          className="flex items-center gap-2 px-4 py-2 bg-brand-blue text-dark-navy font-barlow font-semibold text-sm rounded-lg hover:opacity-90 transition"
         >
           <Download className="w-4 h-4" />
           Export Excel

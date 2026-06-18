@@ -74,7 +74,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${barlow.variable}`}>
-      <body className="font-barlow bg-site-bg text-dark antialiased">
+      <body className="font-barlow bg-off-white text-dark-navy antialiased">
         <PublicShell>{children}</PublicShell>
       </body>
     </html>

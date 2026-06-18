@@ -8,7 +8,7 @@ import type { PropertyWithImages } from '@/types/properties'
 const MapClient = dynamic(() => import('./MapClient'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-site-bg animate-pulse flex items-center justify-center">
+    <div className="w-full h-full bg-off-white animate-pulse flex items-center justify-center">
       <p className="font-barlow text-sm text-navy/40">Loading map…</p>
     </div>
   ),

@@ -27,7 +27,7 @@ export default function PropertyCard({ property }: Props) {
       href={`/properties/${property.id}`}
       className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
     >
-      <div className="relative h-52 bg-site-bg">
+      <div className="relative h-52 bg-off-white">
         {cover ? (
           <Image src={cover} alt={property.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover" />
         ) : (
@@ -41,7 +41,7 @@ export default function PropertyCard({ property }: Props) {
       </div>
 
       <div className="p-4">
-        <h3 className="font-cormorant text-navy text-xl group-hover:text-cyan-brand transition-colors line-clamp-1">
+        <h3 className="font-cormorant text-navy text-xl group-hover:text-brand-blue transition-colors line-clamp-1">
           {property.title}
         </h3>
         <p className="font-barlow text-sm text-gray-500 mt-1">

@@ -12,7 +12,7 @@ interface PreviewFile {
 
 type Status = 'idle' | 'loading' | 'error'
 
-const INPUT = 'w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white placeholder-white/30 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30'
+const INPUT = 'w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-blue/50 focus:ring-1 focus:ring-brand-blue/30'
 const LABEL = 'font-barlow text-xs font-semibold text-white/50 uppercase tracking-widest block mb-1.5'
 
 export default function NewPropertyPage() {
@@ -232,7 +232,7 @@ export default function NewPropertyPage() {
                     role="checkbox"
                     aria-checked={!!form[field]}
                     onClick={() => set(field, !form[field])}
-                    className={`w-10 h-6 rounded-full transition-colors ${form[field] ? 'bg-cyan-500' : 'bg-white/10'} relative flex-shrink-0`}
+                    className={`w-10 h-6 rounded-full transition-colors ${form[field] ? 'bg-brand-blue' : 'bg-white/10'} relative flex-shrink-0`}
                   >
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${form[field] ? 'left-5' : 'left-1'}`} />
                   </div>
@@ -252,7 +252,7 @@ export default function NewPropertyPage() {
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => { e.preventDefault(); handleFiles(e.dataTransfer.files) }}
-                className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center cursor-pointer hover:border-cyan-500/40 hover:bg-white/3 transition-colors mb-4"
+                className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center cursor-pointer hover:border-brand-blue/40 hover:bg-white/3 transition-colors mb-4"
               >
                 <Upload className="w-7 h-7 text-white/20 mx-auto mb-2" />
                 <p className="font-barlow text-sm text-white/30">
@@ -276,7 +276,7 @@ export default function NewPropertyPage() {
                       <X className="w-3.5 h-3.5" />
                     </button>
                     {idx === 0 && (
-                      <span className="absolute bottom-1 left-1 font-barlow text-[10px] bg-cyan-500/80 text-white px-1.5 py-0.5 rounded">
+                      <span className="absolute bottom-1 left-1 font-barlow text-[10px] bg-brand-blue/80 text-white px-1.5 py-0.5 rounded">
                         Cover
                       </span>
                     )}
@@ -284,7 +284,7 @@ export default function NewPropertyPage() {
                 ))}
                 {previews.length < 20 && (
                   <button type="button" onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square rounded-lg border-2 border-dashed border-white/10 flex items-center justify-center hover:border-cyan-500/40 transition-colors">
+                    className="aspect-square rounded-lg border-2 border-dashed border-white/10 flex items-center justify-center hover:border-brand-blue/40 transition-colors">
                     <ImageIcon className="w-5 h-5 text-white/20" />
                   </button>
                 )}
@@ -301,7 +301,7 @@ export default function NewPropertyPage() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="px-8 py-2.5 bg-cyan-500 text-dark font-barlow font-semibold text-sm rounded-lg hover:opacity-90 transition disabled:opacity-50"
+              className="px-8 py-2.5 bg-brand-blue text-dark-navy font-barlow font-semibold text-sm rounded-lg hover:opacity-90 transition disabled:opacity-50"
             >
               {status === 'loading' ? (previews.length > 0 ? 'Uploading…' : 'Creating…') : 'Create Property'}
             </button>

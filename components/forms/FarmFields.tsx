@@ -63,7 +63,7 @@ export default function FarmFields({ value, onChange }: Props) {
               type="checkbox"
               checked={data[key] as boolean}
               onChange={(e) => update(key, e.target.checked as FarmData[typeof key])}
-              className="accent-cyan-brand"
+              className="accent-brand-blue"
             />
             {label}
           </label>
@@ -83,4 +83,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const inputCls =
-  'w-full border border-navy/20 rounded-lg px-3 py-2 font-barlow text-navy focus:outline-none focus:border-cyan-brand'
+  'w-full border border-navy/20 rounded-lg px-3 py-2 font-barlow text-navy focus:outline-none focus:border-brand-blue'
