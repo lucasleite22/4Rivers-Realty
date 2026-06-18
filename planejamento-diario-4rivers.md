@@ -182,6 +182,48 @@
 
 ---
 
+## ✅ IMPLEMENTADO — Sprint 18/06/2026 (Dia 14)
+
+### Redesign visual da Home (inspirado em jaywest.ca)
+
+| Entregável | Detalhes | Status |
+|------------|----------|--------|
+| `HeroMedia.tsx` | Vídeo de fundo opcional com fallback automático para imagem (`fs.existsSync` no build); ativa sozinho quando o cliente enviar `public/videos/hero-ranch.mp4` | ✅ |
+| Hero da Home redesenhado | Painel de texto sólido e compacto sobre o vídeo/imagem (em vez de gradiente full-bleed), badge de marca mantido | ✅ |
+| `CircleFeature.tsx` + seção "Como Ajudamos" | 3 blocos de foto circular sobrepondo a base do hero | ✅ |
+| Depoimento em destaque | Foto circular grande ao lado da citação em itálico (substituindo os 3 cards iguais) | ✅ |
+| `PropertyListRow.tsx` + Featured Properties | Lista horizontal (foto + specs com ícones + CTA) substitui o grid de 3 cards na Home; `/properties` continua em grid | ✅ |
+| Acessibilidade | `prefers-reduced-motion: reduce` oculta o vídeo decorativo, mantém o poster estático | ✅ |
+| Fix: foto de vaca no bloco "Work With Locals" | Substituída por foto de rancho já validada (mesma usada no card Silver Creek Farm) | ✅ |
+| Build, tipo-checagem e deploy | `tsc --noEmit` + `next build` limpos, mesmo bundle size; deploy produção Vercel confirmado | ✅ |
+
+> **Pendente do cliente:** arquivo de vídeo real do hero (`hero-ranch.mp4`) — instruções já deixadas em `public/videos/.gitkeep`.
+> Fase 2 (mesmo tratamento visual em `/about`, `/properties`, `/contact`, `/launches`, `/list-property`) ainda não iniciada — aguardando aprovação do cliente sobre o resultado na Home.
+
+### Decisão registrada: Mapa (Leaflet vs. Google Maps API)
+Mantido **react-leaflet + OpenStreetMap** (gratuito, já funcional). Migrar para Google Maps API traria satélite/Street View melhores, mas exige billing + API key + mudanças de CSP — só vale a pena se Street View/satélite de alta resolução for um diferencial de venda explícito do cliente.
+
+---
+
+## 📈 Curva S — Progresso Planejado vs. Real
+
+> **Metodologia:** progresso real = média ponderada de conclusão dos 8 módulos (M01–M08, 12.5% cada). Progresso planejado = linear ao longo das 10 semanas (cronograma original). Atualizado em 18/06/2026.
+
+| Semana | Data referência | Planejado (%) | Real (%) | Observação |
+|--------|------------------|----------------|----------|------------|
+| S1 | 09/06 | 10% | 15% | Setup + base adiantados |
+| S1→S2 | 09/06 (sprint) | — | 70% | Sprint grande: M05 Admin, M07 CRM, M08 Leads entregues fora de ordem |
+| S2 | 16/06 | 20% | 80% | DB real (TiDB), branding aplicado, M01 (Home/Sobre/Contato), Lighthouse, Playwright |
+| **Hoje** | **18/06** | **~21%** | **86%** | Redesign jaywest.ca na Home + fix imagem |
+| S3 | 23/06 | 30% | 86% | *(projeção — sem trabalho extra agendado)* |
+| S4–S6 | 30/06–14/07 | 40–70% | 86% | Patamar mantido até desbloqueio do M06 |
+| S7–S8 | 21/07–28/07 | 80–90% | 86%→? | M06 (MLS/IDX) depende de credenciais SimplyRETS do cliente — único módulo a 0% |
+| S9–S10 | 04/08–14/08 | 90–100% | →100% | QA final, deploy produção, screencast — projeção pós-desbloqueio do M06 |
+
+**Leitura:** o projeto está ~65 pontos percentuais adiantado do cronograma calendário, puxado pelos sprints intensivos de 09/06, 16/06 e 18/06. O único gargalo real é o **Módulo 06 (MLS/IDX)**, 100% bloqueado por uma dependência externa (credenciais SimplyRETS) — não é um risco de execução, é uma espera de terceiros.
+
+---
+
 ## ✅ IMPLEMENTADO — Sprint 16/06/2026
 
 ### Deploy & Infraestrutura
