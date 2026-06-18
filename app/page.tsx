@@ -134,56 +134,73 @@ export default function HomePage() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[100vh] flex items-end overflow-hidden">
         <Image
-          src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1600&q=85"
+          src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&q=85"
           alt="Horse farm at sunrise in Ocala, Florida"
           fill
           sizes="100vw"
           className="object-cover object-center"
           priority
         />
-        <div className="absolute inset-0 bg-dark-navy/75" />
+        {/* Directional grade — heavier from the bottom-left where the copy sits, clear toward the upper-right sky */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-dark-navy via-dark-navy/55 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-dark-navy/90 via-transparent to-transparent" />
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase mb-6">
-            Ocala · North Central Florida
+        {/* Brand mark, top-left — establishes the brand before any copy is read */}
+        <div className="absolute top-28 left-4 sm:left-6 lg:left-8 z-10 flex items-center gap-3">
+          <Image
+            src="/images/logo-icon.png"
+            alt="4Rivers Realty"
+            width={40}
+            height={40}
+            className="h-10 w-10 object-contain"
+          />
+          <div className="h-8 w-px bg-white/25" />
+          <p className="font-barlow text-white/70 text-xs font-semibold tracking-[0.25em] uppercase">
+            Est. North Central Florida
           </p>
-          <h1 className="font-cormorant font-bold text-5xl sm:text-6xl md:text-7xl text-white leading-tight mb-6">
-            Find Your Perfect Piece
-            <br />
-            <span className="text-brand-blue">of Florida</span>
-          </h1>
-          <p className="font-barlow text-lg sm:text-xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Premium horse farms, ranches, and rural properties in Ocala and
-            North Central Florida
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/properties"
-              className="px-8 py-4 bg-navy text-white font-barlow font-semibold rounded-md hover:bg-brand-blue transition-colors inline-flex items-center justify-center gap-2"
-            >
-              View Properties <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/contact"
-              className="px-8 py-4 border-2 border-white/60 text-white font-barlow font-semibold rounded-md hover:bg-white hover:text-navy transition-colors inline-flex items-center justify-center"
-            >
-              Schedule a Consultation
-            </Link>
-          </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/40 animate-bounce">
-          <div className="w-px h-8 bg-white/20" />
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24">
+          <div className="max-w-3xl">
+            <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase mb-6">
+              Ocala · North Central Florida
+            </p>
+            <h1 className="font-cormorant font-bold text-6xl sm:text-7xl md:text-8xl text-white leading-[0.95] mb-6">
+              Land Built for
+              <br />
+              <span className="text-brand-blue">a Florida Life</span>
+            </h1>
+            <p className="font-barlow text-lg sm:text-xl text-white/80 max-w-xl mb-10 leading-relaxed">
+              Horse farms, working ranches, and rural estates across Marion
+              County — handled by brokers who were raised on this land.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/properties"
+                className="px-8 py-4 bg-brand-blue text-dark-navy font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors inline-flex items-center justify-center gap-2"
+              >
+                View Properties <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/contact"
+                className="px-8 py-4 border-2 border-white/60 text-white font-barlow font-semibold rounded-md hover:bg-white hover:text-navy transition-colors inline-flex items-center justify-center"
+              >
+                Schedule a Consultation
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── Stats Bar ── */}
-      <section className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <AnimatedSection stagger className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      {/* ── Stats Bar — floats over the hero/content seam for depth ── */}
+      <section className="relative bg-white pb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimatedSection
+            stagger
+            className="relative -mt-12 sm:-mt-16 bg-white rounded-2xl shadow-2xl border border-gray-100 grid grid-cols-2 md:grid-cols-4 gap-8 px-8 py-10 sm:py-12"
+          >
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="w-8 h-0.5 bg-brand-blue mx-auto mb-4" />
