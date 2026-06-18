@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, MapPin, Ruler, Star, Award, Handshake, Users } from 'lucide-react'
+import { ArrowRight, MapPin, Star, Award, Handshake, Users } from 'lucide-react'
 import AnimatedSection from '@/components/ui/AnimatedSection'
+import HeroMedia from '@/components/ui/HeroMedia'
+import CircleFeature from '@/components/ui/CircleFeature'
+import PropertyListRow from '@/components/properties/PropertyListRow'
 
 export const metadata: Metadata = {
   title: 'Horse Farms & Rural Properties in Ocala, FL',
@@ -54,6 +57,24 @@ const featuredProperties = [
     image:
       'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
     slug: 'cypress-meadows',
+  },
+]
+
+const circleFeatures = [
+  {
+    image: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=500&q=80',
+    title: 'Explore Properties',
+    description: 'Browse active horse farms, ranches, and rural land across Marion County.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80',
+    title: 'Sell Your Land',
+    description: 'Free valuation and a direct line to our network of qualified buyers.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1472745433479-4556f22e32c2?w=500&q=80',
+    title: 'Work With Locals',
+    description: '20+ years on this land — brokers who know every road and creek.',
   },
 ]
 
@@ -135,61 +156,58 @@ export default function HomePage() {
     <>
       {/* ── Hero ── */}
       <section className="relative min-h-[100vh] flex items-end overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&q=85"
+        <HeroMedia
+          videoSrc="/videos/hero-ranch.mp4"
+          posterSrc="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&q=85"
           alt="Horse farm at sunrise in Ocala, Florida"
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-          priority
         />
-        {/* Directional grade — heavier from the bottom-left where the copy sits, clear toward the upper-right sky */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-dark-navy via-dark-navy/55 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-dark-navy/90 via-transparent to-transparent" />
+        {/* Light bottom grade only — keeps the photo/video visible, the solid panel below carries legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-dark-navy/50 via-transparent to-transparent" />
 
         {/* Brand mark, top-left — establishes the brand before any copy is read */}
-        <div className="absolute top-28 left-4 sm:left-6 lg:left-8 z-10 flex items-center gap-3">
+        <div className="absolute top-28 left-4 sm:left-6 lg:left-8 z-10 flex items-center gap-3 bg-dark-navy/50 backdrop-blur-sm rounded-full pl-3 pr-5 py-2">
           <Image
             src="/images/logo-icon.png"
             alt="4Rivers Realty"
             width={40}
             height={40}
-            className="h-10 w-10 object-contain"
+            className="h-8 w-8 object-contain"
           />
-          <div className="h-8 w-px bg-white/25" />
-          <p className="font-barlow text-white/70 text-xs font-semibold tracking-[0.25em] uppercase">
+          <div className="h-6 w-px bg-white/25" />
+          <p className="font-barlow text-white/80 text-xs font-semibold tracking-[0.25em] uppercase">
             Est. North Central Florida
           </p>
         </div>
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24">
-          <div className="max-w-3xl">
+          {/* Compact, opaque panel — text stays legible while the image breathes around it */}
+          <div className="max-w-2xl bg-dark-navy/85 backdrop-blur-sm rounded-2xl p-8 sm:p-10">
             <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase mb-6">
               Ocala · North Central Florida
             </p>
-            <h1 className="font-cormorant font-bold text-6xl sm:text-7xl md:text-8xl text-white leading-[0.95] mb-6">
+            <h1 className="font-cormorant font-bold text-5xl sm:text-6xl md:text-7xl text-white leading-[0.95] mb-6">
               Land Built for
               <br />
               <span className="text-brand-blue">a Florida Life</span>
             </h1>
-            <p className="font-barlow text-lg sm:text-xl text-white/80 max-w-xl mb-10 leading-relaxed">
+            <p className="font-barlow text-lg sm:text-xl text-white/80 max-w-xl leading-relaxed">
               Horse farms, working ranches, and rural estates across Marion
               County — handled by brokers who were raised on this land.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/properties"
-                className="px-8 py-4 bg-brand-blue text-dark-navy font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors inline-flex items-center justify-center gap-2"
-              >
-                View Properties <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/contact"
-                className="px-8 py-4 border-2 border-white/60 text-white font-barlow font-semibold rounded-md hover:bg-white hover:text-navy transition-colors inline-flex items-center justify-center"
-              >
-                Schedule a Consultation
-              </Link>
-            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            <Link
+              href="/properties"
+              className="px-8 py-4 bg-brand-blue text-dark-navy font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors inline-flex items-center justify-center gap-2"
+            >
+              View Properties <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/contact"
+              className="px-8 py-4 border-2 border-white/60 text-white font-barlow font-semibold rounded-md hover:bg-white hover:text-navy transition-colors inline-flex items-center justify-center"
+            >
+              Schedule a Consultation
+            </Link>
           </div>
         </div>
       </section>
@@ -216,6 +234,17 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── How We Help — circular photo motif ── */}
+      <section className="pt-20 pb-8 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AnimatedSection stagger className="grid grid-cols-1 sm:grid-cols-3 gap-12">
+            {circleFeatures.map((feature) => (
+              <CircleFeature key={feature.title} {...feature} />
+            ))}
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* ── Featured Properties ── */}
       <section className="py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -231,51 +260,18 @@ export default function HomePage() {
             </p>
           </div>
 
-          <AnimatedSection stagger className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <AnimatedSection stagger>
             {featuredProperties.map((prop) => (
-              <article
+              <PropertyListRow
                 key={prop.slug}
-                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group border border-gray-100"
-              >
-                <div className="relative h-60 overflow-hidden">
-                  <Image
-                    src={prop.image}
-                    alt={prop.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <span className="absolute top-4 left-4 bg-dark-navy text-white font-barlow text-xs font-semibold px-3 py-1 rounded-full">
-                    {prop.type}
-                  </span>
-                </div>
-                <div className="p-6">
-                  <h3 className="font-cormorant font-bold text-2xl text-dark-navy">
-                    {prop.name}
-                  </h3>
-                  <div className="flex items-center gap-1 text-gray-400 mt-1">
-                    <MapPin className="w-3.5 h-3.5" />
-                    <span className="font-barlow text-sm">{prop.city}, FL</span>
-                  </div>
-                  <div className="flex items-center gap-4 mt-4 text-sm font-barlow text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <Ruler className="w-3.5 h-3.5 text-brand-blue" />
-                      {prop.acres} acres
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mt-5 pt-5 border-t border-gray-100">
-                    <span className="font-cormorant font-bold text-2xl text-dark-navy">
-                      {formatPrice(prop.price)}
-                    </span>
-                    <Link
-                      href="/properties"
-                      className="font-barlow text-sm font-semibold text-brand-blue hover:text-navy transition-colors flex items-center gap-1"
-                    >
-                      View All <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              </article>
+                name={prop.name}
+                type={prop.type}
+                city={prop.city}
+                acres={prop.acres}
+                price={formatPrice(prop.price)}
+                image={prop.image}
+                href="/properties"
+              />
             ))}
           </AnimatedSection>
 
@@ -335,8 +331,31 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <AnimatedSection stagger className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((t) => (
+          {/* Featured testimonial — large circular photo beside the quote */}
+          <AnimatedSection className="bg-off-white rounded-2xl p-8 sm:p-12 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-8 items-center">
+              <Image
+                src={`https://ui-avatars.com/api/?name=${testimonials[0].avatar}&background=252859&color=ffffff&size=160&bold=true`}
+                alt={testimonials[0].name}
+                width={140}
+                height={140}
+                className="rounded-full mx-auto sm:mx-0 shadow-lg border-4 border-white"
+              />
+              <div>
+                <StarRating />
+                <blockquote className="font-cormorant text-2xl sm:text-3xl text-dark-navy/90 mt-4 leading-relaxed italic">
+                  "{testimonials[0].quote}"
+                </blockquote>
+                <p className="font-barlow font-semibold text-dark-navy text-sm mt-5">
+                  {testimonials[0].name}
+                  <span className="text-gray-400 font-normal"> · {testimonials[0].city}, FL</span>
+                </p>
+              </div>
+            </div>
+          </AnimatedSection>
+
+          <AnimatedSection stagger className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {testimonials.slice(1).map((t) => (
               <div
                 key={t.name}
                 className="bg-off-white p-8 rounded-xl border border-gray-100"

@@ -38,6 +38,13 @@ html {
   border-radius: 2px;
 }
 
+/* Decorative hero video is paused/hidden for users who opt out of motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-media {
+    display: none;
+  }
+}
+
 body {
   background-color: #ffffff;
   color: #181B3A;
