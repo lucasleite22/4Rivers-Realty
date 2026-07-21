@@ -102,7 +102,7 @@ export default function ContactPage() {
                   <div>
                     <p className="font-barlow font-semibold text-dark-navy text-sm">Address</p>
                     <p className="font-barlow text-gray-500 text-sm mt-0.5 leading-relaxed">
-                      Ocala, FL 34470<br />Marion County, Florida
+                      8055 CR 674<br />Bushnell, Florida 33513
                     </p>
                   </div>
                 </li>
@@ -111,9 +111,9 @@ export default function ContactPage() {
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-barlow font-semibold text-dark-navy text-sm">Phone</p>
-                    <a href="tel:+13525550100" className="font-barlow text-gray-500 text-sm mt-0.5 hover:text-brand-blue transition-colors">
-                      (352) 555-0100
+                    <p className="font-barlow font-semibold text-dark-navy text-sm">Phone / WhatsApp</p>
+                    <a href="tel:+14077895260" className="font-barlow text-gray-500 text-sm mt-0.5 hover:text-brand-blue transition-colors">
+                      (407) 789-5260
                     </a>
                   </div>
                 </li>
@@ -123,8 +123,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-barlow font-semibold text-dark-navy text-sm">Email</p>
-                    <a href="mailto:info@4riversrealty.com" className="font-barlow text-gray-500 text-sm mt-0.5 hover:text-brand-blue transition-colors">
-                      info@4riversrealty.com
+                    <a href="mailto:Jalescastro@hotmail.com" className="font-barlow text-gray-500 text-sm mt-0.5 hover:text-brand-blue transition-colors">
+                      Jalescastro@hotmail.com
                     </a>
                   </div>
                 </li>
@@ -135,9 +135,9 @@ export default function ContactPage() {
                   <div>
                     <p className="font-barlow font-semibold text-dark-navy text-sm">Office Hours</p>
                     <p className="font-barlow text-gray-500 text-sm mt-0.5 leading-relaxed">
-                      Mon–Fri: 8:00am – 6:00pm<br />
-                      Saturday: 9:00am – 4:00pm<br />
-                      Sunday: By appointment
+                      Mon–Fri: 9:00am – 5:00pm<br />
+                      Inquiries are handled in the order received.<br />
+                      Weekend messages are answered as soon as possible.
                     </p>
                   </div>
                 </li>
@@ -147,8 +147,8 @@ export default function ContactPage() {
             {/* Map */}
             <div className="rounded-xl overflow-hidden shadow-sm border border-gray-100">
               <iframe
-                title="4Rivers Realty — Ocala, FL"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d55498.28520832027!2d-82.16069!3d29.18733!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88e834a19b3f9853%3A0x2b0f4b1dedd7ae2e!2sOcala%2C%20FL%2034470!5e0!3m2!1sen!2sus!4v1700000000000"
+                title="4Rivers Realty — Bushnell, FL"
+                src="https://www.google.com/maps?q=8055+CR+674,+Bushnell,+FL+33513&output=embed"
                 width="100%"
                 height="260"
                 style={{ border: 0 }}

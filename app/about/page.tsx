@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, Shield, Lightbulb, Heart } from 'lucide-react'
+import { ArrowRight, Shield, Lightbulb, Heart, MapPin, Mail, Phone, BadgeCheck } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'About Us',
@@ -16,43 +16,70 @@ export const metadata: Metadata = {
 
 const team = [
   {
-    name: 'Lucas Leite',
-    role: 'Founder & Principal Broker',
-    initials: 'LL',
-    bio: 'Born and raised in Ocala, Lucas founded 4Rivers Realty with one mission: to connect people with the land that suits their lifestyle. A licensed broker with 20+ years of experience, he brings unmatched local knowledge and genuine passion to every transaction.',
+    name: 'Talles Batista Menezes',
+    role: 'Realtor',
+    initials: 'TM',
+    email: 'Tallesbatistarealtor@gmail.com',
+    phone: '(321) 200-9620',
+    license: 'FL License #3631988',
+    specialties: ['Rural Properties', 'Ranches & Farms', 'Land Development'],
+    bio: 'Talles Batista é corretor de imóveis na Flórida e fundador do Ganhando na América, especializado em propriedades rurais, ranchos e investimentos imobiliários nos Estados Unidos.',
   },
   {
-    name: 'Lindoso',
-    role: 'Senior Agent',
-    initials: 'LN',
-    bio: 'With a background in equestrian management and over a decade in real estate, Lindoso is the go-to specialist for buyers seeking working horse farms and competition-ready facilities across Marion and Alachua counties.',
+    name: 'Bela Biet',
+    role: 'Real Estate Agent',
+    initials: 'BB',
+    email: 'bela4rivers@gmail.com',
+    phone: '(407) 415-2007',
+    license: 'FL License SL3635783',
+    specialties: [
+      'Investment Properties',
+      'Acreage & Land Opportunities',
+      'Luxury Homes',
+      'Ranch & Equestrian Properties',
+      'Farmhouses & Country Living',
+    ],
+    bio: "Born in Brazil and raised in the United States, I've spent over 10 years in real estate, and what I enjoy most is helping people navigate the process with confidence. Today, with 4 Rivers Realty, I specialize in rural Florida properties — from land and ranches to farmhouses — and bring experience in land transactions, tax deed auction opportunities, and making sure every detail and document is handled with care. Whether you're buying your first piece of land, searching for an investment opportunity, or transitioning from city living to the country, I'm here to guide you every step of the way.",
   },
   {
-    name: 'Luan',
-    role: 'Property Specialist',
-    initials: 'LU',
-    bio: 'Luan focuses on raw land acquisitions, ranch properties, and development opportunities throughout Levy and Citrus counties. His thorough due diligence and market analysis help buyers make confident, well-informed decisions.',
+    name: 'Rose Biet',
+    role: 'Real Estate Agent',
+    initials: 'RB',
+    email: 'rose4rivers@gmail.com',
+    phone: '(321) 234-1726',
+    license: 'FL License SL3295740',
+    specialties: [
+      'Residential Real Estate',
+      'First-Time Home Buyers',
+      'Investment Properties',
+      'Acreage & Land Opportunities',
+      'Ranch & Equestrian Properties',
+      'Farmhouses & Country Living',
+    ],
+    bio: 'As a FL licensed real estate professional since 2014, I am dedicated to helping clients make a smooth transition to country living throughout Central Florida. With experience in buying and selling residential properties, including knowledge of tax deed auction opportunities. I provide personalized guidance to explore the best opportunities for your lifestyle and long-term goals. My commitment is to make every step of your real estate journey seamless, informed, and rewarding.',
   },
 ]
 
 const values = [
   {
     icon: <Shield className="w-8 h-8" />,
-    title: 'Integrity',
-    description:
-      "We believe every client deserves honest advice, even when it means telling them what they don't want to hear. Our reputation was built on transparency, and we protect it with every transaction.",
+    title: 'Integridade',
+    description: 'Somos honestos com todas as nossas transações.',
   },
   {
-    icon: <Lightbulb className="w-8 h-8" />,
-    title: 'Expertise',
-    description:
-      'Rural real estate demands a different kind of knowledge — water rights, agricultural zoning, equestrian infrastructure, soil quality. Our team brings deep, specialized expertise to every listing and every search.',
+    icon: <MapPin className="w-8 h-8" />,
+    title: 'Expertise Local',
+    description: 'Somos bem ativos nas nossas áreas locais.',
   },
   {
     icon: <Heart className="w-8 h-8" />,
-    title: 'Dedication',
-    description:
-      "We don't just sell properties. We get to know your goals, your timeline, and your vision. From the first call to the final signature, we're fully committed to making your experience exceptional.",
+    title: 'Compromisso',
+    description: 'Só fechamos quando o cliente está 100% satisfeito.',
+  },
+  {
+    icon: <Lightbulb className="w-8 h-8" />,
+    title: 'Transparência',
+    description: 'Somos bem transparentes e comunicativos com nossos clientes.',
   },
 ]
 
@@ -129,9 +156,9 @@ export default function AboutPage() {
                   destinations in the country.
                 </p>
                 <p>
-                  Over two decades and $2 billion in transactions later, our
-                  commitment remains the same: local knowledge, honest guidance,
-                  and results you can count on.
+                  With over 10 years of experience, 57 closed sales, and $15.5M
+                  in total transaction volume, our commitment remains the same:
+                  local knowledge, honest guidance, and results you can count on.
                 </p>
               </div>
               <Link
@@ -151,7 +178,7 @@ export default function AboutPage() {
                 className="object-cover"
               />
               <div className="absolute bottom-6 left-6 bg-white rounded-xl p-5 shadow-lg max-w-[200px]">
-                <p className="font-cormorant font-bold text-3xl text-dark-navy">20+</p>
+                <p className="font-cormorant font-bold text-3xl text-dark-navy">10+</p>
                 <p className="font-barlow text-sm text-gray-500 mt-1">
                   Years serving North Central Florida
                 </p>
@@ -165,11 +192,8 @@ export default function AboutPage() {
       <section className="py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
-              The People Behind 4Rivers
-            </p>
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
-              Meet Our Team
+              Meet the <span className="text-brand-blue">Team</span>
             </h2>
             <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
               Each member of our team brings specialized knowledge and a genuine
@@ -202,6 +226,38 @@ export default function AboutPage() {
                   <p className="font-barlow text-sm text-gray-500 mt-4 leading-relaxed">
                     {member.bio}
                   </p>
+
+                  <div className="mt-5 pt-5 border-t border-gray-100 space-y-2">
+                    <a
+                      href={`mailto:${member.email}`}
+                      className="flex items-center gap-2 font-barlow text-sm text-gray-600 hover:text-brand-blue transition-colors"
+                    >
+                      <Mail className="w-4 h-4 text-brand-blue shrink-0" />
+                      {member.email}
+                    </a>
+                    <a
+                      href={`tel:${member.phone.replace(/\D/g, '')}`}
+                      className="flex items-center gap-2 font-barlow text-sm text-gray-600 hover:text-brand-blue transition-colors"
+                    >
+                      <Phone className="w-4 h-4 text-brand-blue shrink-0" />
+                      {member.phone}
+                    </a>
+                    <div className="flex items-center gap-2 font-barlow text-sm text-gray-600">
+                      <BadgeCheck className="w-4 h-4 text-brand-blue shrink-0" />
+                      {member.license}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {member.specialties.map((s) => (
+                      <span
+                        key={s}
+                        className="font-barlow text-xs text-dark-navy bg-off-white border border-gray-200 rounded-full px-3 py-1"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
@@ -209,31 +265,59 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Mission & Vision ── */}
+      <section className="py-28 bg-off-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="bg-white rounded-2xl p-10 shadow-sm border border-gray-100">
+              <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
+                Our Mission
+              </p>
+              <p className="font-cormorant text-2xl text-dark-navy leading-relaxed">
+                Our mission is to bring families who want to leave the rush of
+                the city and bring them to the tranquility of ranch life.
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl p-10 shadow-sm border border-gray-100">
+              <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
+                Our Vision
+              </p>
+              <p className="font-cormorant text-2xl text-dark-navy leading-relaxed">
+                Our vision is to be the go-to real estate company for Brazilians
+                looking to move to the United States and live outside the city.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Values ── */}
       <section className="py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
-              What We Stand For
-            </p>
+          <div className="flex items-end justify-between gap-8 mb-16 flex-wrap">
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
-              Our Values
+              What We Stand For
             </h2>
+            <p className="font-barlow text-gray-500 text-lg max-w-sm">
+              Four principles guide every property, every client, every deal.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="divide-y divide-gray-200 border-t border-b border-gray-200">
             {values.map((v) => (
               <div
                 key={v.title}
-                className="text-center px-8 py-10 rounded-2xl bg-off-white hover:shadow-md transition-shadow"
+                className="grid grid-cols-1 sm:grid-cols-[auto_1fr] items-start sm:items-center gap-x-8 gap-y-3 py-9"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-navy text-brand-blue rounded-2xl mb-6">
-                  {v.icon}
+                <div className="flex items-center gap-4 sm:w-56">
+                  <div className="flex items-center justify-center w-12 h-12 bg-navy text-brand-blue rounded-xl shrink-0">
+                    {v.icon}
+                  </div>
+                  <h3 className="font-cormorant font-bold text-2xl text-dark-navy">
+                    {v.title}
+                  </h3>
                 </div>
-                <h3 className="font-cormorant font-bold text-2xl text-dark-navy mb-4">
-                  {v.title}
-                </h3>
-                <p className="font-barlow text-sm text-gray-500 leading-relaxed">
+                <p className="font-barlow text-sm text-gray-500 leading-relaxed max-w-xl">
                   {v.description}
                 </p>
               </div>

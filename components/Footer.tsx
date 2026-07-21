@@ -50,7 +50,9 @@ export default function Footer() {
             {/* Social */}
             <div className="flex gap-4 mt-6">
               <a
-                href="#"
+                href="https://instagram.com/belabiet"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-brand-blue transition-colors"
                 aria-label="Instagram"
               >
@@ -104,30 +106,30 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3 font-barlow text-sm text-gray-400">
               <li className="leading-relaxed">
-                Ocala, FL 34470
+                8055 CR 674
                 <br />
-                Marion County, Florida
+                Bushnell, Florida 33513
               </li>
               <li>
                 <a
-                  href="tel:+13525550100"
+                  href="tel:+14077895260"
                   className="hover:text-brand-blue transition-colors"
                 >
-                  (352) 555-0100
+                  (407) 789-5260
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@4riversrealty.com"
+                  href="mailto:Jalescastro@hotmail.com"
                   className="hover:text-brand-blue transition-colors"
                 >
-                  info@4riversrealty.com
+                  Jalescastro@hotmail.com
                 </a>
               </li>
               <li className="text-gray-500 text-xs leading-relaxed">
-                Mon–Fri: 8am – 6pm
+                Mon–Fri: 9am – 5pm
                 <br />
-                Sat: 9am – 4pm
+                Weekend messages answered when possible
               </li>
             </ul>
           </div>

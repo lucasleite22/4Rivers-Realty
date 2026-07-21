@@ -21,9 +21,9 @@ export const metadata: Metadata = {
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const stats = [
-  { value: '150+', label: 'Properties Sold' },
-  { value: '20+', label: 'Years Experience' },
-  { value: '$2B+', label: 'In Transactions' },
+  { value: '57', label: 'Closed Sales' },
+  { value: '10+', label: 'Years Experience' },
+  { value: '$15.5M', label: 'In Transactions' },
   { value: '5-Star', label: 'Rated' },
 ]
 
@@ -74,7 +74,7 @@ const circleFeatures = [
   {
     image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=80',
     title: 'Work With Locals',
-    description: '20+ years on this land — brokers who know every road and creek.',
+    description: '10+ years on this land — brokers who know every road and creek.',
   },
 ]
 
@@ -83,7 +83,7 @@ const whyCards = [
     icon: <MapPin className="w-7 h-7" />,
     title: 'Local Expertise',
     description:
-      '20+ years living and working in Marion County. We know every road, every creek, and every corner of North Central Florida.',
+      '10+ years living and working in Marion County. We know every road, every creek, and every corner of North Central Florida.',
   },
   {
     icon: <Award className="w-7 h-7" />,
@@ -108,24 +108,10 @@ const whyCards = [
 const testimonials = [
   {
     quote:
-      "The best real estate experience I've had in Florida. They found us the perfect horse farm in under three months. Absolutely seamless from start to finish.",
-    name: 'James R.',
+      'We found our dream horse farm thanks to 4Rivers! Jales was incredibly knowledgeable and patient throughout the entire process.',
+    name: 'John & Mary S.',
     city: 'Ocala',
-    avatar: 'JR',
-  },
-  {
-    quote:
-      'Found our dream horse farm thanks to 4Rivers. Their local knowledge is unmatched — they knew about properties before they even hit the market.',
-    name: 'Sarah M.',
-    city: 'Gainesville',
-    avatar: 'SM',
-  },
-  {
-    quote:
-      'Professional, knowledgeable, and truly passionate about equestrian properties. They made a complex transaction feel simple.',
-    name: 'Robert T.',
-    city: 'Ocala',
-    avatar: 'RT',
+    avatar: 'JM',
   },
 ]
 
@@ -158,8 +144,8 @@ export default function HomePage() {
       <section className="relative min-h-[100vh] flex items-end overflow-hidden">
         <HeroMedia
           videoSrc="/videos/hero-ranch.mp4"
-          posterSrc="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&q=85"
-          alt="Horse farm at sunrise in Ocala, Florida"
+          posterSrc="/images/hero-1199-cr542g.jpg"
+          alt="Open pasture with mature oak trees at a Marion County, Florida property"
         />
         {/* Light bottom grade only — keeps the photo/video visible, the solid panel below carries legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-dark-navy/50 via-transparent to-transparent" />
@@ -249,14 +235,11 @@ export default function HomePage() {
       <section className="py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
-              Exclusive Listings
-            </p>
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
               Featured Properties
             </h2>
             <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
-              Handpicked estates and farms across Marion County and beyond
+              A hand-picked selection of exclusive listings — estates and farms across Marion County and beyond.
             </p>
           </div>
 
@@ -290,29 +273,36 @@ export default function HomePage() {
       <section className="py-28 bg-off-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
-              Our Difference
-            </p>
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
               Why 4Rivers Realty
             </h2>
+            <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
+              What sets us apart when it's time to buy or sell rural Florida land.
+            </p>
           </div>
 
-          <AnimatedSection stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {whyCards.map((card) => (
+          <AnimatedSection
+            stagger
+            className="grid grid-cols-1 sm:grid-cols-2 border border-gray-200 rounded-2xl overflow-hidden bg-white divide-y divide-gray-200 sm:divide-y-0"
+          >
+            {whyCards.map((card, i) => (
               <div
                 key={card.title}
-                className="text-center p-8 rounded-xl bg-white border border-gray-100 hover:border-brand-blue/30 hover:shadow-md transition-all duration-300 group"
+                className={`flex gap-5 p-10 ${
+                  i < whyCards.length - 2 ? 'sm:border-b sm:border-gray-200' : ''
+                } ${i % 2 === 0 ? 'sm:border-r sm:border-gray-200' : ''}`}
               >
-                <div className="inline-flex items-center justify-center w-14 h-14 bg-off-white text-brand-blue rounded-xl mb-5 group-hover:bg-navy group-hover:text-white transition-all duration-300">
+                <div className="flex items-center justify-center w-12 h-12 bg-off-white text-brand-blue rounded-xl shrink-0">
                   {card.icon}
                 </div>
-                <h3 className="font-cormorant font-bold text-xl text-dark-navy mb-3">
-                  {card.title}
-                </h3>
-                <p className="font-barlow text-sm text-gray-500 leading-relaxed">
-                  {card.description}
-                </p>
+                <div>
+                  <h3 className="font-cormorant font-bold text-xl text-dark-navy mb-2">
+                    {card.title}
+                  </h3>
+                  <p className="font-barlow text-sm text-gray-500 leading-relaxed">
+                    {card.description}
+                  </p>
+                </div>
               </div>
             ))}
           </AnimatedSection>
@@ -352,37 +342,6 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-          </AnimatedSection>
-
-          <AnimatedSection stagger className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {testimonials.slice(1).map((t) => (
-              <div
-                key={t.name}
-                className="bg-off-white p-8 rounded-xl border border-gray-100"
-              >
-                <StarRating />
-                <blockquote className="font-cormorant text-xl text-dark-navy/90 mt-5 leading-relaxed">
-                  "{t.quote}"
-                </blockquote>
-                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-200">
-                  <Image
-                    src={`https://ui-avatars.com/api/?name=${t.avatar}&background=252859&color=ffffff&size=48&bold=true`}
-                    alt={t.name}
-                    width={48}
-                    height={48}
-                    className="rounded-full"
-                  />
-                  <div>
-                    <p className="font-barlow font-semibold text-dark-navy text-sm">
-                      {t.name}
-                    </p>
-                    <p className="font-barlow text-xs text-gray-400">
-                      {t.city}, FL
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
           </AnimatedSection>
         </div>
       </section>

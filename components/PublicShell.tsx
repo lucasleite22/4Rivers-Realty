@@ -22,8 +22,8 @@ export default function PublicShell({ children }: { children: React.ReactNode })
       <main id="main-content">{children}</main>
       <Footer />
       <WhatsAppCTA
-        phone={process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? '13525550100'}
-        message="Hello! I found 4Rivers Realty online and I'm interested in your properties."
+        phone={process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? '14077895260'}
+        message="Hi! I am interested in working with you."
       />
     </>
   )
