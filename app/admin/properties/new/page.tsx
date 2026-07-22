@@ -14,6 +14,7 @@ type Status = 'idle' | 'loading' | 'error'
 
 const INPUT = 'w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-blue/50 focus:ring-1 focus:ring-brand-blue/30'
 const LABEL = 'font-barlow text-xs font-semibold text-white/50 uppercase tracking-widest block mb-1.5'
+const MAX_PHOTOS = 60
 
 export default function NewPropertyPage() {
   const router = useRouter()
@@ -47,7 +48,7 @@ export default function NewPropertyPage() {
     if (!files) return
     const incoming = Array.from(files)
       .filter((f) => f.type.startsWith('image/'))
-      .slice(0, 20 - previews.length)
+      .slice(0, MAX_PHOTOS - previews.length)
     setPreviews((prev) => [
       ...prev,
       ...incoming.map((file) => ({ file, objectUrl: URL.createObjectURL(file) })),
@@ -245,9 +246,9 @@ export default function NewPropertyPage() {
           {/* Photos */}
           <section className="bg-white/5 border border-white/10 rounded-xl p-6">
             <p className="font-barlow text-xs font-semibold text-white/30 uppercase tracking-widest mb-2">Photos</p>
-            <p className="font-barlow text-xs text-white/30 mb-4">Up to 20 photos · JPG, PNG, WebP · Max 5 MB each · First photo is cover</p>
+            <p className="font-barlow text-xs text-white/30 mb-4">Up to {MAX_PHOTOS} photos · JPG, PNG, WebP · Max 5 MB each · First photo is cover</p>
 
-            {previews.length < 20 && (
+            {previews.length < MAX_PHOTOS && (
               <div
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => e.preventDefault()}
@@ -282,7 +283,7 @@ export default function NewPropertyPage() {
                     )}
                   </div>
                 ))}
-                {previews.length < 20 && (
+                {previews.length < MAX_PHOTOS && (
                   <button type="button" onClick={() => fileInputRef.current?.click()}
                     className="aspect-square rounded-lg border-2 border-dashed border-white/10 flex items-center justify-center hover:border-brand-blue/40 transition-colors">
                     <ImageIcon className="w-5 h-5 text-white/20" />

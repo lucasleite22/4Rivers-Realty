@@ -18,7 +18,7 @@ const team = [
   {
     name: 'Talles Batista Menezes',
     role: 'Realtor',
-    initials: 'TM',
+    photo: '/images/team/talles-batista.jpg',
     email: 'Tallesbatistarealtor@gmail.com',
     phone: '(321) 200-9620',
     license: 'FL License #3631988',
@@ -28,7 +28,7 @@ const team = [
   {
     name: 'Bela Biet',
     role: 'Real Estate Agent',
-    initials: 'BB',
+    photo: '/images/team/bela-biet.jpg',
     email: 'bela4rivers@gmail.com',
     phone: '(407) 415-2007',
     license: 'FL License SL3635783',
@@ -44,7 +44,7 @@ const team = [
   {
     name: 'Rose Biet',
     role: 'Real Estate Agent',
-    initials: 'RB',
+    photo: '/images/team/rose-biet.jpg',
     email: 'rose4rivers@gmail.com',
     phone: '(321) 234-1726',
     license: 'FL License SL3295740',
@@ -201,19 +201,16 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y divide-gray-200 md:divide-y-0 md:divide-x border border-gray-200 rounded-2xl overflow-hidden bg-white">
             {team.map((member) => (
-              <div
-                key={member.name}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-              >
-                <div className="relative h-48 bg-navy flex items-center justify-center">
+              <div key={member.name}>
+                <div className="relative h-96 bg-navy">
                   <Image
-                    src={`https://ui-avatars.com/api/?name=${member.initials}&background=252859&color=ffffff&size=120&bold=true&font-size=0.4`}
+                    src={member.photo}
                     alt={member.name}
-                    width={100}
-                    height={100}
-                    className="rounded-full border-4 border-white/20"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover object-[center_15%]"
                   />
                 </div>
                 <div className="p-7">
@@ -270,19 +267,19 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="bg-white rounded-2xl p-10 shadow-sm border border-gray-100">
-              <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
+              <h3 className="font-cormorant font-bold text-3xl text-dark-navy mb-4">
                 Our Mission
-              </p>
-              <p className="font-cormorant text-2xl text-dark-navy leading-relaxed">
+              </h3>
+              <p className="font-barlow text-gray-600 leading-relaxed">
                 Our mission is to bring families who want to leave the rush of
                 the city and bring them to the tranquility of ranch life.
               </p>
             </div>
             <div className="bg-white rounded-2xl p-10 shadow-sm border border-gray-100">
-              <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
+              <h3 className="font-cormorant font-bold text-3xl text-dark-navy mb-4">
                 Our Vision
-              </p>
-              <p className="font-cormorant text-2xl text-dark-navy leading-relaxed">
+              </h3>
+              <p className="font-barlow text-gray-600 leading-relaxed">
                 Our vision is to be the go-to real estate company for Brazilians
                 looking to move to the United States and live outside the city.
               </p>

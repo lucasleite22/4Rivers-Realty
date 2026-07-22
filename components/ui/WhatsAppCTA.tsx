@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 interface Props {
   phone: string        // e.g. "13525550100" — digits only, with country code
@@ -21,6 +21,7 @@ export default function WhatsAppCTA({
 }: Props) {
   const [visible, setVisible] = useState(false)
   const [tooltipOpen, setTooltipOpen] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), showAfterMs)
@@ -33,10 +34,14 @@ export default function WhatsAppCTA({
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.6, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.6, y: 20 }}
-          transition={{ type: 'spring', damping: 18, stiffness: 260 }}
+          initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.6, y: 20 }}
+          animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+          exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.6, y: 20 }}
+          transition={
+            prefersReducedMotion
+              ? { duration: 0.15 }
+              : { type: 'spring', damping: 18, stiffness: 260 }
+          }
           className="fixed bottom-6 right-6 z-50 flex items-center gap-3"
         >
           {/* Tooltip */}
@@ -69,13 +74,15 @@ export default function WhatsAppCTA({
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >
-            {/* Pulse ring */}
-            <motion.span
-              className="absolute inset-0 rounded-full"
-              style={{ backgroundColor: '#25D366' }}
-              animate={{ scale: [1, 1.5, 1.5], opacity: [0.5, 0, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-            />
+            {/* Pulse ring (skipped entirely when the user prefers reduced motion) */}
+            {!prefersReducedMotion && (
+              <motion.span
+                className="absolute inset-0 rounded-full"
+                style={{ backgroundColor: '#25D366' }}
+                animate={{ scale: [1, 1.5, 1.5], opacity: [0.5, 0, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+              />
+            )}
             <WhatsAppIcon />
           </motion.a>
         </motion.div>

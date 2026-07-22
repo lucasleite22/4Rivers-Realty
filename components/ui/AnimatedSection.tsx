@@ -1,8 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import type { Variants } from 'framer-motion'
-import { fadeInUp, staggerContainer } from '@/lib/animations'
+import { fadeInUp, staggerContainer, reducedMotionFade, reducedMotionStaggerContainer } from '@/lib/animations'
 
 interface Props {
   children: React.ReactNode
@@ -25,7 +25,15 @@ export default function AnimatedSection({
   delay = 0,
   once = true,
 }: Props) {
-  const appliedVariants = stagger ? staggerContainer : variants
+  const prefersReducedMotion = useReducedMotion()
+  const childVariants = prefersReducedMotion ? reducedMotionFade : fadeInUp
+  const appliedVariants = stagger
+    ? prefersReducedMotion
+      ? reducedMotionStaggerContainer
+      : staggerContainer
+    : prefersReducedMotion
+      ? reducedMotionFade
+      : variants
 
   return (
     <motion.div
@@ -37,9 +45,9 @@ export default function AnimatedSection({
       transition={delay ? { delay } : undefined}
     >
       {stagger
-        ? // Each direct child gets the fadeInUp variant automatically
+        ? // Each direct child gets the fadeInUp variant automatically (or a plain fade when motion is reduced)
           (Array.isArray(children) ? children : [children]).map((child, i) => (
-            <motion.div key={i} variants={fadeInUp}>
+            <motion.div key={i} variants={childVariants}>
               {child}
             </motion.div>
           ))

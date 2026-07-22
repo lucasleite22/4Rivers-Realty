@@ -14,40 +14,24 @@ const navLinks = [
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
 
-  const isHome = pathname === '/'
-  const transparent = isHome && !scrolled
-
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        transparent
-          ? 'bg-transparent'
-          : 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100'
-      }`}
-    >
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image
-            src={transparent ? '/images/logo-horizontal-white.png' : '/images/logo-horizontal-blue.png'}
+            src="/images/logo-horizontal-blue.png"
             alt="4Rivers Realty"
             width={220}
             height={64}
-            className="h-14 w-auto object-contain"
+            className="h-16 w-auto object-contain"
             priority
           />
         </Link>
@@ -59,11 +43,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               className={`font-barlow font-medium text-sm tracking-wide transition-colors hover:text-brand-blue ${
-                pathname === link.href
-                  ? 'text-brand-blue'
-                  : transparent
-                  ? 'text-white'
-                  : 'text-navy'
+                pathname === link.href ? 'text-brand-blue' : 'text-navy'
               }`}
             >
               {link.label}
@@ -72,20 +52,14 @@ export default function Navbar() {
 
           <Link
             href="/contact"
-            className={`ml-2 px-5 py-2.5 font-barlow font-semibold text-sm rounded-md transition-colors ${
-              transparent
-                ? 'bg-white/15 text-white border border-white/30 hover:bg-white hover:text-navy'
-                : 'bg-navy text-white hover:bg-brand-blue'
-            }`}
+            className="ml-2 px-5 py-2.5 font-barlow font-semibold text-sm rounded-md transition-colors bg-navy text-white hover:bg-brand-blue"
           >
             Get in Touch
           </Link>
 
           <Link
             href="/auth/login"
-            className={`font-barlow text-xs font-medium tracking-wide transition-colors hover:text-brand-blue ${
-              transparent ? 'text-white/50' : 'text-gray-400'
-            }`}
+            className="font-barlow text-xs font-medium tracking-wide transition-colors hover:text-brand-blue text-gray-400"
           >
             Admin
           </Link>
@@ -94,9 +68,7 @@ export default function Navbar() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className={`md:hidden p-2 rounded-md transition-colors ${
-            transparent ? 'text-white' : 'text-navy'
-          }`}
+          className="md:hidden p-2 rounded-md transition-colors text-navy"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
