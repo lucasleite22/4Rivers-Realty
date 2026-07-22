@@ -313,12 +313,12 @@ export default function HomePage() {
       <section className="py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
-              Client Stories
-            </p>
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
               What Our Clients Say
             </h2>
+            <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
+              Real families who found their land through 4Rivers Realty.
+            </p>
           </div>
 
           {/* Featured testimonial — large circular photo beside the quote */}
@@ -365,9 +365,6 @@ export default function HomePage() {
               </div>
             </div>
             <div>
-              <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
-                Property Owners
-              </p>
               <h2 className="font-cormorant font-bold text-5xl text-dark-navy leading-tight mb-6">
                 Want to Sell
                 <br />Your Property?

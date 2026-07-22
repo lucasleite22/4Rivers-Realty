@@ -1,5 +1,25 @@
 import type { Variants } from 'framer-motion'
 
+// ── Reduced motion ────────────────────────────────────────────
+// Swap in for any variant above when the user prefers reduced motion:
+// same start/end state, no transform, near-instant transition.
+export const reducedMotionFade: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.15 } },
+}
+
+// Same as staggerContainer, but with the stagger/delay zeroed out so children
+// fade in together instead of one by one.
+export const reducedMotionStaggerContainer: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0,
+      delayChildren: 0,
+    },
+  },
+}
+
 // ── Fade variants ─────────────────────────────────────────────
 export const fadeIn: Variants = {
   hidden: { opacity: 0 },
