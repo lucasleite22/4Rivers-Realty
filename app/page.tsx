@@ -150,27 +150,22 @@ export default function HomePage() {
         {/* Light bottom grade only — keeps the photo/video visible, the solid panel below carries legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-dark-navy/50 via-transparent to-transparent" />
 
-        {/* Brand mark, top-left — establishes the brand before any copy is read */}
-        <div className="absolute top-28 left-4 sm:left-6 lg:left-8 z-10 flex items-center gap-3 bg-dark-navy/50 backdrop-blur-sm rounded-full pl-3 pr-5 py-2">
-          <Image
-            src="/images/logo-icon.png"
-            alt="4Rivers Realty"
-            width={40}
-            height={40}
-            className="h-8 w-8 object-contain"
-          />
-          <div className="h-6 w-px bg-white/25" />
-          <p className="font-barlow text-white/80 text-xs font-semibold tracking-[0.25em] uppercase">
-            Est. North Central Florida
-          </p>
-        </div>
-
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24">
           {/* Compact, opaque panel — text stays legible while the image breathes around it */}
           <div className="max-w-2xl bg-dark-navy/85 backdrop-blur-sm rounded-2xl p-8 sm:p-10">
-            <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase mb-6">
-              Ocala · North Central Florida
-            </p>
+            <div className="flex items-center gap-3 mb-6">
+              <Image
+                src="/images/logo-icon.png"
+                alt="4Rivers Realty"
+                width={32}
+                height={32}
+                className="h-7 w-7 object-contain"
+              />
+              <div className="h-5 w-px bg-white/25" />
+              <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase">
+                Ocala · Est. North Central Florida
+              </p>
+            </div>
             <h1 className="font-cormorant font-bold text-5xl sm:text-6xl md:text-7xl text-white leading-[0.95] mb-6">
               Land Built for
               <br />
