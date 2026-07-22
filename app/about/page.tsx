@@ -18,7 +18,7 @@ const team = [
   {
     name: 'Talles Batista Menezes',
     role: 'Realtor',
-    initials: 'TM',
+    photo: '/images/team/talles-batista.jpg',
     email: 'Tallesbatistarealtor@gmail.com',
     phone: '(321) 200-9620',
     license: 'FL License #3631988',
@@ -28,7 +28,7 @@ const team = [
   {
     name: 'Bela Biet',
     role: 'Real Estate Agent',
-    initials: 'BB',
+    photo: '/images/team/bela-biet.jpg',
     email: 'bela4rivers@gmail.com',
     phone: '(407) 415-2007',
     license: 'FL License SL3635783',
@@ -44,7 +44,7 @@ const team = [
   {
     name: 'Rose Biet',
     role: 'Real Estate Agent',
-    initials: 'RB',
+    photo: '/images/team/rose-biet.jpg',
     email: 'rose4rivers@gmail.com',
     phone: '(321) 234-1726',
     license: 'FL License SL3295740',
@@ -204,13 +204,13 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y divide-gray-200 md:divide-y-0 md:divide-x border border-gray-200 rounded-2xl overflow-hidden bg-white">
             {team.map((member) => (
               <div key={member.name}>
-                <div className="relative h-48 bg-navy flex items-center justify-center">
+                <div className="relative h-96 bg-navy">
                   <Image
-                    src={`https://ui-avatars.com/api/?name=${member.initials}&background=252859&color=ffffff&size=120&bold=true&font-size=0.4`}
+                    src={member.photo}
                     alt={member.name}
-                    width={100}
-                    height={100}
-                    className="rounded-full border-4 border-white/20"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover object-[center_15%]"
                   />
                 </div>
                 <div className="p-7">
