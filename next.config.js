@@ -1,5 +1,8 @@
 // next.config.js
 
+const isDev = process.env.NODE_ENV === 'development'
+const __impeccableLiveDev = isDev ? ' http://localhost:8400' : ''
+
 const securityHeaders = [
   { key: 'X-DNS-Prefetch-Control',   value: 'on' },
   { key: 'X-Frame-Options',          value: 'SAMEORIGIN' },
@@ -15,11 +18,11 @@ const securityHeaders = [
     // Leaflet tiles come from openstreetmap.org; WhatsApp link opens wa.me
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",   // unsafe-eval needed by leaflet
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'" + __impeccableLiveDev,   // unsafe-eval needed by leaflet
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://*.openstreetmap.org https://*.hostinger.com https://4riversrealty.com https://www.4riversrealty.com https://images.unsplash.com https://ui-avatars.com",
-      "connect-src 'self' https://simplyrets.com",
+      "img-src 'self' data: blob: https://*.openstreetmap.org https://*.hostinger.com https://4riversrealty.com https://www.4riversrealty.com https://images.unsplash.com https://ui-avatars.com https://*.public.blob.vercel-storage.com",
+      "connect-src 'self' https://simplyrets.com" + __impeccableLiveDev,
       "frame-ancestors 'none'",
     ].join('; '),
   },
@@ -40,6 +43,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'www.4riversrealty.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'ui-avatars.com' },
+      { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
     ],
     unoptimized: false,
   },
