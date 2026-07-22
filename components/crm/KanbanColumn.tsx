@@ -11,9 +11,10 @@ interface Props {
   leads: Lead[]
   color: string
   onCardClick?: (lead: Lead) => void
+  onDeleteLead?: (leadId: string) => void
 }
 
-export default function KanbanColumn({ id, title, leads, color, onCardClick }: Props) {
+export default function KanbanColumn({ id, title, leads, color, onCardClick, onDeleteLead }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id })
 
   return (
@@ -45,7 +46,7 @@ export default function KanbanColumn({ id, title, leads, color, onCardClick }: P
             </p>
           )}
           {leads.map((lead) => (
-            <KanbanCard key={lead.id} lead={lead} onClick={onCardClick} />
+            <KanbanCard key={lead.id} lead={lead} onClick={onCardClick} onDelete={onDeleteLead} />
           ))}
         </div>
       </SortableContext>

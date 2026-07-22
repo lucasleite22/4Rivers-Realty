@@ -30,7 +30,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    await requireAuth(req)
+    const token = await requireAuth(req)
     const body = await req.json()
 
     const data: Prisma.PropertyUpdateInput = {}
@@ -50,6 +50,7 @@ export async function PATCH(
             type: 'PROPERTY_SOLD',
             entityId: params.id,
             entityType: 'Property',
+            userId: token.sub,
             metadata: { status: 'SOLD' },
           },
         })

@@ -70,6 +70,27 @@ export async function verifyToken(
   }
 }
 
+// ── Current user (from cookies() — for Server Actions) ──
+
+export async function getCurrentUser(): Promise<TokenPayload | null> {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get(COOKIE_NAME)?.value
+    if (!token) return null
+
+    const { payload } = await jwtVerify(token, JWT_SECRET)
+
+    return {
+      sub: payload.sub as string,
+      email: payload['email'] as string,
+      name: payload['name'] as string,
+      role: payload['role'] as string,
+    }
+  } catch {
+    return null
+  }
+}
+
 // ── Middleware helpers ────────────────────────
 
 export async function requireAuth(

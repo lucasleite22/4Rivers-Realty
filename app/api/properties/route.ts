@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    await requireAuth(req)
+    const token = await requireAuth(req)
 
     const body = await req.json()
 
@@ -107,6 +107,7 @@ export async function POST(req: NextRequest) {
         type: 'PROPERTY_CREATED',
         entityId: property.id,
         entityType: 'Property',
+        userId: token.sub,
         metadata: { title: property.title },
       },
     })

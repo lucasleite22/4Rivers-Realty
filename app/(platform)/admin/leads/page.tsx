@@ -24,6 +24,12 @@ export default function AdminLeadsPage() {
     })
   }
 
+  async function handleDeleteLead(leadId: string) {
+    const res = await fetch(`/api/leads/${leadId}`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Failed to delete lead')
+    setLeads((prev) => prev.filter((l) => l.id !== leadId))
+  }
+
   function downloadExport() {
     window.open('/api/export/leads', '_blank')
   }
@@ -55,6 +61,7 @@ export default function AdminLeadsPage() {
           <KanbanBoard
             initialLeads={leads}
             onStageChange={handleStageChange}
+            onDeleteLead={handleDeleteLead}
           />
         </div>
       )}

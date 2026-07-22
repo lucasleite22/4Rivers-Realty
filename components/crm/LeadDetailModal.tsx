@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import type { Lead, LeadStatus } from '@prisma/client'
 import {
   X, Phone, Mail, MapPin, DollarSign, Ruler, Save, ChevronDown,
-  ClipboardList, Clock, Download, Plus, MessageSquare,
+  ClipboardList, Clock, Download, Plus, MessageSquare, Trash2,
 } from 'lucide-react'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -73,13 +73,14 @@ interface Props {
   onClose: () => void
   onUpdate: (updated: Lead) => void
   onStageChange?: (leadId: string, newStatus: LeadStatus) => Promise<void>
+  onDelete?: (leadId: string) => void
 }
 
 const INPUT = 'w-full px-3 py-2.5 rounded-lg border border-gray-200 font-barlow text-sm text-navy focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20'
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function LeadDetailModal({ lead, onClose, onUpdate, onStageChange }: Props) {
+export default function LeadDetailModal({ lead, onClose, onUpdate, onStageChange, onDelete }: Props) {
   const [tab, setTab] = useState<'details' | 'log'>('details')
 
   // ── Details form ──
@@ -233,6 +234,12 @@ export default function LeadDetailModal({ lead, onClose, onUpdate, onStageChange
     a.download = `lead-log-${lead.name.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.txt`
     a.click()
     URL.revokeObjectURL(url)
+  }
+
+  function handleDelete() {
+    if (window.confirm(`Delete lead "${lead.name}"? This cannot be undone.`)) {
+      onDelete?.(lead.id)
+    }
   }
 
   const statusColor = STATUS_OPTIONS.find((s) => s.value === form.status)?.color ?? ''
@@ -509,17 +516,29 @@ export default function LeadDetailModal({ lead, onClose, onUpdate, onStageChange
             </>
           ) : (
             <>
-              <button onClick={onClose} className="px-5 py-2.5 font-barlow text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex items-center gap-2 px-6 py-2.5 bg-navy text-white font-barlow font-semibold text-sm rounded-lg hover:bg-light-blue transition-colors disabled:opacity-60"
-              >
-                <Save className="w-4 h-4" />
-                {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save Changes'}
-              </button>
+              {onDelete ? (
+                <button
+                  onClick={handleDelete}
+                  className="flex items-center gap-2 px-4 py-2.5 font-barlow text-sm text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  aria-label={`Delete lead ${lead.name}`}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete Lead
+                </button>
+              ) : <span />}
+              <div className="flex items-center gap-2">
+                <button onClick={onClose} className="px-5 py-2.5 font-barlow text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-navy text-white font-barlow font-semibold text-sm rounded-lg hover:bg-light-blue transition-colors disabled:opacity-60"
+                >
+                  <Save className="w-4 h-4" />
+                  {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save Changes'}
+                </button>
+              </div>
             </>
           )}
         </div>

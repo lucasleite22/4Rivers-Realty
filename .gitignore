@@ -28,3 +28,9 @@ npm-debug.log*
 "Logo branca_.png"
 "Logo branca-_.png"
 .vercel
+
+# Ferramentas locais e notas pessoais
+.impeccable/
+templates e ideia/
+mensagem-jales-mls.md
+tsconfig.tsbuildinfo

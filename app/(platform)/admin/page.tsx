@@ -10,7 +10,7 @@ interface Stats {
   offersThisMonth: number
   closedThisMonth: number
   overdueFollowUps: number
-  recentEvents: { id: string; type: string; entityType: string; createdAt: string; metadata: Record<string, string> }[]
+  recentEvents: { id: string; type: string; entityType: string; createdAt: string; metadata: Record<string, string>; userName: string | null }[]
 }
 
 const EVENT_LABELS: Record<string, string> = {
@@ -91,6 +91,7 @@ export default function AdminDashboard() {
                         {EVENT_LABELS[ev.type] ?? ev.type}
                         {ev.metadata?.name && <span className="text-white font-semibold"> · {ev.metadata.name}</span>}
                         {ev.metadata?.title && <span className="text-white font-semibold"> · {ev.metadata.title}</span>}
+                        {ev.userName && <span className="text-cyan-400/80"> · by {ev.userName}</span>}
                       </span>
                     </div>
                     <span className="font-barlow text-xs text-white/30 flex-shrink-0 ml-4">

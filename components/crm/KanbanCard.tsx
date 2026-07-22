@@ -4,11 +4,12 @@ import { useRef, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { Lead } from '@prisma/client'
-import { GripVertical, Phone, Mail, Calendar } from 'lucide-react'
+import { GripVertical, Phone, Mail, Calendar, Trash2 } from 'lucide-react'
 
 interface Props {
   lead: Lead
   onClick?: (lead: Lead) => void
+  onDelete?: (leadId: string) => void
 }
 
 const ORIGIN_LABELS: Record<string, string> = {
@@ -31,7 +32,7 @@ const ORIGIN_COLORS: Record<string, string> = {
   OTHER:       'bg-gray-100 text-gray-500',
 }
 
-export default function KanbanCard({ lead, onClick }: Props) {
+export default function KanbanCard({ lead, onClick, onDelete }: Props) {
   const {
     attributes,
     listeners,
@@ -68,6 +69,13 @@ export default function KanbanCard({ lead, onClick }: Props) {
 
   const stop = (e: React.SyntheticEvent) => e.stopPropagation()
 
+  function handleDelete(e: React.SyntheticEvent) {
+    stop(e)
+    if (window.confirm(`Delete lead "${lead.name}"? This cannot be undone.`)) {
+      onDelete?.(lead.id)
+    }
+  }
+
   return (
     <div
       ref={setNodeRef}
@@ -92,7 +100,19 @@ export default function KanbanCard({ lead, onClick }: Props) {
         <GripVertical className="w-4 h-4" />
       </div>
 
-      <div className="pr-6">
+      {onDelete && (
+        <button
+          type="button"
+          onClick={handleDelete}
+          onPointerDown={stop}
+          className="absolute top-3 left-3 text-gray-300 hover:text-red-500 transition-colors p-0.5 -m-0.5 rounded"
+          aria-label={`Delete lead ${lead.name}`}
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      )}
+
+      <div className="pr-6 pl-5">
         <p className="font-barlow font-semibold text-navy text-sm leading-snug">
           {lead.name}
         </p>

@@ -34,9 +34,10 @@ interface Props {
   initialLeads: Lead[]
   onStageChange?: (leadId: string, newStatus: LeadStatus) => Promise<void>
   onCardClick?: (lead: Lead) => void
+  onDeleteLead?: (leadId: string) => Promise<void>
 }
 
-export default function KanbanBoard({ initialLeads, onStageChange, onCardClick }: Props) {
+export default function KanbanBoard({ initialLeads, onStageChange, onCardClick, onDeleteLead }: Props) {
   const [leads, setLeads] = useState<Lead[]>(initialLeads)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
@@ -61,6 +62,18 @@ export default function KanbanBoard({ initialLeads, onStageChange, onCardClick }
 
   function onDragStart({ active }: DragStartEvent) {
     setActiveId(String(active.id))
+  }
+
+  async function handleDeleteLead(leadId: string) {
+    const previousLeads = leads
+    setLeads((prev) => prev.filter((l) => l.id !== leadId))
+    setSelectedLead((prev) => (prev?.id === leadId ? null : prev))
+    try {
+      await onDeleteLead?.(leadId)
+    } catch {
+      // Rollback on failure
+      setLeads(previousLeads)
+    }
   }
 
   async function onDragEnd({ active, over }: DragEndEvent) {
@@ -115,6 +128,7 @@ export default function KanbanBoard({ initialLeads, onStageChange, onCardClick }
             color={col.color}
             leads={getLeadsForColumn(col.id)}
             onCardClick={(lead) => setSelectedLead(lead)}
+            onDeleteLead={handleDeleteLead}
           />
         ))}
       </div>
@@ -137,6 +151,7 @@ export default function KanbanBoard({ initialLeads, onStageChange, onCardClick }
           setSelectedLead(null)
         }}
         onStageChange={onStageChange}
+        onDelete={handleDeleteLead}
       />
     )}
   </>

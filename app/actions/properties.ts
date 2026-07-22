@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache'
 import { Prisma } from '@prisma/client'
 import prisma from '@/lib/prisma'
 import { saveUploadedFile, deleteUploadedFile } from '@/lib/upload'
+import { getCurrentUser } from '@/lib/auth'
 
 // ── Helpers ───────────────────────────────────────────────────
 
@@ -66,8 +67,9 @@ export async function createProperty(
     }
   }
 
+  const currentUser = await getCurrentUser()
   await prisma.dashboardEvent.create({
-    data: { type: 'PROPERTY_CREATED', entityId: property.id, entityType: 'Property', metadata: { title: property.title } },
+    data: { type: 'PROPERTY_CREATED', entityId: property.id, entityType: 'Property', userId: currentUser?.sub, metadata: { title: property.title } },
   })
 
   revalidateProperties()
@@ -113,8 +115,9 @@ export async function toggleFeatured(id: string): Promise<boolean> {
 export async function updatePropertyStatus(id: string, status: string) {
   await prisma.property.update({ where: { id }, data: { status: status as any } })
   if (status === 'SOLD') {
+    const currentUser = await getCurrentUser()
     await prisma.dashboardEvent.create({
-      data: { type: 'PROPERTY_SOLD', entityId: id, entityType: 'Property' },
+      data: { type: 'PROPERTY_SOLD', entityId: id, entityType: 'Property', userId: currentUser?.sub },
     })
   }
   revalidatePath(`/properties/${id}`)

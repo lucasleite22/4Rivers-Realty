@@ -149,9 +149,9 @@ export default function NewPropertyPage() {
                 <label className={LABEL}>Type *</label>
                 <select required value={form.type} onChange={(e) => set('type', e.target.value)}
                   className={INPUT + ' bg-transparent'}>
-                  <option value="">Select type…</option>
+                  <option value="" className="bg-[#0a1929] text-white">Select type…</option>
                   {[['HORSE_FARM','Horse Farm'],['RANCH','Ranch'],['RESIDENTIAL','Residential'],['COMMERCIAL','Commercial'],['LAND','Land']].map(([v,l]) => (
-                    <option key={v} value={v}>{l}</option>
+                    <option key={v} value={v} className="bg-[#0a1929] text-white">{l}</option>
                   ))}
                 </select>
               </div>
@@ -159,9 +159,9 @@ export default function NewPropertyPage() {
                 <label className={LABEL}>Status</label>
                 <select value={form.status} onChange={(e) => set('status', e.target.value)}
                   className={INPUT + ' bg-transparent'}>
-                  <option value="ACTIVE">Active</option>
-                  <option value="UNDER_CONTRACT">Under Contract</option>
-                  <option value="SOLD">Sold</option>
+                  <option value="ACTIVE" className="bg-[#0a1929] text-white">Active</option>
+                  <option value="UNDER_CONTRACT" className="bg-[#0a1929] text-white">Under Contract</option>
+                  <option value="SOLD" className="bg-[#0a1929] text-white">Sold</option>
                 </select>
               </div>
               <div>

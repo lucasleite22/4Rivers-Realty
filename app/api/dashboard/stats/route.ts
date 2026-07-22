@@ -57,6 +57,17 @@ export async function GET(req: NextRequest) {
       }),
     ])
 
+    const userIds = Array.from(new Set(recentEvents.map((e) => e.userId).filter((id): id is string => Boolean(id))))
+    const users = userIds.length > 0
+      ? await prisma.user.findMany({ where: { id: { in: userIds } }, select: { id: true, name: true } })
+      : []
+    const userMap = new Map(users.map((u) => [u.id, u.name]))
+
+    const recentEventsWithUser = recentEvents.map((event) => ({
+      ...event,
+      userName: event.userId ? userMap.get(event.userId) ?? null : null,
+    }))
+
     return NextResponse.json({
       totalActiveProperties,
       leadsThisMonth,
@@ -64,7 +75,7 @@ export async function GET(req: NextRequest) {
       offersThisMonth,
       closedThisMonth,
       overdueFollowUps,
-      recentEvents,
+      recentEvents: recentEventsWithUser,
     })
   } catch (err) {
     if (err instanceof AuthError) {

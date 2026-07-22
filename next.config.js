@@ -1,5 +1,8 @@
 // next.config.js
 
+const createNextIntlPlugin = require('next-intl/plugin')
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
+
 const isDev = process.env.NODE_ENV === 'development'
 const __impeccableLiveDev = isDev ? ' http://localhost:8400' : ''
 
@@ -55,4 +58,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = withNextIntl(nextConfig)

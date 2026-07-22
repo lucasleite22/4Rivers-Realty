@@ -374,7 +374,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                 <label className={LABEL}>Type</label>
                 {editing ? (
                   <select value={String(form.type ?? '')} onChange={(e) => setF('type', e.target.value)} className={INPUT + ' bg-transparent'}>
-                    {Object.entries(TYPE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                    {Object.entries(TYPE_LABEL).map(([v, l]) => <option key={v} value={v} className="bg-[#0a1929] text-white">{l}</option>)}
                   </select>
                 ) : (
                   <p className="font-barlow text-sm text-white">{TYPE_LABEL[property.type] ?? property.type}</p>
@@ -384,9 +384,9 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                 <label className={LABEL}>Status</label>
                 {editing ? (
                   <select value={String(form.status ?? '')} onChange={(e) => setF('status', e.target.value)} className={INPUT + ' bg-transparent'}>
-                    <option value="ACTIVE">Active</option>
-                    <option value="UNDER_CONTRACT">Under Contract</option>
-                    <option value="SOLD">Sold</option>
+                    <option value="ACTIVE" className="bg-[#0a1929] text-white">Active</option>
+                    <option value="UNDER_CONTRACT" className="bg-[#0a1929] text-white">Under Contract</option>
+                    <option value="SOLD" className="bg-[#0a1929] text-white">Sold</option>
                   </select>
                 ) : (
                   <p className="font-barlow text-sm text-white">{property.status.replace('_', ' ')}</p>

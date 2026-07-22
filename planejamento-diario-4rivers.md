@@ -182,6 +182,26 @@
 
 ---
 
+## ✅ IMPLEMENTADO — Sprint 20-22/07/2026
+
+### Conteúdo real do cliente + auditoria de design + infraestrutura
+
+| Entregável | Detalhes | Status |
+|------------|----------|--------|
+| Questionário do cliente respondido e aplicado | Dados reais da empresa, história, contato (`tel:+14077895260`), equipe completa aplicados em `about` e `contact` | ✅ |
+| Equipe real com fotos | Talles Batista Menezes, Bela Biet, Rose Biet — fotos e emails reais (`bela4rivers@gmail.com`, `rose4rivers@gmail.com`) em `about/page.tsx` | ✅ |
+| Contas de admin para o cliente | Logins de admin criados para Saulo e Jales | ✅ |
+| Auditoria de design (skill `impeccable`) | Gerados `DESIGN.md` e `PRODUCT.md`; correções aplicadas via branch `impeccable/audit-fixes` (já mergeada em `main`) | ✅ |
+| Hero slideshow | `components/ui/HeroSlideshow.tsx` + `lib/animations.ts` + 5 imagens reais em `public/images/hero/` | ✅ |
+| Fix de Navbar e CTAs | Correções de navbar, `WhatsAppCTA`, `HeroMedia`, `AnimatedSection` | ✅ |
+| Migração de uploads para Vercel Blob | Substituído armazenamento local (`public/uploads/`) por Vercel Blob Storage — essencial para confiabilidade em produção serverless | ✅ |
+| Seed de propriedades reais | `prisma/seed-real-properties.ts` — dados reais de imóveis aplicados ao banco | ✅ |
+
+> **Trabalho em andamento (não commitado ainda):** internacionalização com `next-intl` — nova estrutura de rotas `app/(marketing)/[locale]/...` (site público, com suporte a idiomas) e `app/(platform)/...` (admin/auth, fora do `[locale]`), `middleware.ts` com `createMiddleware(routing)` e `i18n/routing.ts` + `i18n/request.ts` + `i18n/navigation.ts`. Estrutura testada e funcional (rotas antigas migradas 1:1), mas **ainda não commitada no git** — recomendo commitar assim que validado, para não arriscar perda de trabalho.
+> **Mensagem redigida para o Jales** (`mensagem-jales-mls.md`, ainda não enviada): explica que ele precisa solicitar à Stellar MLS acesso via **IDX/VOW** (RESO Web API) informando o provedor **SimplyRETS** — esse é o único caminho para destravar o Módulo 06.
+
+---
+
 ## ✅ IMPLEMENTADO — Sprint 18/06/2026 (Dia 14)
 
 ### Redesign visual da Home (inspirado em jaywest.ca)
@@ -207,20 +227,20 @@ Mantido **react-leaflet + OpenStreetMap** (gratuito, já funcional). Migrar para
 
 ## 📈 Curva S — Progresso Planejado vs. Real
 
-> **Metodologia:** progresso real = média ponderada de conclusão dos 8 módulos (M01–M08, 12.5% cada). Progresso planejado = linear ao longo das 10 semanas (cronograma original). Atualizado em 18/06/2026.
+> **Metodologia:** progresso real = média ponderada de conclusão dos 8 módulos (M01–M08, 12.5% cada). Progresso planejado = linear ao longo das 10 semanas (cronograma original). Atualizado em 22/07/2026.
 
 | Semana | Data referência | Planejado (%) | Real (%) | Observação |
 |--------|------------------|----------------|----------|------------|
 | S1 | 09/06 | 10% | 15% | Setup + base adiantados |
 | S1→S2 | 09/06 (sprint) | — | 70% | Sprint grande: M05 Admin, M07 CRM, M08 Leads entregues fora de ordem |
 | S2 | 16/06 | 20% | 80% | DB real (TiDB), branding aplicado, M01 (Home/Sobre/Contato), Lighthouse, Playwright |
-| **Hoje** | **18/06** | **~21%** | **86%** | Redesign jaywest.ca na Home + fix imagem |
-| S3 | 23/06 | 30% | 86% | *(projeção — sem trabalho extra agendado)* |
-| S4–S6 | 30/06–14/07 | 40–70% | 86% | Patamar mantido até desbloqueio do M06 |
-| S7–S8 | 21/07–28/07 | 80–90% | 86%→? | M06 (MLS/IDX) depende de credenciais SimplyRETS do cliente — único módulo a 0% |
+| S2→S3 | 18/06 | ~21% | 86% | Redesign jaywest.ca na Home + fix imagem |
+| S3–S6 | 23/06–14/07 | 30–70% | 86% | Patamar mantido — pausa de execução registrada (sem commits entre 18/06 e 20/07) |
+| **Hoje** | **22/07** | **~82%** | **88%** | Conteúdo real do cliente aplicado (M01 fechado), auditoria de design corrigida, uploads migrados para Vercel Blob, i18n (`next-intl`, en/pt) em andamento (não commitado) — **M06 segue 100% bloqueado** |
+| S8 | 28/07 | 90% | 88%→? | Depende exclusivamente do cliente Jales solicitar acesso IDX/VOW à Stellar MLS (mensagem já redigida, aguardando envio/resposta) |
 | S9–S10 | 04/08–14/08 | 90–100% | →100% | QA final, deploy produção, screencast — projeção pós-desbloqueio do M06 |
 
-**Leitura:** o projeto está ~65 pontos percentuais adiantado do cronograma calendário, puxado pelos sprints intensivos de 09/06, 16/06 e 18/06. O único gargalo real é o **Módulo 06 (MLS/IDX)**, 100% bloqueado por uma dependência externa (credenciais SimplyRETS) — não é um risco de execução, é uma espera de terceiros.
+**Leitura:** o projeto está fortemente adiantado do cronograma calendário original, puxado pelos sprints intensivos de 09/06, 16/06, 18/06 e pela retomada de 20-22/07 (conteúdo real do cliente, auditoria de design, infraestrutura). O único gargalo real continua sendo o **Módulo 06 (MLS/IDX)**, 100% bloqueado por uma dependência externa (credenciais SimplyRETS via Stellar MLS) — não é um risco de execução, é uma espera de terceiros. Houve um hiato de execução entre 18/06 e 20/07 (sem commits registrados), retomado com o recebimento do questionário respondido pelo cliente.
 
 ---
 
@@ -303,15 +323,16 @@ Mantido **react-leaflet + OpenStreetMap** (gratuito, já funcional). Migrar para
 
 | # | Tarefa | Módulo | Observação |
 |---|--------|--------|------------|
-| 1 | Enviar questionário-cliente-4rivers.html para o Jales e aguardar resposta | M01 | Popula páginas Sobre, Time, M/V/V |
-| 2 | Edge Function / cron job para sync SimplyRETS (4h) | M06 | Aguardando credenciais SimplyRETS |
+| 1 | ~~Enviar questionário-cliente-4rivers.html para o Jales e aguardar resposta~~ | M01 | ✅ Concluído — cliente respondeu e conteúdo real já aplicado em Sobre/Contato/Time |
+| 2 | Edge Function / cron job para sync SimplyRETS (4h) | M06 | Bloqueado — aguardando Jales solicitar acesso IDX/VOW à Stellar MLS. Mensagem já redigida (`mensagem-jales-mls.md`), ainda não enviada |
 | 3 | Conformidade Stellar MLS (atribuição obrigatória nas listagens) | M06 | Depende do item 2 |
 | 4 | Documentação técnica módulo 06 | M06 | Depende do item 2 |
-| 5 | Fotos reais (hoje são Unsplash/ui-avatars) | M01 | Aguardando cliente |
-| 6 | Telefone/email reais no Contato | M01 | Aguardando cliente |
+| 5 | ~~Fotos reais (hoje são Unsplash/ui-avatars)~~ | M01 | ✅ Resolvido para o time (Talles, Bela, Rose com fotos reais). Pode restar imagem de estoque em contextos decorativos |
+| 6 | ~~Telefone/email reais no Contato~~ | M01 | ✅ Concluído — `tel:+14077895260` e emails reais da equipe aplicados |
 | 7 | Decisão de contraste do `brand-blue` em textos pequenos | M01 | Aguardando validação visual do cliente |
 | 8 | Migrar para Hostinger (se o cliente preferir ao Vercel+TiDB atual) | M10 | Hoje já está em produção real no Vercel |
 | 9 | Gravar o screencast seguindo o roteiro já pronto | M10 | Roteiro em `roteiro-screencast-4rivers.md` |
+| 10 | Commitar a reestruturação de rotas com i18n (`next-intl`) | M01 | `app/(marketing)/[locale]/...`, `app/(platform)/...`, `middleware.ts`, `i18n/` — funcional e testada, mas ainda não commitada. Risco de perda de trabalho enquanto não commitada |
 
 ---
 
@@ -323,15 +344,16 @@ Mantido **react-leaflet + OpenStreetMap** (gratuito, já funcional). Migrar para
 | Estilo | Tailwind CSS + Framer Motion |
 | ORM | Prisma ORM |
 | Banco (local) | MySQL via XAMPP · banco: `4rivers_realty` |
-| Banco (produção) | MySQL Hostinger |
+| Banco (produção) | TiDB Cloud Serverless (via Vercel) |
 | Auth | JWT customizado com `jose` · cookie: `4rivers_session` |
-| Storage de arquivos | Sistema de arquivos local → `public/uploads/` |
+| Storage de arquivos | Vercel Blob Storage |
 | Mapa | Leaflet.js + react-leaflet |
-| MLS | SimplyRETS API (Marion + Sumter County) |
+| MLS | SimplyRETS API (Marion + Sumter County) — bloqueado aguardando credenciais IDX/VOW |
 | Email | Resend · remetente: `notifications@4riversrealty.com` |
-| Deploy | Hostinger (produção) |
+| Deploy | Vercel (produção) |
+| i18n | `next-intl` · rotas `app/(marketing)/[locale]/...` (site público) e `app/(platform)/...` (admin/auth, fora do locale) — em andamento, ainda não commitado |
 | Export | ExcelJS (xlsx estilizado) |
-| Testes | Jest + Testing Library · Playwright (E2E, pendente) |
+| Testes | Jest + Testing Library · Playwright (E2E) |
 | DnD | @dnd-kit (Kanban) |
 | Rate Limiting | In-memory sliding window (`lib/rateLimit.ts`) |
 
