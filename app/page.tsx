@@ -145,6 +145,13 @@ export default function HomePage() {
         <HeroMedia
           videoSrc="/videos/hero-ranch.mp4"
           posterSrc="/images/hero-1199-cr542g.jpg"
+          images={[
+            '/images/hero/hero-slide-1.jpg',
+            '/images/hero/hero-slide-2.jpg',
+            '/images/hero/hero-slide-3.jpg',
+            '/images/hero/hero-slide-4.jpg',
+            '/images/hero/hero-slide-5.jpg',
+          ]}
           alt="Open pasture with mature oak trees at a Marion County, Florida property"
         />
         {/* Light bottom grade only — keeps the photo/video visible, the solid panel below carries legibility */}
