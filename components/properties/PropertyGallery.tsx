@@ -159,8 +159,29 @@ export default function PropertyGallery({
                   <ChevronRight size={28} />
                 </button>
 
-                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 font-barlow text-white/80 text-sm">
+                <div className="absolute bottom-24 sm:bottom-20 left-1/2 -translate-x-1/2 z-10 font-barlow text-white/80 text-sm">
                   {lightboxIndex + 1} / {images.length}
+                </div>
+
+                <div
+                  className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 w-full max-w-3xl px-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex gap-2 overflow-x-auto justify-center pb-1">
+                    {images.map((url, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => goTo(i)}
+                        className={`relative flex-shrink-0 w-16 h-12 rounded-md overflow-hidden border-2 transition-colors ${
+                          i === lightboxIndex ? 'border-white' : 'border-white/20 hover:border-white/50'
+                        }`}
+                        aria-label={`${title} photo ${i + 1}`}
+                      >
+                        <Image src={url} alt={`${title} photo ${i + 1}`} fill sizes="64px" className="object-cover" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </>
             )}

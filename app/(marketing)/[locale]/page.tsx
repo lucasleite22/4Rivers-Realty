@@ -7,6 +7,7 @@ import AnimatedSection from '@/components/ui/AnimatedSection'
 import HeroMedia from '@/components/ui/HeroMedia'
 import CircleFeature from '@/components/ui/CircleFeature'
 import PropertyListRow from '@/components/properties/PropertyListRow'
+import prisma from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'Horse Farms & Rural Properties in Ocala, FL',
@@ -22,38 +23,14 @@ export const metadata: Metadata = {
 // ── Data ─────────────────────────────────────────────────────────────────────
 // Structural/proper-noun data only — display copy comes from message translations.
 
-const featuredProperties = [
-  {
-    name: 'Windmill Ranch',
-    acres: 485,
-    price: 4_200_000,
-    type: 'HORSE_FARM',
-    city: 'Ocala',
-    image:
-      'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80',
-    slug: 'windmill-ranch',
-  },
-  {
-    name: 'Silver Creek Farm',
-    acres: 120,
-    price: 1_850_000,
-    type: 'RANCH',
-    city: 'Reddick',
-    image:
-      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
-    slug: 'silver-creek-farm',
-  },
-  {
-    name: 'Cypress Meadows',
-    acres: 78,
-    price: 975_000,
-    type: 'LAND',
-    city: 'Chiefland',
-    image:
-      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
-    slug: 'cypress-meadows',
-  },
-]
+async function getFeaturedProperties() {
+  return prisma.property.findMany({
+    where: { featured: true, showOnPortal: true },
+    include: { images: { orderBy: { sortOrder: 'asc' } } },
+    orderBy: { createdAt: 'desc' },
+    take: 3,
+  })
+}
 
 const circleFeatureImages = {
   explore: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=500&q=80',
@@ -114,6 +91,7 @@ const whyCardKeys = ['local', 'specialist', 'support', 'network'] as const
 export default async function HomePage() {
   const t = await getTranslations('home')
   const tTypes = await getTranslations('propertyTypes')
+  const featuredProperties = await getFeaturedProperties()
 
   return (
     <>
@@ -227,16 +205,16 @@ export default async function HomePage() {
           </div>
 
           <AnimatedSection stagger>
-            {featuredProperties.map((prop) => (
+            {featuredProperties.map((property) => (
               <PropertyListRow
-                key={prop.slug}
-                name={prop.name}
-                type={tTypes(prop.type)}
-                city={prop.city}
-                acres={prop.acres}
-                price={formatPrice(prop.price)}
-                image={prop.image}
-                href="/properties"
+                key={property.id}
+                name={property.title}
+                type={tTypes(property.type as 'HORSE_FARM' | 'RANCH' | 'RESIDENTIAL' | 'COMMERCIAL' | 'LAND')}
+                city={property.city}
+                acres={Number(property.acreage)}
+                price={formatPrice(Number(property.priceUsd))}
+                image={property.images[0]?.url ?? '/images/hero-1199-cr542g.jpg'}
+                href={`/properties/${property.id}`}
               />
             ))}
           </AnimatedSection>
