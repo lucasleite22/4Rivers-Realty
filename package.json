@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "prisma generate && (prisma migrate resolve --applied 001_init || true) && (prisma migrate resolve --applied 20260720164035_add_property_source || true) && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
