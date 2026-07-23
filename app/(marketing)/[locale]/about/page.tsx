@@ -171,7 +171,7 @@ export default function AboutPage() {
 
             <div className="relative h-[480px] rounded-2xl overflow-hidden shadow-xl">
               <Image
-                src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=85"
+                src="/images/institutional/photo-exterior-2.jpeg"
                 alt="Rural horse farm property in North Central Florida"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"

@@ -1,5 +1,6 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import { getTranslations } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 
 function InstagramIcon() {
   return (
@@ -25,7 +26,16 @@ function LinkedInIcon() {
   )
 }
 
-export default function Footer() {
+export default async function Footer() {
+  const t = await getTranslations('footer')
+  const nav = await getTranslations('nav')
+
+  const quickLinks = [
+    { href: '/properties', label: nav('properties') },
+    { href: '/about', label: nav('about') },
+    { href: '/contact', label: nav('contact') },
+  ]
+
   return (
     <footer className="bg-dark-navy text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -43,21 +53,17 @@ export default function Footer() {
               Where Land Meets Lifestyle
             </p>
             <p className="font-barlow text-gray-400 text-sm mt-4 max-w-sm leading-relaxed">
-              Specializing in horse farms, ranches, and rural estates across
-              Ocala and North Central Florida. Your trusted partner from search
-              to closing.
+              {t('tagline')}
             </p>
             {/* Social */}
             <div className="flex gap-4 mt-6">
-              <a
-                href="https://instagram.com/belabiet"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/"
                 className="text-gray-400 hover:text-brand-blue transition-colors"
                 aria-label="Instagram"
               >
                 <InstagramIcon />
-              </a>
+              </Link>
               <a
                 href="#"
                 className="text-gray-400 hover:text-brand-blue transition-colors"
@@ -78,15 +84,10 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="font-cormorant font-semibold text-lg text-white mb-4">
-              Quick Links
+              {t('quickLinks')}
             </h3>
             <ul className="space-y-2">
-              {[
-                { href: '/properties', label: 'Properties' },
-                { href: '/about', label: 'About Us' },
-                { href: '/contact', label: 'Contact' },
-                { href: '/auth/login', label: 'Agent Login' },
-              ].map((link) => (
+              {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -96,13 +97,21 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <a
+                  href="/auth/login"
+                  className="font-barlow text-sm text-gray-400 hover:text-brand-blue transition-colors"
+                >
+                  Agent Login
+                </a>
+              </li>
             </ul>
           </div>
 
           {/* Contact */}
           <div>
             <h3 className="font-cormorant font-semibold text-lg text-white mb-4">
-              Contact Us
+              {t('contact')}
             </h3>
             <ul className="space-y-3 font-barlow text-sm text-gray-400">
               <li className="leading-relaxed">
@@ -137,7 +146,7 @@ export default function Footer() {
 
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="font-barlow text-xs text-gray-500">
-            © 2025 4Rivers Realty LLC. All rights reserved.
+            © 2025 4Rivers Realty LLC. {t('rights')}
           </p>
           <p className="font-barlow text-xs text-gray-600">
             Licensed Real Estate Brokerage · Florida

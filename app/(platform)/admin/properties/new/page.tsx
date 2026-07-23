@@ -38,6 +38,10 @@ export default function NewPropertyPage() {
     stables: '',
     arenas: '',
     pastures: '',
+    videoUrl: '',
+    isLaunch: false,
+    launchBadge: '',
+    launchDate: '',
   })
 
   function set(field: string, value: string | boolean) {
@@ -87,6 +91,10 @@ export default function NewPropertyPage() {
           stables:     form.stables  ? Number(form.stables)  : undefined,
           arenas:      form.arenas   ? Number(form.arenas)   : undefined,
           pastures:    form.pastures ? Number(form.pastures) : undefined,
+          videoUrl:    form.videoUrl || undefined,
+          isLaunch:    form.isLaunch,
+          launchBadge: form.launchBadge || undefined,
+          launchDate:  form.launchDate || undefined,
         }),
       })
 
@@ -223,6 +231,17 @@ export default function NewPropertyPage() {
             </div>
           </section>
 
+          {/* Video */}
+          <section className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <p className="font-barlow text-xs font-semibold text-white/30 uppercase tracking-widest mb-5">Video (optional)</p>
+            <div>
+              <label className={LABEL}>YouTube Video URL</label>
+              <input type="url" value={form.videoUrl} onChange={(e) => set('videoUrl', e.target.value)}
+                placeholder="e.g. https://www.youtube.com/watch?v=..."
+                className={INPUT} />
+            </div>
+          </section>
+
           {/* Visibility */}
           <section className="bg-white/5 border border-white/10 rounded-xl p-6">
             <p className="font-barlow text-xs font-semibold text-white/30 uppercase tracking-widest mb-5">Visibility</p>
@@ -241,6 +260,41 @@ export default function NewPropertyPage() {
                 </label>
               ))}
             </div>
+          </section>
+
+          {/* Launch */}
+          <section className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <p className="font-barlow text-xs font-semibold text-white/30 uppercase tracking-widest mb-5">Launch</p>
+            <label className="flex items-center gap-3 cursor-pointer mb-5">
+              <div
+                role="checkbox"
+                aria-checked={form.isLaunch}
+                onClick={() => set('isLaunch', !form.isLaunch)}
+                className={`w-10 h-6 rounded-full transition-colors ${form.isLaunch ? 'bg-brand-blue' : 'bg-white/10'} relative flex-shrink-0`}
+              >
+                <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${form.isLaunch ? 'left-5' : 'left-1'}`} />
+              </div>
+              <span className="font-barlow text-sm text-white/70">Mark as Launch</span>
+            </label>
+            {form.isLaunch && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className={LABEL}>Launch Badge</label>
+                  <select value={form.launchBadge} onChange={(e) => set('launchBadge', e.target.value)}
+                    className={INPUT + ' bg-transparent'}>
+                    <option value="" className="bg-[#0a1929] text-white">Default (New Launch)</option>
+                    {['New Launch', 'Just Listed', 'Coming Soon'].map((b) => (
+                      <option key={b} value={b} className="bg-[#0a1929] text-white">{b}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className={LABEL}>Launch Date</label>
+                  <input type="date" value={form.launchDate} onChange={(e) => set('launchDate', e.target.value)}
+                    className={INPUT} />
+                </div>
+              </div>
+            )}
           </section>
 
           {/* Photos */}

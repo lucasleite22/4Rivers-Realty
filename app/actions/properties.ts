@@ -36,6 +36,7 @@ export async function createProperty(
     stables?: number | null
     arenas?: number | null
     pastures?: number | null
+    videoUrl?: string | null
   },
   images?: File[]
 ) {
@@ -55,6 +56,7 @@ export async function createProperty(
       stables: data.stables ?? null,
       arenas: data.arenas ?? null,
       pastures: data.pastures ?? null,
+      videoUrl: data.videoUrl ?? null,
     },
   })
 

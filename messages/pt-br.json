@@ -1,1 +1,349 @@
-{}
+{
+  "nav": {
+    "home": "Início",
+    "properties": "Imóveis",
+    "launches": "Lançamentos",
+    "about": "Sobre",
+    "contact": "Contato",
+    "listProperty": "Anuncie seu Imóvel"
+  },
+  "footer": {
+    "tagline": "Fazendas de cavalos, ranchos e propriedades rurais premium em Ocala e no Centro-Norte da Flórida.",
+    "quickLinks": "Links Rápidos",
+    "contact": "Contato",
+    "rights": "Todos os direitos reservados."
+  },
+  "whatsapp": {
+    "defaultMessage": "Olá! Encontrei seu site e tenho interesse em saber mais sobre seus imóveis.",
+    "defaultLabel": "Conversar no WhatsApp",
+    "shellMessage": "Olá! Tenho interesse em trabalhar com vocês."
+  },
+  "countdown": {
+    "days": "Dias",
+    "hours": "Horas",
+    "minutes": "Minutos",
+    "seconds": "Segundos",
+    "launchIn": "Lançamento em",
+    "live": "Este imóvel já está disponível!"
+  },
+  "propertyTypes": {
+    "all": "Todos os Tipos",
+    "HORSE_FARM": "Fazenda de Cavalos",
+    "RANCH": "Rancho",
+    "RESIDENTIAL": "Residencial",
+    "COMMERCIAL": "Comercial",
+    "LAND": "Terreno"
+  },
+  "propertyCounties": {
+    "all": "Todos os Condados",
+    "MARION": "Condado de Marion",
+    "SUMTER": "Condado de Sumter"
+  },
+  "propertyStatus": {
+    "ACTIVE": "Disponível",
+    "SOLD": "Vendido",
+    "UNDER_CONTRACT": "Em Negociação"
+  },
+  "errors": {
+    "long": "Algo deu errado. Tente novamente ou ligue diretamente para nós.",
+    "short": "Algo deu errado. Tente novamente."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Ocala · Fundada no Centro-Norte da Flórida",
+      "titleLine1": "Terra Feita para",
+      "titleHighlight": "uma Vida na Flórida",
+      "subtitle": "Fazendas de cavalos, ranchos ativos e propriedades rurais em todo o Condado de Marion — conduzidos por corretores que cresceram nessa terra.",
+      "ctaProperties": "Ver Imóveis",
+      "ctaContact": "Agendar uma Consulta"
+    },
+    "stats": {
+      "closedSales": "Vendas Concluídas",
+      "yearsExperience": "Anos de Experiência",
+      "inTransactions": "Em Transações",
+      "rated": "Avaliação"
+    },
+    "circleFeatures": {
+      "explore": {
+        "title": "Explore Imóveis",
+        "description": "Navegue por fazendas de cavalos, ranchos e terrenos rurais ativos em todo o Condado de Marion."
+      },
+      "sell": {
+        "title": "Venda Seu Terreno",
+        "description": "Avaliação gratuita e contato direto com nossa rede de compradores qualificados."
+      },
+      "locals": {
+        "title": "Trabalhe com Locais",
+        "description": "Mais de 10 anos nessa terra — corretores que conhecem cada estrada e riacho."
+      }
+    },
+    "featured": {
+      "eyebrow": "Imóveis em Destaque",
+      "title": "Imóveis em Destaque",
+      "subtitle": "Uma seleção exclusiva de imóveis — propriedades e fazendas em todo o Condado de Marion e além.",
+      "cta": "Ver Imóvel",
+      "viewAll": "Ver Todos os Imóveis"
+    },
+    "launches": {
+      "eyebrow": "Novos Lançamentos",
+      "title": "Últimos Lançamentos",
+      "cta": "Ver Todos os Lançamentos"
+    },
+    "why": {
+      "title": "Por Que a 4Rivers Realty",
+      "subtitle": "O que nos diferencia na hora de comprar ou vender terras rurais na Flórida.",
+      "cards": {
+        "local": {
+          "title": "Conhecimento Local",
+          "description": "Mais de 10 anos vivendo e trabalhando no Condado de Marion. Conhecemos cada estrada, cada riacho e cada canto do Centro-Norte da Flórida."
+        },
+        "specialist": {
+          "title": "Especialistas em Fazendas de Cavalos",
+          "description": "Conhecimento profundo de infraestrutura equestre — cercados, celeiros, arenas, sistemas de água e requisitos de zoneamento."
+        },
+        "support": {
+          "title": "Suporte Completo",
+          "description": "Da primeira busca até o fechamento e além, guiamos cada etapa com cuidado e profissionalismo."
+        },
+        "network": {
+          "title": "Rede de Confiança",
+          "description": "Conectados aos melhores inspetores, advogados, credores e profissionais equestres da região."
+        }
+      }
+    },
+    "testimonials": {
+      "eyebrow": "Depoimentos",
+      "title": "O Que Nossos Clientes Dizem",
+      "subtitle": "Famílias reais que encontraram sua terra através da 4Rivers Realty."
+    },
+    "listProperty": {
+      "freeLabel": "Grátis",
+      "freeSubtitle": "Avaliação do imóvel",
+      "titleLine1": "Quer Vender",
+      "titleLine2": "Seu Imóvel?",
+      "subtitle": "Temos uma rede ativa de compradores qualificados buscando fazendas de cavalos, ranchos e terrenos rurais em todo o Centro-Norte da Flórida. Anuncie seu imóvel com a 4Rivers e alcance o público certo — rapidamente.",
+      "bullets": {
+        "valuation": "Avaliação de mercado gratuita e sem compromisso",
+        "photography": "Fotografia profissional e anúncio completo",
+        "network": "Acesso direto à nossa rede de compradores",
+        "negotiation": "Negociação experiente e suporte no fechamento"
+      },
+      "cta": "Anunciar Meu Imóvel"
+    },
+    "cta": {
+      "eyebrow": "Comece Sua Jornada",
+      "title": "Pronto para Encontrar o Imóvel dos Seus Sonhos?",
+      "subtitle": "Seja você em busca de uma fazenda de cavalos ativa, um refúgio tranquilo em um rancho ou terra bruta para construir sua visão — estamos aqui para guiar você em cada etapa.",
+      "button": "Entre em Contato"
+    }
+  },
+  "about": {
+    "eyebrow": "Nossa História",
+    "title": "Sobre a 4Rivers Realty",
+    "valuesTitle": "Nossos Valores",
+    "teamTitle": "Conheça Nossa Equipe"
+  },
+  "contact": {
+    "eyebrow": "Entre em Contato",
+    "title": "Fale Conosco",
+    "subtitle": "Seja um imóvel específico em mente ou o início da sua busca, nossa equipe está pronta para ajudar.",
+    "info": {
+      "title": "Informações de Contato",
+      "address": "Endereço",
+      "addressLine1": "8055 CR 674",
+      "addressLine2": "Bushnell, Florida 33513",
+      "phone": "Telefone / WhatsApp",
+      "email": "E-mail",
+      "hours": "Horário de Atendimento",
+      "hoursLine1": "Seg–Sex: 9h – 17h",
+      "hoursLine2": "As solicitações são atendidas por ordem de chegada.",
+      "hoursLine3": "Mensagens recebidas no fim de semana são respondidas o mais rápido possível."
+    },
+    "mapTitle": "4Rivers Realty — Bushnell, FL",
+    "agentAccess": {
+      "label": "Acesso para Corretores",
+      "button": "Acessar Painel Administrativo",
+      "restricted": "Restrito a corretores licenciados"
+    },
+    "form": {
+      "title": "Envie Sua Mensagem",
+      "subtitle": "Normalmente respondemos em até 24 horas em dias úteis.",
+      "success": "Mensagem enviada! Entraremos em contato em até 24 horas.",
+      "error": "Algo deu errado. Tente novamente ou ligue diretamente para nós.",
+      "name": "Nome Completo",
+      "namePlaceholder": "João Silva",
+      "email": "E-mail",
+      "emailPlaceholder": "joao@exemplo.com",
+      "phone": "Telefone",
+      "phonePlaceholder": "(352) 000-0000",
+      "interest": "Tenho Interesse Em",
+      "interestOptions": {
+        "placeholder": "Selecione um tipo de imóvel...",
+        "horseFarm": "Fazenda de Cavalos",
+        "ranch": "Rancho",
+        "land": "Terreno",
+        "residential": "Residencial",
+        "other": "Outro"
+      },
+      "message": "Mensagem",
+      "messagePlaceholder": "Conte-nos sobre o imóvel que você procura — tamanho, localização, orçamento ou outros detalhes...",
+      "submit": "Enviar Mensagem",
+      "sending": "Enviando...",
+      "privacy": "Suas informações são mantidas em sigilo e nunca são compartilhadas com terceiros."
+    }
+  },
+  "propertyGrid": {
+    "empty": "Nenhum imóvel encontrado com esses critérios.",
+    "loading": "Carregando imóveis…"
+  },
+  "propertyMap": {
+    "loading": "Carregando mapa…"
+  },
+  "properties": {
+    "eyebrow": "Nossos Imóveis",
+    "title": "Imóveis",
+    "subtitle": "Ocala e Condado de Sumter, Flórida"
+  },
+  "propertyDetail": {
+    "noPhoto": "Nenhuma foto disponível",
+    "back": "Voltar aos Imóveis",
+    "acres": "Acres",
+    "stables": "Estábulos",
+    "arenas": "Arenas",
+    "pastures": "Pastagens",
+    "about": "Sobre Este Imóvel",
+    "location": "Localização",
+    "countySuffix": "Condado, FL"
+  },
+  "propertyFilters": {
+    "minPrice": "Preço mín.",
+    "maxPrice": "Preço máx.",
+    "minAcres": "Acres mín."
+  },
+  "propertyInterestForm": {
+    "title": "Solicitar Mais Informações",
+    "success": "Obrigado! Um membro da nossa equipe entrará em contato em breve sobre este imóvel.",
+    "name": "Nome",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "message": "Mensagem",
+    "messagePlaceholder": "Tenho interesse em {propertyTitle}...",
+    "error": "Algo deu errado. Tente novamente.",
+    "sending": "Enviando…",
+    "submit": "Solicitar Informações"
+  },
+  "propertyCard": {
+    "noPhoto": "Sem foto",
+    "acresSuffix": "ac"
+  },
+  "propertyListRow": {
+    "citySuffix": "FL",
+    "acresSuffix": "acres",
+    "cta": "Ver Imóvel"
+  },
+  "propertiesViewToggle": {
+    "grid": "Grade",
+    "map": "Mapa",
+    "gridAria": "Visualização em grade",
+    "mapAria": "Visualização em mapa"
+  },
+  "launches": {
+    "eyebrow": "Exclusivo",
+    "title": "Nossos Lançamentos",
+    "subtitle": "Seja o primeiro a saber sobre nossos imóveis mais novos antes de irem ao mercado aberto.",
+    "viewAllCta": "Ver Todo o Portfólio",
+    "filters": {
+      "all": "Todos",
+      "horseFarm": "Fazenda de Cavalos",
+      "ranch": "Rancho",
+      "land": "Terreno",
+      "comingSoon": "Em Breve"
+    },
+    "nextLaunch": "Próximo Lançamento",
+    "officialOpening": "Abertura oficial — 1º de julho de 2026",
+    "today": "Hoje",
+    "daysAgo": "há {days}d",
+    "priceOnRequest": "Preço Sob Consulta",
+    "details": "Detalhes",
+    "notifyMe": "Notifique-me",
+    "badges": {
+      "newLaunch": "Novo Lançamento",
+      "justListed": "Recém Anunciado",
+      "comingSoon": "Em Breve"
+    },
+    "notify": {
+      "title": "Quer ser notificado dos próximos lançamentos?",
+      "subtitle": "Cadastre-se e receba os novos lançamentos antes de irem ao mercado.",
+      "cta": "Receber Alertas"
+    }
+  },
+  "listProperty": {
+    "eyebrow": "Proprietários",
+    "titleLine1": "Anuncie Seu Imóvel",
+    "titleLine2": "com a 4Rivers Realty",
+    "subtitle": "Venda sua fazenda de cavalos, rancho ou terreno rural com uma equipe de especialistas locais.",
+    "processEyebrow": "Processo Simples",
+    "processTitle": "Como Funciona",
+    "step": "ETAPA {number}",
+    "steps": {
+      "submit": {
+        "title": "Envie Seu Imóvel",
+        "description": "Preencha os detalhes do seu imóvel e envie fotos."
+      },
+      "review": {
+        "title": "Análise Administrativa",
+        "description": "Nossa equipe analisa sua submissão quanto à precisão e completude."
+      },
+      "contact": {
+        "title": "Contato do Corretor",
+        "description": "Um corretor local entra em contato para discutir os próximos passos."
+      },
+      "listed": {
+        "title": "Anunciado e Divulgado",
+        "description": "Seu imóvel entra no ar e é divulgado para compradores qualificados."
+      }
+    },
+    "formTitle": "Envie Seu Imóvel",
+    "formSubtitle": "Preencha os detalhes abaixo e nossa equipe entrará em contato.",
+    "successTitle": "Envio recebido!",
+    "successSubtitle": "Nossa equipe analisará seu imóvel e entrará em contato em até 24 horas.",
+    "error": "Algo deu errado. Tente novamente ou ligue diretamente para nós.",
+    "sections": {
+      "yourInfo": "Suas Informações",
+      "propertyDetails": "Detalhes do Imóvel",
+      "propertyPhotos": "Fotos do Imóvel"
+    },
+    "fields": {
+      "fullName": "Nome Completo",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "propertyType": "Tipo de Imóvel",
+      "county": "Condado",
+      "address": "Endereço do Imóvel",
+      "acreage": "Área Total (acres)",
+      "askingPrice": "Preço Pedido (USD)",
+      "notes": "Detalhes Adicionais"
+    },
+    "placeholders": {
+      "fullName": "João Silva",
+      "email": "joao@exemplo.com",
+      "phone": "(352) 000-0000",
+      "propertyType": "Selecione o tipo…",
+      "county": "ex.: Condado de Marion",
+      "address": "Endereço ou descrição do lote",
+      "acreage": "ex.: 50",
+      "askingPrice": "ex.: 1500000",
+      "notes": "Descreva o imóvel — benfeitorias, infraestrutura, água, acesso viário, prazo, etc."
+    },
+    "photos": {
+      "hint": "Até 8 fotos · JPG, PNG, WebP · Máx. 5 MB cada",
+      "click": "Clique para enviar",
+      "drag": "ou arraste e solte",
+      "removeAria": "Remover foto",
+      "cover": "Capa"
+    },
+    "submitting": "Enviando…",
+    "submit": "Enviar Imóvel",
+    "disclaimer": "Sem compromisso. Suas informações são mantidas em sigilo."
+  }
+}

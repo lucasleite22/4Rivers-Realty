@@ -33,6 +33,10 @@ interface Property {
   stables: number | null
   arenas: number | null
   pastures: number | null
+  videoUrl: string | null
+  isLaunch: boolean
+  launchBadge: string | null
+  launchDate: string | null
   latitude: number | null
   longitude: number | null
   mlsId: string | null
@@ -137,6 +141,10 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           stables:      form.stables  != null ? Number(form.stables)  : null,
           arenas:       form.arenas   != null ? Number(form.arenas)   : null,
           pastures:     form.pastures != null ? Number(form.pastures) : null,
+          videoUrl:     form.videoUrl || null,
+          isLaunch:     form.isLaunch,
+          launchBadge:  form.launchBadge || null,
+          launchDate:   form.launchDate || null,
         }),
       })
       if (!res.ok) throw new Error('Failed to save')
@@ -174,7 +182,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
   // ── Visibility quick-toggle (saves immediately, no edit mode required) ───────
 
-  async function toggleVisibility(field: 'featured' | 'showOnPortal') {
+  async function toggleVisibility(field: 'featured' | 'showOnPortal' | 'isLaunch') {
     if (!property) return
     const newVal = !property[field]
     // Optimistic update
@@ -473,6 +481,77 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   )}
                 </div>
               ))}
+            </div>
+
+            {/* Video */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+              <p className="font-barlow text-xs font-semibold text-white/30 uppercase tracking-widest mb-4">Video (optional)</p>
+              {editing ? (
+                <input type="url" value={String(form.videoUrl ?? '')} onChange={(e) => setF('videoUrl', e.target.value)}
+                  placeholder="e.g. https://www.youtube.com/watch?v=..."
+                  className={INPUT} />
+              ) : (
+                property.videoUrl ? (
+                  <a href={property.videoUrl} target="_blank" rel="noopener noreferrer"
+                    className="font-barlow text-sm text-brand-blue hover:underline break-all">
+                    {property.videoUrl}
+                  </a>
+                ) : (
+                  <p className="font-barlow text-sm text-white/30">—</p>
+                )
+              )}
+            </div>
+
+            {/* Launch */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+              <p className="font-barlow text-xs font-semibold text-white/30 uppercase tracking-widest mb-4">Launch</p>
+              <label className="flex items-center justify-between py-2 cursor-pointer">
+                <span className="font-barlow text-sm text-white/60">Mark as Launch</span>
+                <button
+                  type="button"
+                  onClick={() => editing ? setF('isLaunch', !form.isLaunch) : toggleVisibility('isLaunch')}
+                  disabled={togglingField === 'isLaunch'}
+                  className={`w-10 h-6 rounded-full transition-colors relative flex-shrink-0 focus:outline-none cursor-pointer
+                    ${(editing ? !!form.isLaunch : !!property.isLaunch) ? 'bg-brand-blue' : 'bg-white/10'}
+                    ${togglingField === 'isLaunch' ? 'opacity-50' : 'hover:opacity-80'}`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all
+                    ${(editing ? !!form.isLaunch : !!property.isLaunch) ? 'left-5' : 'left-1'}`} />
+                </button>
+              </label>
+              {(editing ? !!form.isLaunch : !!property.isLaunch) && (
+                <div className="border-t border-white/5 pt-4 mt-2 space-y-4">
+                  <div>
+                    <label className={LABEL}>Launch Badge</label>
+                    {editing ? (
+                      <select value={String(form.launchBadge ?? '')} onChange={(e) => setF('launchBadge', e.target.value)}
+                        className={INPUT + ' bg-transparent'}>
+                        <option value="" className="bg-[#0a1929] text-white">Default (New Launch)</option>
+                        {['New Launch', 'Just Listed', 'Coming Soon'].map((b) => (
+                          <option key={b} value={b} className="bg-[#0a1929] text-white">{b}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="font-barlow text-sm text-white">{property.launchBadge ?? 'New Launch'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className={LABEL}>Launch Date</label>
+                    {editing ? (
+                      <input type="date"
+                        value={form.launchDate ? String(form.launchDate).slice(0, 10) : ''}
+                        onChange={(e) => setF('launchDate', e.target.value)}
+                        className={INPUT} />
+                    ) : (
+                      <p className="font-barlow text-sm text-white">
+                        {property.launchDate
+                          ? new Date(property.launchDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                          : <span className="text-white/30">—</span>}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Visibility */}

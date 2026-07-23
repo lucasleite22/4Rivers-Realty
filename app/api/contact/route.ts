@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     const resend = getResend()
     if (resend) {
-      const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://4riversrealty.com'}/admin/leads`
+      const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://4riversrealty.us'}/admin/leads`
       const agentPhone = process.env.AGENT_PHONE ?? '(352) 555-0100'
 
       Promise.allSettled([

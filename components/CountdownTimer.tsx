@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { digitFlip } from '@/lib/animations'
 
 interface TimeLeft {
@@ -61,10 +62,12 @@ function Digit({ value, label }: { value: number; label: string }) {
 
 export default function CountdownTimer({
   targetDate,
-  label = 'Launch in',
+  label,
   onExpired,
   className = '',
 }: Props) {
+  const t = useTranslations('countdown')
+  const resolvedLabel = label ?? t('launchIn')
   const target = targetDate instanceof Date ? targetDate : new Date(targetDate)
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calcTimeLeft(target))
   const [expired, setExpired] = useState(false)
@@ -92,26 +95,26 @@ export default function CountdownTimer({
   if (expired) {
     return (
       <div className={`text-center font-cormorant text-3xl text-navy ${className}`}>
-        This property is now live!
+        {t('live')}
       </div>
     )
   }
 
   return (
     <div className={`flex flex-col items-center gap-4 ${className}`}>
-      {label && (
+      {resolvedLabel && (
         <p className="font-barlow text-sm font-semibold tracking-[0.3em] uppercase text-brand-blue">
-          {label}
+          {resolvedLabel}
         </p>
       )}
       <div className="flex items-start gap-3 sm:gap-5">
-        <Digit value={timeLeft.days} label="Days" />
+        <Digit value={timeLeft.days} label={t('days')} />
         <Separator />
-        <Digit value={timeLeft.hours} label="Hours" />
+        <Digit value={timeLeft.hours} label={t('hours')} />
         <Separator />
-        <Digit value={timeLeft.minutes} label="Min" />
+        <Digit value={timeLeft.minutes} label={t('minutes')} />
         <Separator />
-        <Digit value={timeLeft.seconds} label="Sec" />
+        <Digit value={timeLeft.seconds} label={t('seconds')} />
       </div>
     </div>
   )

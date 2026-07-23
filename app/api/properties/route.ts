@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
     const county = searchParams.get('county')
     const featured = searchParams.get('featured')
     const showOnPortal = searchParams.get('showOnPortal')
+    const isLaunch = searchParams.get('isLaunch')
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
     const minAcreage = searchParams.get('minAcreage')
@@ -32,6 +33,7 @@ export async function GET(req: NextRequest) {
     if (county) where.county = { contains: county }
     if (featured === 'true') where.featured = true
     if (showOnPortal === 'true') where.showOnPortal = true
+    if (isLaunch === 'true') where.isLaunch = true
 
     if (minPrice || maxPrice) {
       where.priceUsd = {}
@@ -98,6 +100,10 @@ export async function POST(req: NextRequest) {
         stables: body.stables ?? null,
         arenas: body.arenas ?? null,
         pastures: body.pastures ?? null,
+        videoUrl: body.videoUrl ?? null,
+        isLaunch: body.isLaunch ?? false,
+        launchBadge: body.launchBadge ?? null,
+        launchDate: body.launchDate ? new Date(body.launchDate) : null,
       },
       include: { images: true },
     })

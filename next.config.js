@@ -26,6 +26,7 @@ const securityHeaders = [
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://*.openstreetmap.org https://*.hostinger.com https://4riversrealty.com https://www.4riversrealty.com https://images.unsplash.com https://ui-avatars.com https://*.public.blob.vercel-storage.com",
       "connect-src 'self' https://simplyrets.com" + __impeccableLiveDev,
+      "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com",
       "frame-ancestors 'none'",
     ].join('; '),
   },

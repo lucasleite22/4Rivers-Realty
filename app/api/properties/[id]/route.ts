@@ -61,6 +61,10 @@ export async function PATCH(
     if (body.stables !== undefined) data.stables = body.stables
     if (body.arenas !== undefined) data.arenas = body.arenas
     if (body.pastures !== undefined) data.pastures = body.pastures
+    if (body.videoUrl !== undefined) data.videoUrl = body.videoUrl
+    if (body.isLaunch !== undefined) data.isLaunch = body.isLaunch
+    if (body.launchBadge !== undefined) data.launchBadge = body.launchBadge
+    if (body.launchDate !== undefined) data.launchDate = body.launchDate ? new Date(body.launchDate) : null
 
     const property = await prisma.property.update({
       where: { id: params.id },

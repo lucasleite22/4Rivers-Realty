@@ -16,6 +16,8 @@ interface Property {
   city: string
   county: string
   featured: boolean
+  isLaunch: boolean
+  launchBadge: string | null
   createdAt: string
 }
 
@@ -131,8 +133,13 @@ export default function AdminPropertiesPage() {
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
                         <div>
-                          <p className="font-barlow font-semibold text-sm text-white group-hover:text-cyan-400 transition-colors">
+                          <p className="font-barlow font-semibold text-sm text-white group-hover:text-cyan-400 transition-colors flex items-center gap-2">
                             {p.title}
+                            {p.isLaunch && (
+                              <span className="font-barlow text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-blue/20 text-brand-blue">
+                                {p.launchBadge ?? 'New Launch'}
+                              </span>
+                            )}
                           </p>
                           <p className="font-barlow text-xs text-white/30 flex items-center gap-1 mt-0.5">
                             <Ruler className="w-3 h-3" />

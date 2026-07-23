@@ -118,6 +118,10 @@ model Property {
   stables       Int?
   arenas        Int?
   pastures      Int?
+  videoUrl      String?
+  isLaunch      Boolean        @default(false)
+  launchBadge   String?
+  launchDate    DateTime?
   // Geolocation — populated by Google Maps Geocoding API (Semana 6, Luan)
   latitude      Float?
   longitude     Float?
@@ -133,6 +137,7 @@ model Property {
   @@index([county])
   @@index([featured])
   @@index([showOnPortal])
+  @@index([isLaunch])
   @@map("properties")
 }
 

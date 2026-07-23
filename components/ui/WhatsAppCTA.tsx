@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   phone: string        // e.g. "13525550100" — digits only, with country code
@@ -10,15 +11,15 @@ interface Props {
   showAfterMs?: number // delay before appearing (default 3s)
 }
 
-const DEFAULT_MESSAGE =
-  'Hello! I found your website and I\'m interested in learning more about your properties.'
-
 export default function WhatsAppCTA({
   phone,
-  message = DEFAULT_MESSAGE,
-  label = 'Chat on WhatsApp',
+  message,
+  label,
   showAfterMs = 3000,
 }: Props) {
+  const t = useTranslations('whatsapp')
+  const resolvedMessage = message ?? t('defaultMessage')
+  const resolvedLabel = label ?? t('defaultLabel')
   const [visible, setVisible] = useState(false)
   const [tooltipOpen, setTooltipOpen] = useState(false)
   const prefersReducedMotion = useReducedMotion()
@@ -28,7 +29,7 @@ export default function WhatsAppCTA({
     return () => clearTimeout(t)
   }, [showAfterMs])
 
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(resolvedMessage)}`
 
   return (
     <AnimatePresence>
@@ -54,7 +55,7 @@ export default function WhatsAppCTA({
                 transition={{ duration: 0.15 }}
                 className="font-barlow text-sm font-semibold bg-white text-navy px-4 py-2 rounded-full shadow-lg whitespace-nowrap"
               >
-                {label}
+                {resolvedLabel}
               </motion.span>
             )}
           </AnimatePresence>
@@ -64,7 +65,7 @@ export default function WhatsAppCTA({
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={label}
+            aria-label={resolvedLabel}
             onMouseEnter={() => setTooltipOpen(true)}
             onMouseLeave={() => setTooltipOpen(false)}
             onFocus={() => setTooltipOpen(true)}

@@ -1,1 +1,349 @@
-{}
+{
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "launches": "Launches",
+    "about": "About",
+    "contact": "Contact",
+    "listProperty": "List Your Property"
+  },
+  "footer": {
+    "tagline": "Premium horse farms, ranches, and rural estates in Ocala and North Central Florida.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  },
+  "whatsapp": {
+    "defaultMessage": "Hello! I found your website and I'm interested in learning more about your properties.",
+    "defaultLabel": "Chat on WhatsApp",
+    "shellMessage": "Hi! I am interested in working with you."
+  },
+  "countdown": {
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds",
+    "launchIn": "Launch in",
+    "live": "This property is now live!"
+  },
+  "propertyTypes": {
+    "all": "All Types",
+    "HORSE_FARM": "Horse Farm",
+    "RANCH": "Ranch",
+    "RESIDENTIAL": "Residential",
+    "COMMERCIAL": "Commercial",
+    "LAND": "Land"
+  },
+  "propertyCounties": {
+    "all": "All Counties",
+    "MARION": "Marion County",
+    "SUMTER": "Sumter County"
+  },
+  "propertyStatus": {
+    "ACTIVE": "Active",
+    "SOLD": "Sold",
+    "UNDER_CONTRACT": "Under Contract"
+  },
+  "errors": {
+    "long": "Something went wrong. Please try again or call us directly.",
+    "short": "Something went wrong. Please try again."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Ocala · Est. North Central Florida",
+      "titleLine1": "Land Built for",
+      "titleHighlight": "a Florida Life",
+      "subtitle": "Horse farms, working ranches, and rural estates across Marion County — handled by brokers who were raised on this land.",
+      "ctaProperties": "View Properties",
+      "ctaContact": "Schedule a Consultation"
+    },
+    "stats": {
+      "closedSales": "Closed Sales",
+      "yearsExperience": "Years Experience",
+      "inTransactions": "In Transactions",
+      "rated": "Rated"
+    },
+    "circleFeatures": {
+      "explore": {
+        "title": "Explore Properties",
+        "description": "Browse active horse farms, ranches, and rural land across Marion County."
+      },
+      "sell": {
+        "title": "Sell Your Land",
+        "description": "Free valuation and a direct line to our network of qualified buyers."
+      },
+      "locals": {
+        "title": "Work With Locals",
+        "description": "10+ years on this land — brokers who know every road and creek."
+      }
+    },
+    "featured": {
+      "eyebrow": "Featured Listings",
+      "title": "Featured Properties",
+      "subtitle": "A hand-picked selection of exclusive listings — estates and farms across Marion County and beyond.",
+      "cta": "View Listing",
+      "viewAll": "View All Properties"
+    },
+    "launches": {
+      "eyebrow": "New Launches",
+      "title": "Latest Launches",
+      "cta": "View All Launches"
+    },
+    "why": {
+      "title": "Why 4Rivers Realty",
+      "subtitle": "What sets us apart when it's time to buy or sell rural Florida land.",
+      "cards": {
+        "local": {
+          "title": "Local Expertise",
+          "description": "10+ years living and working in Marion County. We know every road, every creek, and every corner of North Central Florida."
+        },
+        "specialist": {
+          "title": "Horse Farm Specialists",
+          "description": "Deep knowledge of equestrian infrastructure — paddocks, barns, arenas, water systems, and zoning requirements."
+        },
+        "support": {
+          "title": "Full-Service Support",
+          "description": "From your first search to the closing table and beyond, we guide every step with care and professionalism."
+        },
+        "network": {
+          "title": "Trusted Network",
+          "description": "Connected to the best inspectors, attorneys, lenders, and equine professionals in the region."
+        }
+      }
+    },
+    "testimonials": {
+      "eyebrow": "Testimonials",
+      "title": "What Our Clients Say",
+      "subtitle": "Real families who found their land through 4Rivers Realty."
+    },
+    "listProperty": {
+      "freeLabel": "Free",
+      "freeSubtitle": "Property evaluation",
+      "titleLine1": "Want to Sell",
+      "titleLine2": "Your Property?",
+      "subtitle": "We have an active network of qualified buyers looking for horse farms, ranches, and rural land across North Central Florida. List your property with 4Rivers and reach the right audience — fast.",
+      "bullets": {
+        "valuation": "Free market valuation with no obligation",
+        "photography": "Professional photography and listing",
+        "network": "Direct access to our buyer network",
+        "negotiation": "Experienced negotiation and closing support"
+      },
+      "cta": "List My Property"
+    },
+    "cta": {
+      "eyebrow": "Start Your Journey",
+      "title": "Ready to Find Your Dream Property?",
+      "subtitle": "Whether you're looking for a working horse farm, a peaceful ranch retreat, or raw land to build your vision — we're here to guide you every step of the way.",
+      "button": "Get in Touch"
+    }
+  },
+  "about": {
+    "eyebrow": "Our Story",
+    "title": "About 4Rivers Realty",
+    "valuesTitle": "Our Values",
+    "teamTitle": "Meet Our Team"
+  },
+  "contact": {
+    "eyebrow": "Get in Touch",
+    "title": "Contact Us",
+    "subtitle": "Whether you have a specific property in mind or are just starting your search, our team is ready to help.",
+    "info": {
+      "title": "Contact Information",
+      "address": "Address",
+      "addressLine1": "8055 CR 674",
+      "addressLine2": "Bushnell, Florida 33513",
+      "phone": "Phone / WhatsApp",
+      "email": "Email",
+      "hours": "Office Hours",
+      "hoursLine1": "Mon–Fri: 9:00am – 5:00pm",
+      "hoursLine2": "Inquiries are handled in the order received.",
+      "hoursLine3": "Weekend messages are answered as soon as possible."
+    },
+    "mapTitle": "4Rivers Realty — Bushnell, FL",
+    "agentAccess": {
+      "label": "Agent Access",
+      "button": "Access Admin Panel",
+      "restricted": "Restricted to licensed agents"
+    },
+    "form": {
+      "title": "Send Us a Message",
+      "subtitle": "We typically respond within 24 hours on business days.",
+      "success": "Message sent! We'll be in touch within 24 hours.",
+      "error": "Something went wrong. Please try again or call us directly.",
+      "name": "Full Name",
+      "namePlaceholder": "John Smith",
+      "email": "Email Address",
+      "emailPlaceholder": "john@example.com",
+      "phone": "Phone Number",
+      "phonePlaceholder": "(352) 000-0000",
+      "interest": "I'm Interested In",
+      "interestOptions": {
+        "placeholder": "Select a property type...",
+        "horseFarm": "Horse Farm",
+        "ranch": "Ranch",
+        "land": "Land",
+        "residential": "Residential",
+        "other": "Other"
+      },
+      "message": "Message",
+      "messagePlaceholder": "Tell us about the property you're looking for — size, location, budget, or any other details...",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "privacy": "Your information is kept private and never shared with third parties."
+    }
+  },
+  "propertyGrid": {
+    "empty": "No properties found matching your criteria.",
+    "loading": "Loading properties…"
+  },
+  "propertyMap": {
+    "loading": "Loading map…"
+  },
+  "properties": {
+    "eyebrow": "Our Listings",
+    "title": "Properties",
+    "subtitle": "Ocala & Sumter County, Florida"
+  },
+  "propertyDetail": {
+    "noPhoto": "No photo available",
+    "back": "Back to Listings",
+    "acres": "Acres",
+    "stables": "Stables",
+    "arenas": "Arenas",
+    "pastures": "Pastures",
+    "about": "About This Property",
+    "location": "Location",
+    "countySuffix": "County, FL"
+  },
+  "propertyFilters": {
+    "minPrice": "Min price",
+    "maxPrice": "Max price",
+    "minAcres": "Min acres"
+  },
+  "propertyInterestForm": {
+    "title": "Request More Information",
+    "success": "Thanks! A member of our team will reach out shortly about this property.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "messagePlaceholder": "I'm interested in {propertyTitle}...",
+    "error": "Something went wrong. Please try again.",
+    "sending": "Sending…",
+    "submit": "Request Information"
+  },
+  "propertyCard": {
+    "noPhoto": "No photo",
+    "acresSuffix": "ac"
+  },
+  "propertyListRow": {
+    "citySuffix": "FL",
+    "acresSuffix": "acres",
+    "cta": "View Listing"
+  },
+  "propertiesViewToggle": {
+    "grid": "Grid",
+    "map": "Map",
+    "gridAria": "Grid view",
+    "mapAria": "Map view"
+  },
+  "launches": {
+    "eyebrow": "Exclusive",
+    "title": "Our Launches",
+    "subtitle": "Be the first to know about our newest listings before they hit the open market.",
+    "viewAllCta": "View Full Portfolio",
+    "filters": {
+      "all": "All",
+      "horseFarm": "Horse Farm",
+      "ranch": "Ranch",
+      "land": "Land",
+      "comingSoon": "Coming Soon"
+    },
+    "nextLaunch": "Next Launch",
+    "officialOpening": "Official opening — July 1, 2026",
+    "today": "Today",
+    "daysAgo": "{days}d ago",
+    "priceOnRequest": "Price on Request",
+    "details": "Details",
+    "notifyMe": "Notify Me",
+    "badges": {
+      "newLaunch": "New Launch",
+      "justListed": "Just Listed",
+      "comingSoon": "Coming Soon"
+    },
+    "notify": {
+      "title": "Want to be notified of upcoming launches?",
+      "subtitle": "Sign up and get new launches before they hit the market.",
+      "cta": "Get Alerts"
+    }
+  },
+  "listProperty": {
+    "eyebrow": "Property Owners",
+    "titleLine1": "List Your Property",
+    "titleLine2": "with 4Rivers Realty",
+    "subtitle": "Sell your horse farm, ranch, or rural land with a team of local specialists.",
+    "processEyebrow": "Simple Process",
+    "processTitle": "How It Works",
+    "step": "STEP {number}",
+    "steps": {
+      "submit": {
+        "title": "Submit Your Property",
+        "description": "Fill in your property details and upload photos."
+      },
+      "review": {
+        "title": "Admin Review",
+        "description": "Our team reviews your submission for accuracy and completeness."
+      },
+      "contact": {
+        "title": "Agent Contact",
+        "description": "A local agent reaches out to discuss next steps."
+      },
+      "listed": {
+        "title": "Listed & Marketed",
+        "description": "Your property goes live and is marketed to qualified buyers."
+      }
+    },
+    "formTitle": "Submit Your Property",
+    "formSubtitle": "Fill in the details below and our team will be in touch.",
+    "successTitle": "Submission received!",
+    "successSubtitle": "Our team will review your property and reach out within 24 hours.",
+    "error": "Something went wrong. Please try again or call us directly.",
+    "sections": {
+      "yourInfo": "Your Information",
+      "propertyDetails": "Property Details",
+      "propertyPhotos": "Property Photos"
+    },
+    "fields": {
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "propertyType": "Property Type",
+      "county": "County",
+      "address": "Property Address",
+      "acreage": "Total Acreage",
+      "askingPrice": "Asking Price (USD)",
+      "notes": "Additional Details"
+    },
+    "placeholders": {
+      "fullName": "John Smith",
+      "email": "john@example.com",
+      "phone": "(352) 000-0000",
+      "propertyType": "Select type…",
+      "county": "e.g. Marion County",
+      "address": "Street address or parcel description",
+      "acreage": "e.g. 50",
+      "askingPrice": "e.g. 1500000",
+      "notes": "Describe the property — improvements, infrastructure, water, road access, timeline, etc."
+    },
+    "photos": {
+      "hint": "Up to 8 photos · JPG, PNG, WebP · Max 5 MB each",
+      "click": "Click to upload",
+      "drag": "or drag and drop",
+      "removeAria": "Remove photo",
+      "cover": "Cover"
+    },
+    "submitting": "Submitting…",
+    "submit": "Submit Property",
+    "disclaimer": "No obligation. Your information is kept confidential."
+  }
+}

@@ -26,6 +26,14 @@ const STATUS_LABELS: Record<string, string> = {
   UNDER_CONTRACT: 'Under Contract',
 }
 
+function getYouTubeEmbedUrl(url: string | null): string | null {
+  if (!url) return null
+  const match = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  )
+  return match ? `https://www.youtube.com/embed/${match[1]}` : null
+}
+
 async function getProperty(id: string) {
   return prisma.property.findUnique({
     where: { id },
@@ -51,6 +59,7 @@ export default async function PropertyDetailPage({ params }: Props) {
     : []
   const mainImage = images[0] ?? null
   const hasCoords = property.latitude != null && property.longitude != null
+  const videoEmbedUrl = getYouTubeEmbedUrl(property.videoUrl)
 
   const price = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -167,6 +176,24 @@ export default async function PropertyDetailPage({ params }: Props) {
                   {property.description}
                 </p>
               </div>
+
+              {/* Video */}
+              {videoEmbedUrl && (
+                <div className="mt-10">
+                  <h2 className="font-cormorant font-bold text-2xl text-dark-navy mb-4">
+                    Property Video
+                  </h2>
+                  <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                    <iframe
+                      src={videoEmbedUrl}
+                      title={`${property.title} video`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="absolute inset-0 w-full h-full"
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Map */}
               {hasCoords && (

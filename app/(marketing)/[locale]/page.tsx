@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
 import { ArrowRight, MapPin, Star, Award, Handshake, Users } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 import HeroMedia from '@/components/ui/HeroMedia'
 import CircleFeature from '@/components/ui/CircleFeature'
@@ -19,20 +20,14 @@ export const metadata: Metadata = {
 }
 
 // ── Data ─────────────────────────────────────────────────────────────────────
-
-const stats = [
-  { value: '57', label: 'Closed Sales' },
-  { value: '10+', label: 'Years Experience' },
-  { value: '$15.5M', label: 'In Transactions' },
-  { value: '5-Star', label: 'Rated' },
-]
+// Structural/proper-noun data only — display copy comes from message translations.
 
 const featuredProperties = [
   {
     name: 'Windmill Ranch',
     acres: 485,
     price: 4_200_000,
-    type: 'Horse Farm',
+    type: 'HORSE_FARM',
     city: 'Ocala',
     image:
       'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80',
@@ -42,7 +37,7 @@ const featuredProperties = [
     name: 'Silver Creek Farm',
     acres: 120,
     price: 1_850_000,
-    type: 'Ranch',
+    type: 'RANCH',
     city: 'Reddick',
     image:
       'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
@@ -52,7 +47,7 @@ const featuredProperties = [
     name: 'Cypress Meadows',
     acres: 78,
     price: 975_000,
-    type: 'Land',
+    type: 'LAND',
     city: 'Chiefland',
     image:
       'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
@@ -60,50 +55,18 @@ const featuredProperties = [
   },
 ]
 
-const circleFeatures = [
-  {
-    image: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=500&q=80',
-    title: 'Explore Properties',
-    description: 'Browse active horse farms, ranches, and rural land across Marion County.',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80',
-    title: 'Sell Your Land',
-    description: 'Free valuation and a direct line to our network of qualified buyers.',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=80',
-    title: 'Work With Locals',
-    description: '10+ years on this land — brokers who know every road and creek.',
-  },
-]
+const circleFeatureImages = {
+  explore: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=500&q=80',
+  sell: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80',
+  locals: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=80',
+}
 
-const whyCards = [
-  {
-    icon: <MapPin className="w-7 h-7" />,
-    title: 'Local Expertise',
-    description:
-      '10+ years living and working in Marion County. We know every road, every creek, and every corner of North Central Florida.',
-  },
-  {
-    icon: <Award className="w-7 h-7" />,
-    title: 'Horse Farm Specialists',
-    description:
-      'Deep knowledge of equestrian infrastructure — paddocks, barns, arenas, water systems, and zoning requirements.',
-  },
-  {
-    icon: <Handshake className="w-7 h-7" />,
-    title: 'Full-Service Support',
-    description:
-      'From your first search to the closing table and beyond, we guide every step with care and professionalism.',
-  },
-  {
-    icon: <Users className="w-7 h-7" />,
-    title: 'Trusted Network',
-    description:
-      'Connected to the best inspectors, attorneys, lenders, and equine professionals in the region.',
-  },
-]
+const whyIcons = {
+  local: <MapPin className="w-7 h-7" />,
+  specialist: <Award className="w-7 h-7" />,
+  support: <Handshake className="w-7 h-7" />,
+  network: <Users className="w-7 h-7" />,
+}
 
 const testimonials = [
   {
@@ -137,7 +100,21 @@ function formatPrice(n: number) {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-export default function HomePage() {
+const statKeys = ['closedSales', 'yearsExperience', 'inTransactions', 'rated'] as const
+const statValues: Record<(typeof statKeys)[number], string> = {
+  closedSales: '57',
+  yearsExperience: '10+',
+  inTransactions: '$15.5M',
+  rated: '5-Star',
+}
+
+const circleFeatureKeys = ['explore', 'sell', 'locals'] as const
+const whyCardKeys = ['local', 'specialist', 'support', 'network'] as const
+
+export default async function HomePage() {
+  const t = await getTranslations('home')
+  const tTypes = await getTranslations('propertyTypes')
+
   return (
     <>
       {/* ── Hero ── */}
@@ -170,17 +147,16 @@ export default function HomePage() {
               />
               <div className="h-5 w-px bg-white/25" />
               <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase">
-                Ocala · Est. North Central Florida
+                {t('hero.eyebrow')}
               </p>
             </div>
             <h1 className="font-cormorant font-bold text-5xl sm:text-6xl md:text-7xl text-white leading-[0.95] mb-6">
-              Land Built for
+              {t('hero.titleLine1')}
               <br />
-              <span className="text-brand-blue">a Florida Life</span>
+              <span className="text-brand-blue">{t('hero.titleHighlight')}</span>
             </h1>
             <p className="font-barlow text-lg sm:text-xl text-white/80 max-w-xl leading-relaxed">
-              Horse farms, working ranches, and rural estates across Marion
-              County — handled by brokers who were raised on this land.
+              {t('hero.subtitle')}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 mt-8">
@@ -188,13 +164,13 @@ export default function HomePage() {
               href="/properties"
               className="px-8 py-4 bg-brand-blue text-dark-navy font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors inline-flex items-center justify-center gap-2"
             >
-              View Properties <ArrowRight className="w-4 h-4" />
+              {t('hero.ctaProperties')} <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/contact"
               className="px-8 py-4 border-2 border-white/60 text-white font-barlow font-semibold rounded-md hover:bg-white hover:text-navy transition-colors inline-flex items-center justify-center"
             >
-              Schedule a Consultation
+              {t('hero.ctaContact')}
             </Link>
           </div>
         </div>
@@ -207,14 +183,14 @@ export default function HomePage() {
             stagger
             className="relative -mt-12 sm:-mt-16 bg-white rounded-2xl shadow-2xl border border-gray-100 grid grid-cols-2 md:grid-cols-4 gap-8 px-8 py-10 sm:py-12"
           >
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
+            {statKeys.map((key) => (
+              <div key={key} className="text-center">
                 <div className="w-8 h-0.5 bg-brand-blue mx-auto mb-4" />
                 <p className="font-cormorant font-bold text-4xl text-dark-navy">
-                  {stat.value}
+                  {statValues[key]}
                 </p>
                 <p className="font-barlow text-sm text-gray-400 mt-1 tracking-wide">
-                  {stat.label}
+                  {t(`stats.${key}`)}
                 </p>
               </div>
             ))}
@@ -226,8 +202,13 @@ export default function HomePage() {
       <section className="pt-20 pb-8 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatedSection stagger className="grid grid-cols-1 sm:grid-cols-3 gap-12">
-            {circleFeatures.map((feature) => (
-              <CircleFeature key={feature.title} {...feature} />
+            {circleFeatureKeys.map((key) => (
+              <CircleFeature
+                key={key}
+                image={circleFeatureImages[key]}
+                title={t(`circleFeatures.${key}.title`)}
+                description={t(`circleFeatures.${key}.description`)}
+              />
             ))}
           </AnimatedSection>
         </div>
@@ -238,10 +219,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
-              Featured Properties
+              {t('featured.title')}
             </h2>
             <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
-              A hand-picked selection of exclusive listings — estates and farms across Marion County and beyond.
+              {t('featured.subtitle')}
             </p>
           </div>
 
@@ -250,7 +231,7 @@ export default function HomePage() {
               <PropertyListRow
                 key={prop.slug}
                 name={prop.name}
-                type={prop.type}
+                type={tTypes(prop.type)}
                 city={prop.city}
                 acres={prop.acres}
                 price={formatPrice(prop.price)}
@@ -265,7 +246,7 @@ export default function HomePage() {
               href="/properties"
               className="inline-flex items-center gap-2 px-8 py-4 border-2 border-navy text-navy font-barlow font-semibold rounded-md hover:bg-navy hover:text-white transition-colors"
             >
-              View All Properties <ArrowRight className="w-4 h-4" />
+              {t('featured.viewAll')} <ArrowRight className="w-4 h-4" />
             </Link>
           </AnimatedSection>
         </div>
@@ -276,10 +257,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
-              Why 4Rivers Realty
+              {t('why.title')}
             </h2>
             <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
-              What sets us apart when it's time to buy or sell rural Florida land.
+              {t('why.subtitle')}
             </p>
           </div>
 
@@ -287,22 +268,22 @@ export default function HomePage() {
             stagger
             className="grid grid-cols-1 sm:grid-cols-2 border border-gray-200 rounded-2xl overflow-hidden bg-white divide-y divide-gray-200 sm:divide-y-0"
           >
-            {whyCards.map((card, i) => (
+            {whyCardKeys.map((key, i) => (
               <div
-                key={card.title}
+                key={key}
                 className={`flex gap-5 p-10 ${
-                  i < whyCards.length - 2 ? 'sm:border-b sm:border-gray-200' : ''
+                  i < whyCardKeys.length - 2 ? 'sm:border-b sm:border-gray-200' : ''
                 } ${i % 2 === 0 ? 'sm:border-r sm:border-gray-200' : ''}`}
               >
                 <div className="flex items-center justify-center w-12 h-12 bg-off-white text-brand-blue rounded-xl shrink-0">
-                  {card.icon}
+                  {whyIcons[key]}
                 </div>
                 <div>
                   <h3 className="font-cormorant font-bold text-xl text-dark-navy mb-2">
-                    {card.title}
+                    {t(`why.cards.${key}.title`)}
                   </h3>
                   <p className="font-barlow text-sm text-gray-500 leading-relaxed">
-                    {card.description}
+                    {t(`why.cards.${key}.description`)}
                   </p>
                 </div>
               </div>
@@ -316,10 +297,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
-              What Our Clients Say
+              {t('testimonials.title')}
             </h2>
             <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
-              Real families who found their land through 4Rivers Realty.
+              {t('testimonials.subtitle')}
             </p>
           </div>
 
@@ -354,7 +335,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="relative h-[420px] rounded-2xl overflow-hidden shadow-xl">
               <Image
-                src="https://images.unsplash.com/photo-1543674892-7d64d45df18b?w=800&q=85"
+                src="/images/institutional/photo-propriedade-4.jpeg"
                 alt="Rural property for sale in Florida"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -362,28 +343,23 @@ export default function HomePage() {
               />
               <div className="absolute inset-0 bg-dark-navy/25" />
               <div className="absolute bottom-6 left-6 bg-white rounded-xl px-5 py-4 shadow-lg">
-                <p className="font-cormorant font-bold text-2xl text-dark-navy">Free</p>
-                <p className="font-barlow text-sm text-gray-500">Property evaluation</p>
+                <p className="font-cormorant font-bold text-2xl text-dark-navy">{t('listProperty.freeLabel')}</p>
+                <p className="font-barlow text-sm text-gray-500">{t('listProperty.freeSubtitle')}</p>
               </div>
             </div>
             <div>
               <h2 className="font-cormorant font-bold text-5xl text-dark-navy leading-tight mb-6">
-                Want to Sell
-                <br />Your Property?
+                {t('listProperty.titleLine1')}
+                <br />{t('listProperty.titleLine2')}
               </h2>
               <p className="font-barlow text-gray-600 text-lg leading-relaxed mb-8">
-                We have an active network of qualified buyers looking for horse farms, ranches, and rural land across North Central Florida. List your property with 4Rivers and reach the right audience — fast.
+                {t('listProperty.subtitle')}
               </p>
               <ul className="space-y-3 mb-10">
-                {[
-                  'Free market valuation with no obligation',
-                  'Professional photography and listing',
-                  'Direct access to our buyer network',
-                  'Experienced negotiation and closing support',
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-3 font-barlow text-sm text-gray-600">
+                {(['valuation', 'photography', 'network', 'negotiation'] as const).map((key) => (
+                  <li key={key} className="flex items-center gap-3 font-barlow text-sm text-gray-600">
                     <span className="w-5 h-5 rounded-full bg-brand-blue/15 text-brand-blue flex items-center justify-center flex-shrink-0 text-xs font-bold">✓</span>
-                    {item}
+                    {t(`listProperty.bullets.${key}`)}
                   </li>
                 ))}
               </ul>
@@ -391,7 +367,7 @@ export default function HomePage() {
                 href="/list-property"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-dark-navy text-white font-barlow font-semibold rounded-md hover:bg-brand-blue transition-colors"
               >
-                List My Property <ArrowRight className="w-4 h-4" />
+                {t('listProperty.cta')} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
@@ -402,21 +378,19 @@ export default function HomePage() {
       <section className="py-28 bg-dark-navy">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase mb-6">
-            Start Your Journey
+            {t('cta.eyebrow')}
           </p>
           <h2 className="font-cormorant font-bold text-5xl text-white mb-6">
-            Ready to Find Your Dream Property?
+            {t('cta.title')}
           </h2>
           <p className="font-barlow text-white/60 text-lg mb-10 leading-relaxed">
-            Whether you're looking for a working horse farm, a peaceful ranch
-            retreat, or raw land to build your vision — we're here to guide you
-            every step of the way.
+            {t('cta.subtitle')}
           </p>
           <Link
             href="/contact"
             className="inline-flex items-center gap-2 px-10 py-4 bg-brand-blue text-dark-navy font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors text-lg"
           >
-            Get in Touch <ArrowRight className="w-5 h-5" />
+            {t('cta.button')} <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </section>

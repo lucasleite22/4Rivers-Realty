@@ -6,6 +6,7 @@ import { hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import '../../globals.css'
 import PublicShell from '@/components/PublicShell'
+import Footer from '@/components/Footer'
 import { routing } from '@/i18n/routing'
 
 const cormorant = Cormorant_Garamond({
@@ -97,7 +98,7 @@ export default async function MarketingRootLayout({
     <html lang={locale} className={`${cormorant.variable} ${barlow.variable}`}>
       <body className="font-barlow bg-off-white text-dark-navy antialiased">
         <NextIntlClientProvider messages={messages}>
-          <PublicShell>{children}</PublicShell>
+          <PublicShell footer={<Footer />}>{children}</PublicShell>
         </NextIntlClientProvider>
       </body>
     </html>

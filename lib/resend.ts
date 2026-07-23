@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 
-export const FROM_ADDRESS = 'notifications@4riversrealty.com'
-export const AGENT_EMAIL  = process.env.AGENT_NOTIFICATION_EMAIL ?? 'info@4riversrealty.com'
+export const FROM_ADDRESS = 'notifications@4riversrealty.us'
+export const AGENT_EMAIL  = process.env.AGENT_NOTIFICATION_EMAIL ?? 'info@4riversrealty.us'
 
 // Lazy singleton — only instantiated when actually sending an email.
 // Avoids build-time failure when RESEND_API_KEY is not set (e.g. demo deploys).

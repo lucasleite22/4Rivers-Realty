@@ -1,21 +1,22 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
-
-const navLinks = [
-  { href: '/properties', label: 'Properties' },
-  { href: '/launches', label: 'Launches' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
-]
+import { useTranslations } from 'next-intl'
+import { Link, usePathname } from '@/i18n/navigation'
 
 export default function Navbar() {
+  const t = useTranslations('nav')
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
+
+  const navLinks = [
+    { href: '/properties', label: t('properties') },
+    { href: '/launches', label: t('launches') },
+    { href: '/about', label: t('about') },
+    { href: '/contact', label: t('contact') },
+  ]
 
   useEffect(() => {
     setMenuOpen(false)
@@ -54,15 +55,15 @@ export default function Navbar() {
             href="/contact"
             className="ml-2 px-5 py-2.5 font-barlow font-semibold text-sm rounded-md transition-colors bg-navy text-white hover:bg-brand-blue"
           >
-            Get in Touch
+            {t('contact')}
           </Link>
 
-          <Link
+          <a
             href="/auth/login"
             className="font-barlow text-xs font-medium tracking-wide transition-colors hover:text-brand-blue text-gray-400"
           >
             Admin
-          </Link>
+          </a>
         </div>
 
         {/* Mobile hamburger */}
@@ -102,14 +103,14 @@ export default function Navbar() {
             href="/contact"
             className="mt-2 px-5 py-3 bg-navy text-white font-barlow font-semibold text-sm rounded-md text-center hover:bg-brand-blue transition-colors"
           >
-            Get in Touch
+            {t('contact')}
           </Link>
-          <Link
+          <a
             href="/auth/login"
             className="font-barlow text-xs text-gray-400 py-2 px-2 hover:text-brand-blue transition-colors"
           >
             Admin
-          </Link>
+          </a>
         </div>
       </div>
     </header>
