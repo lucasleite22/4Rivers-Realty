@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import Image from 'next/image'
-import { Link } from '@/i18n/navigation'
 import { getTranslations } from 'next-intl/server'
-import { ArrowLeft, MapPin, Home, Trees, Building2 } from 'lucide-react'
+import { MapPin, Home, Trees, Building2 } from 'lucide-react'
 import prisma from '@/lib/prisma'
 import PropertyMap from '@/components/map/PropertyMap'
+import PropertyGallery from '@/components/properties/PropertyGallery'
 import PropertyInterestForm from '@/components/properties/PropertyInterestForm'
 import type { PropertyWithImages } from '@/types/properties'
 
@@ -48,7 +47,6 @@ export default async function PropertyDetailPage({ params }: Props) {
   const images = property.images.length
     ? property.images.map((img) => img.url)
     : []
-  const mainImage = images[0] ?? null
   const hasCoords = property.latitude != null && property.longitude != null
   const videoEmbedUrl = getYouTubeEmbedUrl(property.videoUrl)
 
@@ -61,51 +59,14 @@ export default async function PropertyDetailPage({ params }: Props) {
   return (
     <main className="min-h-screen bg-white pt-20">
       {/* ── Gallery ── */}
-      <section className="relative bg-off-white">
-        <div className="relative h-[42vh] min-h-[340px] sm:h-[55vh] sm:min-h-[420px]">
-          {mainImage ? (
-            <Image
-              src={mainImage}
-              alt={property.title}
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-navy/5">
-              <p className="font-barlow text-navy/30 text-sm">{t('noPhoto')}</p>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-dark-navy/60 via-transparent to-transparent" />
-
-          <Link
-            href="/properties"
-            className="absolute top-5 left-4 sm:left-6 inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm text-dark-navy font-barlow text-sm font-semibold px-4 py-2 rounded-full shadow-sm hover:bg-white transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" /> {t('back')}
-          </Link>
-
-          <span className="absolute top-5 right-4 sm:right-6 bg-dark-navy text-white font-barlow text-xs font-semibold uppercase tracking-wide px-3 py-1.5 rounded-full">
-            {tStatus(property.status as 'ACTIVE' | 'SOLD' | 'UNDER_CONTRACT')}
-          </span>
-        </div>
-
-        {images.length > 1 && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10 pb-2">
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {images.slice(0, 8).map((url, i) => (
-                <div
-                  key={i}
-                  className="relative flex-shrink-0 w-28 h-20 rounded-lg overflow-hidden border-2 border-white shadow-md"
-                >
-                  <Image src={url} alt={`${property.title} photo ${i + 1}`} fill sizes="112px" className="object-cover" />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
+      <PropertyGallery
+        images={images}
+        title={property.title}
+        status={property.status}
+        statusLabel={tStatus(property.status as 'ACTIVE' | 'SOLD' | 'UNDER_CONTRACT')}
+        backLabel={t('back')}
+        noPhotoLabel={t('noPhoto')}
+      />
 
       {/* ── Content ── */}
       <section className="py-12 sm:py-16">

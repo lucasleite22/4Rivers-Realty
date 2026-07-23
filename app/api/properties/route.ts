@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { requireAuth, AuthError } from '@/lib/auth'
+import { requireAuth, verifyToken, AuthError } from '@/lib/auth'
 import { Prisma } from '@prisma/client'
 
 // ── GET /api/properties — public ─────────────
@@ -12,6 +12,7 @@ import { Prisma } from '@prisma/client'
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = req.nextUrl
+    const admin = await verifyToken(req)
 
     const where: Prisma.PropertyWhereInput = {}
 
@@ -32,8 +33,14 @@ export async function GET(req: NextRequest) {
     if (status) where.status = status as any
     if (county) where.county = { contains: county }
     if (featured === 'true') where.featured = true
-    if (showOnPortal === 'true') where.showOnPortal = true
     if (isLaunch === 'true') where.isLaunch = true
+
+    if (!admin) {
+      // Public/unauthenticated callers must never see delisted properties
+      where.showOnPortal = true
+    } else if (showOnPortal === 'true') {
+      where.showOnPortal = true
+    }
 
     if (minPrice || maxPrice) {
       where.priceUsd = {}
