@@ -1,26 +1,19 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 
-const TYPES = [
-  { value: '', label: 'All Types' },
-  { value: 'HORSE_FARM', label: 'Horse Farm' },
-  { value: 'RANCH', label: 'Ranch' },
-  { value: 'LAND', label: 'Land' },
-  { value: 'RESIDENTIAL', label: 'Residential' },
-  { value: 'COMMERCIAL', label: 'Commercial' },
-]
-
-const COUNTIES = [
-  { value: '', label: 'All Counties' },
-  { value: 'Marion', label: 'Marion County' },
-  { value: 'Sumter', label: 'Sumter County' },
-]
+const TYPE_VALUES = ['', 'HORSE_FARM', 'RANCH', 'LAND', 'RESIDENTIAL', 'COMMERCIAL'] as const
+const COUNTY_VALUES = ['', 'Marion', 'Sumter'] as const
 
 export default function PropertyFilters() {
   const router = useRouter()
   const params = useSearchParams()
+  const tTypes = useTranslations('propertyTypes')
+  const tCounties = useTranslations('propertyCounties')
+  const t = useTranslations('propertyFilters')
 
   const update = useCallback(
     (key: string, value: string) => {
@@ -48,8 +41,10 @@ export default function PropertyFilters() {
         onChange={(e) => update('type', e.target.value)}
         className={`${selectCls} col-span-2`}
       >
-        {TYPES.map((t) => (
-          <option key={t.value} value={t.value}>{t.label}</option>
+        {TYPE_VALUES.map((value) => (
+          <option key={value} value={value}>
+            {tTypes(value === '' ? 'all' : (value as 'HORSE_FARM' | 'RANCH' | 'RESIDENTIAL' | 'COMMERCIAL' | 'LAND'))}
+          </option>
         ))}
       </select>
 
@@ -58,14 +53,16 @@ export default function PropertyFilters() {
         onChange={(e) => update('county', e.target.value)}
         className={`${selectCls} col-span-2`}
       >
-        {COUNTIES.map((c) => (
-          <option key={c.value} value={c.value}>{c.label}</option>
+        {COUNTY_VALUES.map((value) => (
+          <option key={value} value={value}>
+            {tCounties(value === '' ? 'all' : (value.toUpperCase() as 'MARION' | 'SUMTER'))}
+          </option>
         ))}
       </select>
 
       <input
         type="number"
-        placeholder="Min price"
+        placeholder={t('minPrice')}
         defaultValue={params.get('minPrice') ?? ''}
         onBlur={(e) => update('minPrice', e.target.value)}
         className={inputCls}
@@ -73,7 +70,7 @@ export default function PropertyFilters() {
 
       <input
         type="number"
-        placeholder="Max price"
+        placeholder={t('maxPrice')}
         defaultValue={params.get('maxPrice') ?? ''}
         onBlur={(e) => update('maxPrice', e.target.value)}
         className={inputCls}
@@ -81,7 +78,7 @@ export default function PropertyFilters() {
 
       <input
         type="number"
-        placeholder="Min acres"
+        placeholder={t('minAcres')}
         defaultValue={params.get('minAcreage') ?? ''}
         onBlur={(e) => update('minAcreage', e.target.value)}
         className={`${inputCls} col-span-2 sm:w-28`}

@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
+import { getTranslations } from 'next-intl/server'
 import { ArrowLeft, MapPin, Home, Trees, Building2 } from 'lucide-react'
 import prisma from '@/lib/prisma'
 import PropertyMap from '@/components/map/PropertyMap'
@@ -10,20 +11,6 @@ import type { PropertyWithImages } from '@/types/properties'
 
 interface Props {
   params: { id: string }
-}
-
-const TYPE_LABELS: Record<string, string> = {
-  HORSE_FARM: 'Horse Farm',
-  RANCH: 'Ranch',
-  RESIDENTIAL: 'Residential',
-  COMMERCIAL: 'Commercial',
-  LAND: 'Land',
-}
-
-const STATUS_LABELS: Record<string, string> = {
-  ACTIVE: 'Active',
-  SOLD: 'Sold',
-  UNDER_CONTRACT: 'Under Contract',
 }
 
 function getYouTubeEmbedUrl(url: string | null): string | null {
@@ -54,6 +41,10 @@ export default async function PropertyDetailPage({ params }: Props) {
   const property = await getProperty(params.id)
   if (!property) notFound()
 
+  const t = await getTranslations('propertyDetail')
+  const tTypes = await getTranslations('propertyTypes')
+  const tStatus = await getTranslations('propertyStatus')
+
   const images = property.images.length
     ? property.images.map((img) => img.url)
     : []
@@ -83,7 +74,7 @@ export default async function PropertyDetailPage({ params }: Props) {
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-navy/5">
-              <p className="font-barlow text-navy/30 text-sm">No photo available</p>
+              <p className="font-barlow text-navy/30 text-sm">{t('noPhoto')}</p>
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-dark-navy/60 via-transparent to-transparent" />
@@ -92,11 +83,11 @@ export default async function PropertyDetailPage({ params }: Props) {
             href="/properties"
             className="absolute top-5 left-4 sm:left-6 inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm text-dark-navy font-barlow text-sm font-semibold px-4 py-2 rounded-full shadow-sm hover:bg-white transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Listings
+            <ArrowLeft className="w-4 h-4" /> {t('back')}
           </Link>
 
           <span className="absolute top-5 right-4 sm:right-6 bg-dark-navy text-white font-barlow text-xs font-semibold uppercase tracking-wide px-3 py-1.5 rounded-full">
-            {STATUS_LABELS[property.status] ?? property.status}
+            {tStatus(property.status as 'ACTIVE' | 'SOLD' | 'UNDER_CONTRACT')}
           </span>
         </div>
 
@@ -123,14 +114,14 @@ export default async function PropertyDetailPage({ params }: Props) {
             {/* Left: details */}
             <div className="lg:col-span-2">
               <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-2">
-                {TYPE_LABELS[property.type] ?? property.type}
+                {tTypes(property.type as 'HORSE_FARM' | 'RANCH' | 'RESIDENTIAL' | 'COMMERCIAL' | 'LAND')}
               </p>
               <h1 className="font-cormorant font-bold text-4xl sm:text-5xl text-dark-navy leading-tight mb-3">
                 {property.title}
               </h1>
               <p className="flex items-center gap-2 font-barlow text-gray-500 mb-6">
                 <MapPin className="w-4 h-4 text-brand-blue" />
-                {property.address}, {property.city}, {property.county} County, FL
+                {property.address}, {property.city}, {property.county} {t('countySuffix')}
               </p>
 
               <p className="font-cormorant font-bold text-3xl text-dark-navy mb-8">
@@ -142,27 +133,27 @@ export default async function PropertyDetailPage({ params }: Props) {
                 <div className="bg-off-white rounded-xl p-4 text-center">
                   <Trees className="w-5 h-5 text-brand-blue mx-auto mb-2" />
                   <p className="font-cormorant font-bold text-xl text-dark-navy">{Number(property.acreage)}</p>
-                  <p className="font-barlow text-xs text-gray-500">Acres</p>
+                  <p className="font-barlow text-xs text-gray-500">{t('acres')}</p>
                 </div>
                 {property.stables != null && (
                   <div className="bg-off-white rounded-xl p-4 text-center">
                     <Home className="w-5 h-5 text-brand-blue mx-auto mb-2" />
                     <p className="font-cormorant font-bold text-xl text-dark-navy">{property.stables}</p>
-                    <p className="font-barlow text-xs text-gray-500">Stables</p>
+                    <p className="font-barlow text-xs text-gray-500">{t('stables')}</p>
                   </div>
                 )}
                 {property.arenas != null && (
                   <div className="bg-off-white rounded-xl p-4 text-center">
                     <Building2 className="w-5 h-5 text-brand-blue mx-auto mb-2" />
                     <p className="font-cormorant font-bold text-xl text-dark-navy">{property.arenas}</p>
-                    <p className="font-barlow text-xs text-gray-500">Arenas</p>
+                    <p className="font-barlow text-xs text-gray-500">{t('arenas')}</p>
                   </div>
                 )}
                 {property.pastures != null && (
                   <div className="bg-off-white rounded-xl p-4 text-center">
                     <Trees className="w-5 h-5 text-brand-blue mx-auto mb-2" />
                     <p className="font-cormorant font-bold text-xl text-dark-navy">{property.pastures}</p>
-                    <p className="font-barlow text-xs text-gray-500">Pastures</p>
+                    <p className="font-barlow text-xs text-gray-500">{t('pastures')}</p>
                   </div>
                 )}
               </div>
@@ -170,7 +161,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Description */}
               <div>
                 <h2 className="font-cormorant font-bold text-2xl text-dark-navy mb-4">
-                  About This Property
+                  {t('about')}
                 </h2>
                 <p className="font-barlow text-gray-600 leading-relaxed whitespace-pre-line">
                   {property.description}
@@ -181,7 +172,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               {videoEmbedUrl && (
                 <div className="mt-10">
                   <h2 className="font-cormorant font-bold text-2xl text-dark-navy mb-4">
-                    Property Video
+                    {t('video')}
                   </h2>
                   <div className="relative w-full aspect-video rounded-xl overflow-hidden">
                     <iframe
@@ -199,7 +190,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               {hasCoords && (
                 <div className="mt-10">
                   <h2 className="font-cormorant font-bold text-2xl text-dark-navy mb-4">
-                    Location
+                    {t('location')}
                   </h2>
                   <PropertyMap
                     properties={[property as unknown as PropertyWithImages]}

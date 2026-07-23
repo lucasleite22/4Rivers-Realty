@@ -1,17 +1,19 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useProperties } from '@/hooks/useProperties'
 import PropertyCard from './PropertyCard'
 
 export default function PropertyGrid() {
   const { properties, loading, error } = useProperties()
+  const t = useTranslations('propertyGrid')
 
   if (loading) return null // parent Suspense shows skeleton
 
   if (error) {
     return (
       <p className="font-barlow text-center text-gray-500 py-20">
-        Could not load properties. Please try again.
+        {t('error')}
       </p>
     )
   }
@@ -19,7 +21,7 @@ export default function PropertyGrid() {
   if (!properties.length) {
     return (
       <p className="font-barlow text-center text-gray-400 py-20">
-        No properties found.
+        {t('empty')}
       </p>
     )
   }

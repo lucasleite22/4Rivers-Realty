@@ -1,5 +1,8 @@
+'use client'
+
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 import { ArrowRight, MapPin, Ruler } from 'lucide-react'
 
 interface Props {
@@ -14,6 +17,8 @@ interface Props {
 
 /** Horizontal listing row — photo + icon specs + CTA, used for the homepage showcase. */
 export default function PropertyListRow({ name, type, city, acres, price, image, href }: Props) {
+  const t = useTranslations('propertyListRow')
+
   return (
     <Link
       href={href}
@@ -38,10 +43,10 @@ export default function PropertyListRow({ name, type, city, acres, price, image,
         </h3>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 font-barlow text-sm text-gray-500">
           <span className="flex items-center gap-1.5">
-            <MapPin className="w-4 h-4 text-brand-blue" /> {city}, FL
+            <MapPin className="w-4 h-4 text-brand-blue" /> {city}, {t('citySuffix')}
           </span>
           <span className="flex items-center gap-1.5">
-            <Ruler className="w-4 h-4 text-brand-blue" /> {acres} acres
+            <Ruler className="w-4 h-4 text-brand-blue" /> {acres} {t('acresSuffix')}
           </span>
         </div>
         <p className="font-cormorant font-bold text-2xl text-dark-navy mt-4">{price}</p>
@@ -49,7 +54,7 @@ export default function PropertyListRow({ name, type, city, acres, price, image,
 
       <div className="flex-shrink-0 self-stretch sm:self-center">
         <span className="inline-flex items-center gap-2 px-6 py-3 bg-brand-blue text-dark-navy font-barlow font-semibold text-sm rounded-md group-hover:bg-light-blue transition-colors whitespace-nowrap">
-          View Listing <ArrowRight className="w-4 h-4" />
+          {t('cta')} <ArrowRight className="w-4 h-4" />
         </span>
       </div>
     </Link>

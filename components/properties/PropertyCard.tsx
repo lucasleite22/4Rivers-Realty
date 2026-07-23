@@ -1,4 +1,7 @@
-import Link from 'next/link'
+'use client'
+
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
 import type { PropertyWithImages } from '@/types/properties'
 
@@ -6,15 +9,9 @@ interface Props {
   property: PropertyWithImages
 }
 
-const TYPE_LABELS: Record<string, string> = {
-  HORSE_FARM: 'Horse Farm',
-  RANCH: 'Ranch',
-  RESIDENTIAL: 'Residential',
-  COMMERCIAL: 'Commercial',
-  LAND: 'Land',
-}
-
 export default function PropertyCard({ property }: Props) {
+  const t = useTranslations('propertyCard')
+  const tTypes = useTranslations('propertyTypes')
   const cover = property.coverImageUrl ?? property.images?.[0]?.url ?? null
   const price = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -32,11 +29,11 @@ export default function PropertyCard({ property }: Props) {
           <Image src={cover} alt={property.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-navy/20 font-barlow text-sm">
-            No photo
+            {t('noPhoto')}
           </div>
         )}
         <span className="absolute top-3 left-3 bg-navy text-white font-barlow text-xs px-2 py-1 rounded">
-          {TYPE_LABELS[property.type] ?? property.type}
+          {tTypes(property.type as 'HORSE_FARM' | 'RANCH' | 'RESIDENTIAL' | 'COMMERCIAL' | 'LAND')}
         </span>
       </div>
 
@@ -45,11 +42,11 @@ export default function PropertyCard({ property }: Props) {
           {property.title}
         </h3>
         <p className="font-barlow text-sm text-gray-500 mt-1">
-          {property.city}, {property.county} County
+          {property.city}, {property.county} {t('countySuffix')}
         </p>
         <div className="flex items-center justify-between mt-3">
           <span className="font-cormorant text-2xl text-navy">{price}</span>
-          <span className="font-barlow text-sm text-gray-400">{Number(property.acreage)} ac</span>
+          <span className="font-barlow text-sm text-gray-400">{Number(property.acreage)} {t('acresSuffix')}</span>
         </div>
       </div>
     </Link>

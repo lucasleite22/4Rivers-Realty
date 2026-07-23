@@ -1,17 +1,23 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import type { PropertyWithImages } from '@/types/properties'
+
+function MapLoading() {
+  const t = useTranslations('propertyMap')
+  return (
+    <div className="w-full h-full bg-off-white animate-pulse flex items-center justify-center">
+      <p className="font-barlow text-sm text-navy/40">{t('loading')}</p>
+    </div>
+  )
+}
 
 // Leaflet must be loaded client-side only — it reads window/document on import.
 // next/dynamic with ssr:false is the official Next.js pattern for this.
 const MapClient = dynamic(() => import('./MapClient'), {
   ssr: false,
-  loading: () => (
-    <div className="w-full h-full bg-off-white animate-pulse flex items-center justify-center">
-      <p className="font-barlow text-sm text-navy/40">Loading map…</p>
-    </div>
-  ),
+  loading: () => <MapLoading />,
 })
 
 interface Props {

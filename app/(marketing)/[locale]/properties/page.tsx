@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { getTranslations } from 'next-intl/server'
 import PropertyFilters from '@/components/properties/PropertyFilters'
 import PropertiesViewToggle from '@/components/properties/PropertiesViewToggle'
 
@@ -7,17 +8,19 @@ export const metadata = {
   description: 'Browse horse farms, ranches, and land in Ocala & Sumter County, FL',
 }
 
-export default function PropertiesPage() {
+export default async function PropertiesPage() {
+  const t = await getTranslations('properties')
+
   return (
     <main className="min-h-screen bg-white">
       <section className="bg-dark-navy pt-28 pb-16 px-4">
         <div className="max-w-6xl mx-auto">
           <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-3">
-            Our Listings
+            {t('eyebrow')}
           </p>
-          <h1 className="font-cormorant text-4xl text-white">Properties</h1>
+          <h1 className="font-cormorant text-4xl text-white">{t('title')}</h1>
           <p className="font-barlow text-white/60 mt-2">
-            Ocala &amp; Sumter County, Florida
+            {t('subtitle')}
           </p>
         </div>
       </section>

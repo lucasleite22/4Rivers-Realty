@@ -4,7 +4,8 @@ import 'leaflet/dist/leaflet.css'
 import { useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import type { Map as LeafletMap } from 'leaflet'
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import type { PropertyWithImages } from '@/types/properties'
 
 // ── Fix Leaflet default icon path broken by webpack ──────────
@@ -83,6 +84,9 @@ export default function MapClient({
   zoom = DEFAULT_ZOOM,
   center = DEFAULT_CENTER,
 }: Props) {
+  const t = useTranslations('mapClient')
+  const tCard = useTranslations('propertyCard')
+
   useEffect(() => {
     fixLeafletIcons()
   }, [])
@@ -124,7 +128,7 @@ export default function MapClient({
                 {prop.title}
               </p>
               <p className="text-gray-500 text-xs mt-0.5">
-                {prop.city}, {prop.county} County · {Number(prop.acreage)} ac
+                {prop.city}, {prop.county} {tCard('countySuffix')} · {Number(prop.acreage)} {tCard('acresSuffix')}
               </p>
               <p className="font-cormorant font-bold text-lg text-navy mt-1">
                 {fmtPrice(prop.priceUsd)}
@@ -133,7 +137,7 @@ export default function MapClient({
                 href={`/properties/${prop.id}`}
                 className="block mt-2 text-center bg-navy text-white text-xs font-semibold py-1.5 rounded hover:bg-brand-blue transition-colors"
               >
-                View Details
+                {t('viewDetails')}
               </Link>
             </div>
           </Popup>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { MapPin, Ruler, ArrowRight, Sparkles, Clock } from 'lucide-react'
 import prisma from '@/lib/prisma'
 import CountdownTimer from '@/components/CountdownTimer'
@@ -18,12 +19,10 @@ export const metadata: Metadata = {
   },
 }
 
-const TYPE_LABELS: Record<string, string> = {
-  HORSE_FARM: 'Horse Farm',
-  RANCH: 'Ranch',
-  RESIDENTIAL: 'Residential',
-  COMMERCIAL: 'Commercial',
-  LAND: 'Land',
+const BADGE_KEYS: Record<string, string> = {
+  'New Launch': 'newLaunch',
+  'Just Listed': 'justListed',
+  'Coming Soon': 'comingSoon',
 }
 
 async function getLaunches() {
@@ -47,7 +46,7 @@ function daysAgo(date: Date) {
   return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)))
 }
 
-function BadgeColor({ badge }: { badge: string }) {
+function BadgeColor({ badge, label }: { badge: string; label: string }) {
   const styles: Record<string, string> = {
     'New Launch': 'bg-brand-blue text-white',
     'Just Listed': 'bg-green-500 text-white',
@@ -55,12 +54,15 @@ function BadgeColor({ badge }: { badge: string }) {
   }
   return (
     <span className={`font-barlow text-xs font-bold px-3 py-1 rounded-full ${styles[badge] ?? 'bg-gray-500 text-white'}`}>
-      {badge}
+      {label}
     </span>
   )
 }
 
 export default async function LaunchesPage() {
+  const t = await getTranslations('launches')
+  const tTypes = await getTranslations('propertyTypes')
+  const locale = await getLocale()
   const launches = await getLaunches()
 
   const nextLaunch = launches
@@ -77,21 +79,21 @@ export default async function LaunchesPage() {
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="w-4 h-4 text-light-blue" />
                 <p className="font-barlow text-light-blue text-sm font-semibold tracking-[0.3em] uppercase">
-                  Exclusivo
+                  {t('eyebrow')}
                 </p>
               </div>
               <h1 className="font-cormorant font-bold text-5xl sm:text-6xl text-white">
-                Nossos Lançamentos
+                {t('title')}
               </h1>
               <p className="font-barlow text-white/70 text-lg mt-4 max-w-xl">
-                As propriedades mais recentes e exclusivas do nosso portfólio — horse farms, ranchos e terras virgens em North Central Florida.
+                {t('subtitle')}
               </p>
             </div>
             <Link
               href="/properties"
               className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 border-2 border-white/30 text-white font-barlow font-semibold text-sm rounded-md hover:border-brand-blue hover:text-brand-blue transition-colors"
             >
-              Ver todo o portfólio <ArrowRight className="w-4 h-4" />
+              {t('viewAllCta')} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -103,13 +105,15 @@ export default async function LaunchesPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-8">
             <div>
               <p className="font-barlow text-sm font-semibold tracking-[0.3em] uppercase text-brand-blue mb-1">
-                Next Launch
+                {t('nextLaunch')}
               </p>
               <h2 className="font-cormorant font-bold text-3xl text-navy">
                 {nextLaunch.title}
               </h2>
               <p className="font-barlow text-gray-500 text-sm mt-1">
-                Official opening — {nextLaunch.launchDate!.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                {t('officialOpening', {
+                  date: nextLaunch.launchDate!.toLocaleDateString(locale === 'pt-br' ? 'pt-BR' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+                })}
               </p>
             </div>
             <CountdownTimer
@@ -125,7 +129,7 @@ export default async function LaunchesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {launches.length === 0 ? (
             <p className="font-barlow text-gray-500 text-center py-16">
-              Nenhum lançamento disponível no momento. Volte em breve!
+              {t('emptyState')}
             </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -149,20 +153,23 @@ export default async function LaunchesPage() {
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center bg-navy/5">
-                          <p className="font-barlow text-navy/30 text-sm">No photo available</p>
+                          <p className="font-barlow text-navy/30 text-sm">{t('noPhoto')}</p>
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                       <div className="absolute top-4 left-4">
-                        <BadgeColor badge={badge} />
+                        <BadgeColor
+                          badge={badge}
+                          label={BADGE_KEYS[badge] ? t(`badges.${BADGE_KEYS[badge]}`) : badge}
+                        />
                       </div>
                       <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/40 text-white/90 text-xs font-barlow px-2 py-1 rounded-full">
                         <Clock className="w-3 h-3" />
-                        {daysAgo(prop.createdAt) === 0 ? 'Today' : `${daysAgo(prop.createdAt)}d ago`}
+                        {daysAgo(prop.createdAt) === 0 ? t('today') : t('daysAgo', { days: daysAgo(prop.createdAt) })}
                       </div>
                       <div className="absolute bottom-4 left-4">
                         <span className="font-barlow text-xs font-semibold bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded">
-                          {TYPE_LABELS[prop.type] ?? prop.type}
+                          {tTypes.has(prop.type) ? tTypes(prop.type) : prop.type}
                         </span>
                       </div>
                     </div>
@@ -188,7 +195,7 @@ export default async function LaunchesPage() {
                         <div>
                           <div className="flex items-center gap-1.5 text-gray-400 mb-1">
                             <Ruler className="w-3.5 h-3.5" />
-                            <span className="font-barlow text-sm">{Number(prop.acreage)} acres</span>
+                            <span className="font-barlow text-sm">{Number(prop.acreage)} {t('acresSuffix')}</span>
                           </div>
                           <span className="font-cormorant font-bold text-2xl text-navy">
                             {formatPrice(Number(prop.priceUsd))}
@@ -198,7 +205,7 @@ export default async function LaunchesPage() {
                           href={`/properties/${prop.id}`}
                           className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-navy text-white font-barlow font-semibold text-sm rounded-lg hover:bg-brand-blue transition-colors"
                         >
-                          Details
+                          {t('details')}
                           <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
@@ -216,16 +223,16 @@ export default async function LaunchesPage() {
         <div className="max-w-3xl mx-auto px-4 text-center">
           <Sparkles className="w-8 h-8 text-brand-blue mx-auto mb-6" />
           <h2 className="font-cormorant font-bold text-4xl text-white mb-5">
-            Quer ser notificado dos próximos lançamentos?
+            {t('notify.title')}
           </h2>
           <p className="font-barlow text-white/70 text-lg mb-8">
-            Cadastre-se e receba os novos lançamentos antes de irem ao mercado.
+            {t('notify.subtitle')}
           </p>
           <Link
             href="/contact"
             className="inline-flex items-center gap-2 px-10 py-4 bg-brand-blue text-white font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors"
           >
-            Receber Alertas <ArrowRight className="w-4 h-4" />
+            {t('notify.cta')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>

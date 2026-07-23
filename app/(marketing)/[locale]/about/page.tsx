@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 import { ArrowRight, Shield, Lightbulb, Heart, MapPin, Mail, Phone, BadgeCheck } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -60,30 +61,17 @@ const team = [
   },
 ]
 
-const values = [
-  {
-    icon: <Shield className="w-8 h-8" />,
-    title: 'Integridade',
-    description: 'Somos honestos com todas as nossas transações.',
-  },
-  {
-    icon: <MapPin className="w-8 h-8" />,
-    title: 'Expertise Local',
-    description: 'Somos bem ativos nas nossas áreas locais.',
-  },
-  {
-    icon: <Heart className="w-8 h-8" />,
-    title: 'Compromisso',
-    description: 'Só fechamos quando o cliente está 100% satisfeito.',
-  },
-  {
-    icon: <Lightbulb className="w-8 h-8" />,
-    title: 'Transparência',
-    description: 'Somos bem transparentes e comunicativos com nossos clientes.',
-  },
-]
+const valueIcons = {
+  integrity: <Shield className="w-8 h-8" />,
+  localExpertise: <MapPin className="w-8 h-8" />,
+  commitment: <Heart className="w-8 h-8" />,
+  transparency: <Lightbulb className="w-8 h-8" />,
+} as const
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const t = await getTranslations('about')
+  const valueKeys = ['integrity', 'localExpertise', 'commitment', 'transparency'] as const
+
   return (
     <>
       {/* ── Hero ── */}
@@ -118,10 +106,10 @@ export default function AboutPage() {
           {/* Headline */}
           <div>
             <h1 className="font-cormorant font-bold text-4xl sm:text-5xl text-white tracking-wide">
-              Our Story
+              {t('hero.title')}
             </h1>
             <p className="font-barlow text-white/55 text-sm tracking-[0.35em] uppercase mt-3">
-              Rooted in Florida · Passionate About Land
+              {t('hero.subtitle')}
             </p>
           </div>
         </div>
@@ -133,39 +121,23 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <p className="font-barlow text-brand-blue text-sm font-semibold tracking-[0.3em] uppercase mb-4">
-                Who We Are
+                {t('story.eyebrow')}
               </p>
               <h2 className="font-cormorant font-bold text-5xl text-dark-navy leading-tight mb-6">
-                Rooted in Florida,
+                {t('story.titleLine1')}
                 <br />
-                Passionate About Land
+                {t('story.titleLine2')}
               </h2>
               <div className="space-y-5 font-barlow text-gray-600 leading-relaxed">
-                <p>
-                  Founded in Ocala, Florida, 4Rivers Realty was built on a simple
-                  belief: finding the right rural property should be an experience,
-                  not just a transaction. With deep roots in North Central Florida's
-                  equestrian community, we specialize in horse farms, ranches, and
-                  rural estates that match your vision of the perfect lifestyle.
-                </p>
-                <p>
-                  Our name reflects the four rivers that define our region — the
-                  Withlacoochee, the Ocklawaha, the Santa Fe, and the Suwannee —
-                  waterways that have shaped this land for centuries and continue
-                  to make North Central Florida one of the most sought-after rural
-                  destinations in the country.
-                </p>
-                <p>
-                  With over 10 years of experience, 57 closed sales, and $15.5M
-                  in total transaction volume, our commitment remains the same:
-                  local knowledge, honest guidance, and results you can count on.
-                </p>
+                <p>{t('story.paragraph1')}</p>
+                <p>{t('story.paragraph2')}</p>
+                <p>{t('story.paragraph3')}</p>
               </div>
               <Link
                 href="/contact"
                 className="inline-flex items-center gap-2 mt-8 px-8 py-4 bg-dark-navy text-white font-barlow font-semibold rounded-md hover:bg-brand-blue transition-colors"
               >
-                Talk to Our Team <ArrowRight className="w-4 h-4" />
+                {t('story.cta')} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
@@ -178,9 +150,9 @@ export default function AboutPage() {
                 className="object-cover"
               />
               <div className="absolute bottom-6 left-6 bg-white rounded-xl p-5 shadow-lg max-w-[200px]">
-                <p className="font-cormorant font-bold text-3xl text-dark-navy">10+</p>
+                <p className="font-cormorant font-bold text-3xl text-dark-navy">{t('story.statNumber')}</p>
                 <p className="font-barlow text-sm text-gray-500 mt-1">
-                  Years serving North Central Florida
+                  {t('story.statLabel')}
                 </p>
               </div>
             </div>
@@ -193,11 +165,10 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
-              Meet the <span className="text-brand-blue">Team</span>
+              {t('team.title')} <span className="text-brand-blue">{t('team.titleHighlight')}</span>
             </h2>
             <p className="font-barlow text-gray-500 mt-4 text-lg max-w-xl mx-auto">
-              Each member of our team brings specialized knowledge and a genuine
-              love for Florida land.
+              {t('team.subtitle')}
             </p>
           </div>
 
@@ -268,20 +239,18 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="bg-white rounded-2xl p-10 shadow-sm border border-gray-100">
               <h3 className="font-cormorant font-bold text-3xl text-dark-navy mb-4">
-                Our Mission
+                {t('mission.title')}
               </h3>
               <p className="font-barlow text-gray-600 leading-relaxed">
-                Our mission is to bring families who want to leave the rush of
-                the city and bring them to the tranquility of ranch life.
+                {t('mission.text')}
               </p>
             </div>
             <div className="bg-white rounded-2xl p-10 shadow-sm border border-gray-100">
               <h3 className="font-cormorant font-bold text-3xl text-dark-navy mb-4">
-                Our Vision
+                {t('vision.title')}
               </h3>
               <p className="font-barlow text-gray-600 leading-relaxed">
-                Our vision is to be the go-to real estate company for Brazilians
-                looking to move to the United States and live outside the city.
+                {t('vision.text')}
               </p>
             </div>
           </div>
@@ -293,29 +262,29 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between gap-8 mb-16 flex-wrap">
             <h2 className="font-cormorant font-bold text-5xl text-dark-navy">
-              What We Stand For
+              {t('values.title')}
             </h2>
             <p className="font-barlow text-gray-500 text-lg max-w-sm">
-              Four principles guide every property, every client, every deal.
+              {t('values.subtitle')}
             </p>
           </div>
 
           <div className="divide-y divide-gray-200 border-t border-b border-gray-200">
-            {values.map((v) => (
+            {valueKeys.map((key) => (
               <div
-                key={v.title}
+                key={key}
                 className="grid grid-cols-1 sm:grid-cols-[auto_1fr] items-start sm:items-center gap-x-8 gap-y-3 py-9"
               >
                 <div className="flex items-center gap-4 sm:w-56">
                   <div className="flex items-center justify-center w-12 h-12 bg-navy text-brand-blue rounded-xl shrink-0">
-                    {v.icon}
+                    {valueIcons[key]}
                   </div>
                   <h3 className="font-cormorant font-bold text-2xl text-dark-navy">
-                    {v.title}
+                    {t(`values.${key}.title`)}
                   </h3>
                 </div>
                 <p className="font-barlow text-sm text-gray-500 leading-relaxed max-w-xl">
-                  {v.description}
+                  {t(`values.${key}.description`)}
                 </p>
               </div>
             ))}
@@ -327,16 +296,16 @@ export default function AboutPage() {
       <section className="py-20 bg-dark-navy">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="font-cormorant font-bold text-4xl text-white mb-5">
-            Let's Find Your Property Together
+            {t('cta.title')}
           </h2>
           <p className="font-barlow text-white/60 text-lg mb-8">
-            Reach out to our team and start the conversation today.
+            {t('cta.subtitle')}
           </p>
           <Link
             href="/contact"
             className="inline-flex items-center gap-2 px-10 py-4 bg-brand-blue text-dark-navy font-barlow font-semibold rounded-md hover:bg-light-blue transition-colors"
           >
-            Contact Us <ArrowRight className="w-4 h-4" />
+            {t('cta.button')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>

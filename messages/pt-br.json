@@ -141,7 +141,60 @@
     "eyebrow": "Nossa História",
     "title": "Sobre a 4Rivers Realty",
     "valuesTitle": "Nossos Valores",
-    "teamTitle": "Conheça Nossa Equipe"
+    "teamTitle": "Conheça Nossa Equipe",
+    "hero": {
+      "title": "Nossa História",
+      "subtitle": "Enraizados na Flórida · Apaixonados por Terra"
+    },
+    "story": {
+      "eyebrow": "Quem Somos",
+      "titleLine1": "Enraizados na Flórida,",
+      "titleLine2": "Apaixonados por Terra",
+      "paragraph1": "Fundada em Ocala, Flórida, a 4Rivers Realty foi construída sobre uma crença simples: encontrar a propriedade rural certa deveria ser uma experiência, não apenas uma transação. Com raízes profundas na comunidade equestre do Centro-Norte da Flórida, somos especialistas em fazendas de cavalos, ranchos e propriedades rurais que combinam com a sua visão do estilo de vida perfeito.",
+      "paragraph2": "Nosso nome reflete os quatro rios que definem nossa região — o Withlacoochee, o Ocklawaha, o Santa Fe e o Suwannee — cursos d'água que moldaram essa terra por séculos e continuam fazendo do Centro-Norte da Flórida um dos destinos rurais mais procurados do país.",
+      "paragraph3": "Com mais de 10 anos de experiência, 57 vendas concluídas e US$ 15,5 milhões em volume total de transações, nosso compromisso continua o mesmo: conhecimento local, orientação honesta e resultados em que você pode confiar.",
+      "cta": "Fale com Nossa Equipe",
+      "statNumber": "10+",
+      "statLabel": "Anos servindo o Centro-Norte da Flórida"
+    },
+    "team": {
+      "title": "Conheça a",
+      "titleHighlight": "Equipe",
+      "subtitle": "Cada membro da nossa equipe traz conhecimento especializado e um amor genuíno pela terra da Flórida."
+    },
+    "mission": {
+      "title": "Nossa Missão",
+      "text": "Nossa missão é trazer famílias que desejam deixar a correria da cidade para a tranquilidade da vida no rancho."
+    },
+    "vision": {
+      "title": "Nossa Visão",
+      "text": "Nossa visão é ser a imobiliária de referência para brasileiros que buscam se mudar para os Estados Unidos e viver fora da cidade."
+    },
+    "values": {
+      "title": "Nossos Princípios",
+      "subtitle": "Quatro princípios guiam cada imóvel, cada cliente, cada negócio.",
+      "integrity": {
+        "title": "Integridade",
+        "description": "Somos honestos com todas as nossas transações."
+      },
+      "localExpertise": {
+        "title": "Expertise Local",
+        "description": "Somos bem ativos nas nossas áreas locais."
+      },
+      "commitment": {
+        "title": "Compromisso",
+        "description": "Só fechamos quando o cliente está 100% satisfeito."
+      },
+      "transparency": {
+        "title": "Transparência",
+        "description": "Somos bem transparentes e comunicativos com nossos clientes."
+      }
+    },
+    "cta": {
+      "title": "Vamos Encontrar Seu Imóvel Juntos",
+      "subtitle": "Entre em contato com nossa equipe e comece a conversa hoje mesmo.",
+      "button": "Fale Conosco"
+    }
   },
   "contact": {
     "eyebrow": "Entre em Contato",
@@ -194,10 +247,14 @@
   },
   "propertyGrid": {
     "empty": "Nenhum imóvel encontrado com esses critérios.",
-    "loading": "Carregando imóveis…"
+    "loading": "Carregando imóveis…",
+    "error": "Não foi possível carregar os imóveis. Tente novamente."
   },
   "propertyMap": {
     "loading": "Carregando mapa…"
+  },
+  "mapClient": {
+    "viewDetails": "Ver Detalhes"
   },
   "properties": {
     "eyebrow": "Nossos Imóveis",
@@ -212,6 +269,7 @@
     "arenas": "Arenas",
     "pastures": "Pastagens",
     "about": "Sobre Este Imóvel",
+    "video": "Vídeo do Imóvel",
     "location": "Localização",
     "countySuffix": "Condado, FL"
   },
@@ -234,7 +292,8 @@
   },
   "propertyCard": {
     "noPhoto": "Sem foto",
-    "acresSuffix": "ac"
+    "acresSuffix": "ac",
+    "countySuffix": "Condado"
   },
   "propertyListRow": {
     "citySuffix": "FL",
@@ -260,12 +319,15 @@
       "comingSoon": "Em Breve"
     },
     "nextLaunch": "Próximo Lançamento",
-    "officialOpening": "Abertura oficial — 1º de julho de 2026",
+    "officialOpening": "Abertura oficial — {date}",
     "today": "Hoje",
     "daysAgo": "há {days}d",
     "priceOnRequest": "Preço Sob Consulta",
+    "acresSuffix": "acres",
     "details": "Detalhes",
     "notifyMe": "Notifique-me",
+    "noPhoto": "Nenhuma foto disponível",
+    "emptyState": "Nenhum lançamento disponível no momento. Volte em breve!",
     "badges": {
       "newLaunch": "Novo Lançamento",
       "justListed": "Recém Anunciado",

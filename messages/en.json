@@ -141,7 +141,60 @@
     "eyebrow": "Our Story",
     "title": "About 4Rivers Realty",
     "valuesTitle": "Our Values",
-    "teamTitle": "Meet Our Team"
+    "teamTitle": "Meet Our Team",
+    "hero": {
+      "title": "Our Story",
+      "subtitle": "Rooted in Florida · Passionate About Land"
+    },
+    "story": {
+      "eyebrow": "Who We Are",
+      "titleLine1": "Rooted in Florida,",
+      "titleLine2": "Passionate About Land",
+      "paragraph1": "Founded in Ocala, Florida, 4Rivers Realty was built on a simple belief: finding the right rural property should be an experience, not just a transaction. With deep roots in North Central Florida's equestrian community, we specialize in horse farms, ranches, and rural estates that match your vision of the perfect lifestyle.",
+      "paragraph2": "Our name reflects the four rivers that define our region — the Withlacoochee, the Ocklawaha, the Santa Fe, and the Suwannee — waterways that have shaped this land for centuries and continue to make North Central Florida one of the most sought-after rural destinations in the country.",
+      "paragraph3": "With over 10 years of experience, 57 closed sales, and $15.5M in total transaction volume, our commitment remains the same: local knowledge, honest guidance, and results you can count on.",
+      "cta": "Talk to Our Team",
+      "statNumber": "10+",
+      "statLabel": "Years serving North Central Florida"
+    },
+    "team": {
+      "title": "Meet the",
+      "titleHighlight": "Team",
+      "subtitle": "Each member of our team brings specialized knowledge and a genuine love for Florida land."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "text": "Our mission is to bring families who want to leave the rush of the city and bring them to the tranquility of ranch life."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "text": "Our vision is to be the go-to real estate company for Brazilians looking to move to the United States and live outside the city."
+    },
+    "values": {
+      "title": "What We Stand For",
+      "subtitle": "Four principles guide every property, every client, every deal.",
+      "integrity": {
+        "title": "Integrity",
+        "description": "We are honest in all of our transactions."
+      },
+      "localExpertise": {
+        "title": "Local Expertise",
+        "description": "We are deeply active in our local areas."
+      },
+      "commitment": {
+        "title": "Commitment",
+        "description": "We only close when the client is 100% satisfied."
+      },
+      "transparency": {
+        "title": "Transparency",
+        "description": "We are transparent and communicative with our clients."
+      }
+    },
+    "cta": {
+      "title": "Let's Find Your Property Together",
+      "subtitle": "Reach out to our team and start the conversation today.",
+      "button": "Contact Us"
+    }
   },
   "contact": {
     "eyebrow": "Get in Touch",
@@ -194,10 +247,14 @@
   },
   "propertyGrid": {
     "empty": "No properties found matching your criteria.",
-    "loading": "Loading properties…"
+    "loading": "Loading properties…",
+    "error": "Could not load properties. Please try again."
   },
   "propertyMap": {
     "loading": "Loading map…"
+  },
+  "mapClient": {
+    "viewDetails": "View Details"
   },
   "properties": {
     "eyebrow": "Our Listings",
@@ -212,6 +269,7 @@
     "arenas": "Arenas",
     "pastures": "Pastures",
     "about": "About This Property",
+    "video": "Property Video",
     "location": "Location",
     "countySuffix": "County, FL"
   },
@@ -234,7 +292,8 @@
   },
   "propertyCard": {
     "noPhoto": "No photo",
-    "acresSuffix": "ac"
+    "acresSuffix": "ac",
+    "countySuffix": "County"
   },
   "propertyListRow": {
     "citySuffix": "FL",
@@ -260,12 +319,15 @@
       "comingSoon": "Coming Soon"
     },
     "nextLaunch": "Next Launch",
-    "officialOpening": "Official opening — July 1, 2026",
+    "officialOpening": "Official opening — {date}",
     "today": "Today",
     "daysAgo": "{days}d ago",
     "priceOnRequest": "Price on Request",
+    "acresSuffix": "acres",
     "details": "Details",
     "notifyMe": "Notify Me",
+    "noPhoto": "No photo available",
+    "emptyState": "No launches available at the moment. Check back soon!",
     "badges": {
       "newLaunch": "New Launch",
       "justListed": "Just Listed",

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { LayoutGrid, Map } from 'lucide-react'
 import PropertyGrid from './PropertyGrid'
 import PropertyMap from '@/components/map/PropertyMap'
@@ -20,6 +21,7 @@ function MapView() {
 
 export default function PropertiesViewToggle() {
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const t = useTranslations('propertiesViewToggle')
 
   return (
     <div>
@@ -32,10 +34,10 @@ export default function PropertiesViewToggle() {
                 ? 'bg-navy text-white'
                 : 'text-gray-500 hover:text-navy'
             }`}
-            aria-label="Grid view"
+            aria-label={t('gridAria')}
           >
             <LayoutGrid className="w-4 h-4" />
-            Grid
+            {t('grid')}
           </button>
           <button
             onClick={() => setViewMode('map')}
@@ -44,10 +46,10 @@ export default function PropertiesViewToggle() {
                 ? 'bg-navy text-white'
                 : 'text-gray-500 hover:text-navy'
             }`}
-            aria-label="Map view"
+            aria-label={t('mapAria')}
           >
             <Map className="w-4 h-4" />
-            Map
+            {t('map')}
           </button>
         </div>
       </div>
