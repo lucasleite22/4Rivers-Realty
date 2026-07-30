@@ -132,6 +132,7 @@ export default async function AboutPage() {
                 <p>{t('story.paragraph1')}</p>
                 <p>{t('story.paragraph2')}</p>
                 <p>{t('story.paragraph3')}</p>
+                <p>{t('story.paragraph4')}</p>
               </div>
               <Link
                 href="/contact"

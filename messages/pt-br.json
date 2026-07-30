@@ -150,12 +150,13 @@
       "eyebrow": "Quem Somos",
       "titleLine1": "Enraizados na Flórida,",
       "titleLine2": "Apaixonados por Terra",
-      "paragraph1": "Fundada em Ocala, Flórida, a 4Rivers Realty foi construída sobre uma crença simples: encontrar a propriedade rural certa deveria ser uma experiência, não apenas uma transação. Com raízes profundas na comunidade equestre do Centro-Norte da Flórida, somos especialistas em fazendas de cavalos, ranchos e propriedades rurais que combinam com a sua visão do estilo de vida perfeito.",
-      "paragraph2": "Nosso nome reflete os quatro rios que definem nossa região — o Withlacoochee, o Ocklawaha, o Santa Fe e o Suwannee — cursos d'água que moldaram essa terra por séculos e continuam fazendo do Centro-Norte da Flórida um dos destinos rurais mais procurados do país.",
-      "paragraph3": "Com mais de 10 anos de experiência, 57 vendas concluídas e US$ 15,5 milhões em volume total de transações, nosso compromisso continua o mesmo: conhecimento local, orientação honesta e resultados em que você pode confiar.",
+      "paragraph1": "Fundada em 2024, no coração do Condado de Sumter, a 4Rivers Realty foi construída sobre uma crença simples: a terra é mais do que solo e cercas — é onde as famílias criam raízes, onde legados tomam forma, e onde o verdadeiro jeito de viver da Flórida ainda permanece vivo.",
+      "paragraph2": "Somos uma empresa familiar, e isso molda tudo o que fazemos. Ao trabalhar conosco, você não é apenas mais uma transação — você é um vizinho. Acreditamos em lealdade, honestidade e em agir com integridade, porque um aperto de mãos ainda significa alguma coisa por aqui. Nossa reputação não é construída sobre promessas vazias; é construída fazendo o certo pelas pessoas que confiam em nós para uma das maiores decisões de suas vidas.",
+      "paragraph3": "Nosso foco está naquilo que conhecemos e amamos: ranchos e fazendas. De operações de gado em atividade a propriedades tranquilas à espera de seu próximo capítulo, somos especialistas em conectar vendedores e compradores que entendem o verdadeiro valor da terra aberta, do bom solo e do céu sem limites.",
+      "paragraph4": "Com mais de 10 anos de experiência, 57 vendas concluídas e US$ 15 milhões ou mais em volume total de transações, nosso compromisso continua o mesmo: conhecimento local, orientação honesta e resultados em que você pode confiar.",
       "cta": "Fale com Nossa Equipe",
       "statNumber": "10+",
-      "statLabel": "Anos servindo o Centro-Norte da Flórida"
+      "statLabel": "Anos de experiência combinada em corretagem"
     },
     "team": {
       "title": "Conheça a",
@@ -179,7 +180,7 @@
       },
       "localExpertise": {
         "title": "Expertise Local",
-        "description": "Somos bem ativos nas nossas áreas locais."
+        "description": "Mais de 5 anos vivendo e trabalhando no Condado de Sumter. Conhecemos cada detalhe do condado!"
       },
       "commitment": {
         "title": "Compromisso",
@@ -251,7 +252,8 @@
     "error": "Não foi possível carregar os imóveis. Tente novamente."
   },
   "propertyMap": {
-    "loading": "Carregando mapa…"
+    "loading": "Carregando mapa…",
+    "missingApiKey": "Mapa indisponível — chave da API do Google Maps ainda não configurada."
   },
   "mapClient": {
     "viewDetails": "Ver Detalhes"

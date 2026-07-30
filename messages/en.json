@@ -150,12 +150,13 @@
       "eyebrow": "Who We Are",
       "titleLine1": "Rooted in Florida,",
       "titleLine2": "Passionate About Land",
-      "paragraph1": "Founded in Ocala, Florida, 4Rivers Realty was built on a simple belief: finding the right rural property should be an experience, not just a transaction. With deep roots in North Central Florida's equestrian community, we specialize in horse farms, ranches, and rural estates that match your vision of the perfect lifestyle.",
-      "paragraph2": "Our name reflects the four rivers that define our region — the Withlacoochee, the Ocklawaha, the Santa Fe, and the Suwannee — waterways that have shaped this land for centuries and continue to make North Central Florida one of the most sought-after rural destinations in the country.",
-      "paragraph3": "With over 10 years of experience, 57 closed sales, and $15.5M in total transaction volume, our commitment remains the same: local knowledge, honest guidance, and results you can count on.",
+      "paragraph1": "Founded in 2024 in the heart of Sumter County, 4Rivers Realty was built on a simple belief: land is more than dirt and fences — it's where families put down roots, where legacies take shape, and where the Florida way of life still runs deep.",
+      "paragraph2": "We're a family-owned brokerage, and that shapes everything we do. When you work with us, you're not just another transaction — you're a neighbor. We believe in loyalty, honesty, and dealing with integrity, because a handshake still means something out here. Our reputation isn't built on flashy promises; it's built on doing right by the people who trust us with one of the biggest decisions of their lives.",
+      "paragraph3": "Our focus is on what we know and love best: ranches and farms. From working cattle operations to quiet homesteads waiting for their next chapter, we specialize in connecting sellers and buyers who understand the true value of open land, good soil, and wide-open sky.",
+      "paragraph4": "With over 10 years of experience, 57 closed sales, and $15M+ in total transaction volume, our commitment remains the same: local knowledge, honest guidance, and results you can count on.",
       "cta": "Talk to Our Team",
       "statNumber": "10+",
-      "statLabel": "Years serving North Central Florida"
+      "statLabel": "Years of combined brokerage experience"
     },
     "team": {
       "title": "Meet the",
@@ -179,7 +180,7 @@
       },
       "localExpertise": {
         "title": "Local Expertise",
-        "description": "We are deeply active in our local areas."
+        "description": "5+ years living and working in Sumter County. We know the ins and outs of the county!"
       },
       "commitment": {
         "title": "Commitment",
@@ -251,7 +252,8 @@
     "error": "Could not load properties. Please try again."
   },
   "propertyMap": {
-    "loading": "Loading map…"
+    "loading": "Loading map…",
+    "missingApiKey": "Map unavailable — Google Maps API key not configured yet."
   },
   "mapClient": {
     "viewDetails": "View Details"
