@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { APIProvider } from '@vis.gl/react-google-maps'
 import { useTranslations } from 'next-intl'
 import type { PropertyWithImages } from '@/types/properties'
 
@@ -13,12 +14,13 @@ function MapLoading() {
   )
 }
 
-// Leaflet must be loaded client-side only — it reads window/document on import.
-// next/dynamic with ssr:false is the official Next.js pattern for this.
+// The Google Maps JS binding reads window/document on import — must load client-side only.
 const MapClient = dynamic(() => import('./MapClient'), {
   ssr: false,
   loading: () => <MapLoading />,
 })
+
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
 
 interface Props {
   properties: PropertyWithImages[]
@@ -40,9 +42,25 @@ export default function PropertyMap({
   zoom,
   center,
 }: Props) {
+  const t = useTranslations('propertyMap')
+
+  if (!GOOGLE_MAPS_API_KEY) {
+    return (
+      <div
+        className={`w-full ${height} rounded-xl overflow-hidden border border-navy/10 shadow-sm flex items-center justify-center bg-off-white`}
+      >
+        <p className="font-barlow text-sm text-navy/40 text-center px-6">
+          {t('missingApiKey')}
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className={`w-full ${height} rounded-xl overflow-hidden border border-navy/10 shadow-sm`}>
-      <MapClient properties={properties} zoom={zoom} center={center} />
+      <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+        <MapClient properties={properties} zoom={zoom} center={center} />
+      </APIProvider>
     </div>
   )
 }

@@ -135,6 +135,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           county:       form.county,
           city:         form.city,
           address:      form.address,
+          latitude:     form.latitude  != null ? Number(form.latitude)  : null,
+          longitude:    form.longitude != null ? Number(form.longitude) : null,
           description:  form.description,
           featured:     form.featured,
           showOnPortal: form.showOnPortal,
@@ -445,6 +447,32 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                     <input value={String(form.county ?? '')} onChange={(e) => setF('county', e.target.value)} className={INPUT} />
                   ) : (
                     <p className="font-barlow text-sm text-white">{property.county}</p>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={LABEL}>Latitude</label>
+                  {editing ? (
+                    <input type="number" step="any" value={form.latitude != null ? String(form.latitude) : ''}
+                      onChange={(e) => setF('latitude', e.target.value === '' ? null : Number(e.target.value))}
+                      className={INPUT} />
+                  ) : (
+                    <p className="font-barlow text-sm text-white">
+                      {property.latitude ?? <span className="text-white/30">—</span>}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className={LABEL}>Longitude</label>
+                  {editing ? (
+                    <input type="number" step="any" value={form.longitude != null ? String(form.longitude) : ''}
+                      onChange={(e) => setF('longitude', e.target.value === '' ? null : Number(e.target.value))}
+                      className={INPUT} />
+                  ) : (
+                    <p className="font-barlow text-sm text-white">
+                      {property.longitude ?? <span className="text-white/30">—</span>}
+                    </p>
                   )}
                 </div>
               </div>

@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
     const maxPrice = searchParams.get('maxPrice')
     const minAcreage = searchParams.get('minAcreage')
     const search = searchParams.get('search')
+    const all = searchParams.get('all') === 'true'
     const page = Math.max(1, Number(searchParams.get('page') ?? 1))
     const limit = Math.min(50, Math.max(1, Number(searchParams.get('limit') ?? 20)))
 
@@ -68,14 +69,15 @@ export async function GET(req: NextRequest) {
         where,
         include: { images: { orderBy: { sortOrder: 'asc' } } },
         orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * limit,
-        take: limit,
+        ...(all ? {} : { skip: (page - 1) * limit, take: limit }),
       }),
     ])
 
     return NextResponse.json({
       data: properties,
-      meta: { total, page, limit, pages: Math.ceil(total / limit) },
+      meta: all
+        ? { total, page: 1, limit: total, pages: 1 }
+        : { total, page, limit, pages: Math.ceil(total / limit) },
     })
   } catch (err) {
     console.error('[GET /api/properties]', err)
@@ -101,6 +103,8 @@ export async function POST(req: NextRequest) {
         city: body.city,
         address: body.address,
         description: body.description,
+        latitude: body.latitude ?? null,
+        longitude: body.longitude ?? null,
         status: body.status ?? 'ACTIVE',
         featured: body.featured ?? true,
         showOnPortal: body.showOnPortal ?? true,

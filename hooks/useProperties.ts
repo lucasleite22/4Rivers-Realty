@@ -12,7 +12,7 @@ interface UsePropertiesResult {
   refetch: () => void
 }
 
-export function useProperties(): UsePropertiesResult {
+export function useProperties(overrides?: Record<string, string>): UsePropertiesResult {
   const params = useSearchParams()
   const [properties, setProperties] = useState<PropertyWithImages[]>([])
   const [meta, setMeta] = useState<PropertyListResponse['meta'] | null>(null)
@@ -23,7 +23,11 @@ export function useProperties(): UsePropertiesResult {
     setLoading(true)
     setError(null)
     try {
-      const qs = params.toString()
+      const merged = new URLSearchParams(params.toString())
+      if (overrides) {
+        for (const [key, value] of Object.entries(overrides)) merged.set(key, value)
+      }
+      const qs = merged.toString()
       const res = await fetch(`/api/properties${qs ? `?${qs}` : ''}`)
       if (!res.ok) throw new Error('Failed to load properties')
       const data: PropertyListResponse = await res.json()
@@ -34,7 +38,7 @@ export function useProperties(): UsePropertiesResult {
     } finally {
       setLoading(false)
     }
-  }, [params])
+  }, [params, overrides])
 
   useEffect(() => {
     fetch_()

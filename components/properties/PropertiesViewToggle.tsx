@@ -9,8 +9,11 @@ import { useProperties } from '@/hooks/useProperties'
 
 type ViewMode = 'grid' | 'map'
 
+// Stable reference: map view must show every matching property, not one paginated page.
+const MAP_OVERRIDES = { all: 'true', page: '1' }
+
 function MapView() {
-  const { properties, loading } = useProperties()
+  const { properties, loading } = useProperties(MAP_OVERRIDES)
   if (loading) {
     return (
       <div className="w-full h-[520px] bg-gray-100 animate-pulse rounded-xl mt-6" />

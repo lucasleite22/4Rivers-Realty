@@ -32,6 +32,8 @@ export default function NewPropertyPage() {
     county: '',
     city: '',
     address: '',
+    latitude: '',
+    longitude: '',
     description: '',
     featured: true,
     showOnPortal: true,
@@ -85,6 +87,8 @@ export default function NewPropertyPage() {
           county:      form.county,
           city:        form.city,
           address:     form.address,
+          latitude:    form.latitude  ? Number(form.latitude)  : undefined,
+          longitude:   form.longitude ? Number(form.longitude) : undefined,
           description: form.description,
           featured:    form.featured,
           showOnPortal:form.showOnPortal,
@@ -205,6 +209,16 @@ export default function NewPropertyPage() {
                 <label className={LABEL}>Full Address *</label>
                 <input required value={form.address} onChange={(e) => set('address', e.target.value)}
                   placeholder="Street address" className={INPUT} />
+              </div>
+              <div>
+                <label className={LABEL}>Latitude</label>
+                <input type="number" step="any" value={form.latitude} onChange={(e) => set('latitude', e.target.value)}
+                  placeholder="e.g. 29.1872" className={INPUT} />
+              </div>
+              <div>
+                <label className={LABEL}>Longitude</label>
+                <input type="number" step="any" value={form.longitude} onChange={(e) => set('longitude', e.target.value)}
+                  placeholder="e.g. -82.1401" className={INPUT} />
               </div>
             </div>
           </section>

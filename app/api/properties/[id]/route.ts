@@ -42,6 +42,8 @@ export async function PATCH(
     if (body.city !== undefined) data.city = body.city
     if (body.address !== undefined) data.address = body.address
     if (body.description !== undefined) data.description = body.description
+    if (body.latitude !== undefined) data.latitude = body.latitude
+    if (body.longitude !== undefined) data.longitude = body.longitude
     if (body.status !== undefined) {
       data.status = body.status
       if (body.status === 'SOLD') {
