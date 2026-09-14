@@ -2,16 +2,16 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import { ArrowRight, Shield, Lightbulb, Heart, MapPin, Mail, Phone, BadgeCheck } from 'lucide-react'
+import { ArrowRight, Shield, Lightbulb, Heart, MapPin, Mail, Phone, BadgeCheck, Instagram } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'About Us',
   description:
-    'Founded in Ocala, Florida, 4Rivers Realty has been the trusted name in horse farms, ranches, and rural properties in North Central Florida for over 20 years.',
+    'Founded in Sumter County, Florida, 4Rivers Realty has been the trusted name in horse farms, ranches, and rural properties in North Central Florida for over 20 years.',
   openGraph: {
-    title: 'About 4Rivers Realty | Ocala, FL',
+    title: 'About 4Rivers Realty | Sumter County, FL',
     description:
-      'Founded in Ocala, Florida, 4Rivers Realty has been the trusted name in horse farms and rural properties for over 20 years.',
+      'Founded in Sumter County, Florida, 4Rivers Realty has been the trusted name in horse farms and rural properties for over 20 years.',
   },
 }
 
@@ -58,6 +58,17 @@ const team = [
       'Farmhouses & Country Living',
     ],
     bio: 'As a FL licensed real estate professional since 2014, I am dedicated to helping clients make a smooth transition to country living throughout Central Florida. With experience in buying and selling residential properties, including knowledge of tax deed auction opportunities. I provide personalized guidance to explore the best opportunities for your lifestyle and long-term goals. My commitment is to make every step of your real estate journey seamless, informed, and rewarding.',
+  },
+  {
+    name: 'Millena Sales',
+    role: 'Realtor',
+    photo: '/images/team/millena-sales.jpg',
+    email: 'millena.sales.realtor@gmail.com',
+    phone: '(781) 504-2708',
+    license: 'FL License SL3621774',
+    specialties: [],
+    bio: 'Sou corretora de imóveis em Orlando e região, apaixonada por ajudar meus clientes a encontrar o imóvel ideal! Meu objetivo é tornar cada etapa do processo de compra, venda ou investimento simples, segura e personalizada!',
+    instagram: 'https://www.instagram.com/millena.realtor/',
   },
 ]
 
@@ -215,6 +226,17 @@ export default async function AboutPage() {
                       <BadgeCheck className="w-4 h-4 text-brand-blue shrink-0" />
                       {member.license}
                     </div>
+                    {member.instagram && (
+                      <a
+                        href={member.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 font-barlow text-sm text-gray-600 hover:text-brand-blue transition-colors"
+                      >
+                        <Instagram className="w-4 h-4 text-brand-blue shrink-0" />
+                        Instagram
+                      </a>
+                    )}
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-2">
