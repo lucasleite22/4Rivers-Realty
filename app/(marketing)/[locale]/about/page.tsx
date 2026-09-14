@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { ArrowRight, Shield, Lightbulb, Heart, MapPin, Mail, Phone, BadgeCheck, Instagram } from 'lucide-react'
 
@@ -24,7 +24,10 @@ const team = [
     phone: '(321) 200-9620',
     license: 'FL License #3631988',
     specialties: ['Rural Properties', 'Ranches & Farms', 'Land Development'],
-    bio: 'Talles Batista é corretor de imóveis na Flórida e fundador do Ganhando na América, especializado em propriedades rurais, ranchos e investimentos imobiliários nos Estados Unidos.',
+    bio: {
+      pt: 'Talles Batista é corretor de imóveis na Flórida e fundador do Ganhando na América, especializado em propriedades rurais, ranchos e investimentos imobiliários nos Estados Unidos.',
+      en: 'Talles Batista is a licensed real estate agent in Florida and founder of Ganhando na América, specializing in rural properties, ranches, and real estate investments in the United States.',
+    },
   },
   {
     name: 'Bela Biet',
@@ -40,7 +43,10 @@ const team = [
       'Ranch & Equestrian Properties',
       'Farmhouses & Country Living',
     ],
-    bio: "Born in Brazil and raised in the United States, I've spent over 10 years in real estate, and what I enjoy most is helping people navigate the process with confidence. Today, with 4 Rivers Realty, I specialize in rural Florida properties — from land and ranches to farmhouses — and bring experience in land transactions, tax deed auction opportunities, and making sure every detail and document is handled with care. Whether you're buying your first piece of land, searching for an investment opportunity, or transitioning from city living to the country, I'm here to guide you every step of the way.",
+    bio: {
+      en: "Born in Brazil and raised in the United States, I've spent over 10 years in real estate, and what I enjoy most is helping people navigate the process with confidence. Today, with 4 Rivers Realty, I specialize in rural Florida properties — from land and ranches to farmhouses — and bring experience in land transactions, tax deed auction opportunities, and making sure every detail and document is handled with care. Whether you're buying your first piece of land, searching for an investment opportunity, or transitioning from city living to the country, I'm here to guide you every step of the way.",
+      pt: 'Nascida no Brasil e criada nos Estados Unidos, atuo há mais de 10 anos no mercado imobiliário, e o que mais gosto é ajudar as pessoas a passarem por esse processo com confiança. Hoje, com a 4 Rivers Realty, sou especializada em propriedades rurais da Flórida — de terrenos e ranchos a fazendas — e trago experiência em transações de terras, oportunidades de leilão de tax deed, e cuido para que cada detalhe e documento seja tratado com atenção. Seja para comprar seu primeiro terreno, buscar uma oportunidade de investimento ou fazer a transição da vida na cidade para o campo, estou aqui para te guiar em cada etapa.',
+    },
   },
   {
     name: 'Rose Biet',
@@ -57,7 +63,10 @@ const team = [
       'Ranch & Equestrian Properties',
       'Farmhouses & Country Living',
     ],
-    bio: 'As a FL licensed real estate professional since 2014, I am dedicated to helping clients make a smooth transition to country living throughout Central Florida. With experience in buying and selling residential properties, including knowledge of tax deed auction opportunities. I provide personalized guidance to explore the best opportunities for your lifestyle and long-term goals. My commitment is to make every step of your real estate journey seamless, informed, and rewarding.',
+    bio: {
+      en: 'As a FL licensed real estate professional since 2014, I am dedicated to helping clients make a smooth transition to country living throughout Central Florida. With experience in buying and selling residential properties, including knowledge of tax deed auction opportunities. I provide personalized guidance to explore the best opportunities for your lifestyle and long-term goals. My commitment is to make every step of your real estate journey seamless, informed, and rewarding.',
+      pt: 'Como profissional licenciada em imóveis na Flórida desde 2014, me dedico a ajudar meus clientes a fazer uma transição tranquila para a vida no campo em toda a Flórida Central. Com experiência na compra e venda de imóveis residenciais, incluindo conhecimento sobre oportunidades de leilão de tax deed. Ofereço orientação personalizada para explorar as melhores oportunidades para o seu estilo de vida e objetivos de longo prazo. Meu compromisso é tornar cada etapa da sua jornada imobiliária simples, transparente e gratificante.',
+    },
   },
   {
     name: 'Millena Sales',
@@ -67,7 +76,10 @@ const team = [
     phone: '(781) 504-2708',
     license: 'FL License SL3621774',
     specialties: [],
-    bio: 'Sou corretora de imóveis em Orlando e região, apaixonada por ajudar meus clientes a encontrar o imóvel ideal! Meu objetivo é tornar cada etapa do processo de compra, venda ou investimento simples, segura e personalizada!',
+    bio: {
+      pt: 'Sou corretora de imóveis em Orlando e região, apaixonada por ajudar meus clientes a encontrar o imóvel ideal! Meu objetivo é tornar cada etapa do processo de compra, venda ou investimento simples, segura e personalizada!',
+      en: "I'm a real estate agent serving Orlando and the surrounding area, passionate about helping my clients find the perfect property! My goal is to make every step of the buying, selling, or investing process simple, secure, and personalized!",
+    },
     instagram: 'https://www.instagram.com/millena.realtor/',
   },
 ]
@@ -81,6 +93,8 @@ const valueIcons = {
 
 export default async function AboutPage() {
   const t = await getTranslations('about')
+  const locale = await getLocale()
+  const bioLang = locale.startsWith('pt') ? 'pt' : 'en'
   const valueKeys = ['integrity', 'localExpertise', 'commitment', 'transparency'] as const
 
   return (
@@ -204,7 +218,7 @@ export default async function AboutPage() {
                     {member.role}
                   </p>
                   <p className="font-barlow text-sm text-gray-500 mt-4 leading-relaxed">
-                    {member.bio}
+                    {member.bio[bioLang]}
                   </p>
 
                   <div className="mt-5 pt-5 border-t border-gray-100 space-y-2">
