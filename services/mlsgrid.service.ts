@@ -81,6 +81,13 @@ export interface MlsListing {
   StandardStatus: string // 'Active' | 'Closed' | 'Pending' | ...
   MlsStatus?: string
   MlgCanView: boolean
+  // Which MLS Grid Master Data License Agreement use cases this record is
+  // authorized for (e.g. ['IDX'], ['VOW'], ['IDX', 'VOW']). MlgCanView only
+  // says "keep this record" — public IDX display additionally requires
+  // 'IDX' to be present here. A record with MlgCanView: true but MlgCanUse
+  // not containing 'IDX' may be retained (e.g. for VOW/CRM use) but must
+  // NOT be shown on a public-facing site.
+  MlgCanUse?: string[]
 
   ListPrice?: number
   ClosePrice?: number

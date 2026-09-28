@@ -9,7 +9,12 @@
 // has to review and flip showOnPortal in the properties panel before they
 // go live (see PATCH /api/properties/bulk for the batch-approve action).
 // Updates to an already-synced listing only refresh its MLS-sourced fields —
-// admin curation flags (showOnPortal/featured) are never overwritten once set.
+// admin curation flags (showOnPortal/featured) are never overwritten once set,
+// EXCEPT for two compliance-driven cases (not curation, data-accuracy/license
+// requirements): a listing that goes Withdrawn/Expired/Canceled is force-
+// unpublished, and a listing whose MlgCanUse no longer includes 'IDX' is
+// force-unpublished; a listing whose MlgCanView turns false is deleted
+// outright (MLS Grid no longer authorizes retaining it at all).
 //
 // Not authenticated the normal admin way — protected by CRON_SECRET, the
 // standard Vercel Cron pattern (Vercel sends `Authorization: Bearer
@@ -34,6 +39,12 @@ import {
 
 const ORIGINATING_SYSTEM = 'mfrmls'
 const TARGET_COUNTIES = ['Marion', 'Sumter']
+
+// Statuses that mean "no longer legitimate active inventory" but aren't a
+// sale (a sale — Closed — stays visible as SOLD, same as our own agent
+// listings). These get unpublished, not deleted: MlgCanView is still true,
+// so MLS Grid still authorizes us to retain the record.
+const OFF_MARKET_HIDE_STATUSES = ['Withdrawn', 'Expired', 'Canceled', 'Cancelled']
 
 // MLSGrid media URLs are signed and expire within hours (confirmed empirically —
 // see lib/upload.ts saveMlsImage), so every photo has to be downloaded and
@@ -88,14 +99,51 @@ function mapListingToPropertyData(listing: MlsListing) {
 }
 
 async function upsertListing(listing: MlsListing) {
-  const data = mapListingToPropertyData(listing)
   const existing = await prisma.property.findUnique({ where: { mlsId: listing.ListingKey } })
 
+  // MLS Grid: MlgCanView false means we are no longer authorized to retain
+  // this record at all — not "hide it", remove it. Their own feed drops it
+  // entirely after 7 days; we don't wait, we drop our copy as soon as we see it.
+  if (!listing.MlgCanView) {
+    if (existing) {
+      await prisma.property.delete({ where: { id: existing.id } }) // cascades to PropertyImage
+      return 'removed' as const
+    }
+    return 'skippedNotAuthorized' as const
+  }
+
+  // MlgCanView true only means "you may keep this record" — public IDX
+  // display additionally requires 'IDX' in MlgCanUse. A record authorized
+  // only for VOW/CRM use must never appear on the public site.
+  const idxAuthorized = (listing.MlgCanUse ?? []).includes('IDX')
+  if (!idxAuthorized) {
+    if (existing?.showOnPortal) {
+      await prisma.property.update({ where: { id: existing.id }, data: { showOnPortal: false } })
+      return 'unpublishedNotIdx' as const
+    }
+    return 'skippedNotAuthorized' as const
+  }
+
+  const data = mapListingToPropertyData(listing)
+  const forceHide = OFF_MARKET_HIDE_STATUSES.includes(listing.StandardStatus)
+
   if (existing) {
-    // Never touch source/showOnPortal/featured on update — those are
-    // admin curation state, not MLS data.
-    await prisma.property.update({ where: { id: existing.id }, data })
+    // Every other admin curation field (featured, showOnPortal when it was
+    // a deliberate choice) is left alone — except we force showOnPortal
+    // false when the listing goes Withdrawn/Expired/Canceled, since
+    // continuing to advertise those as available isn't a curation call,
+    // it's a data-accuracy requirement.
+    await prisma.property.update({
+      where: { id: existing.id },
+      data: forceHide ? { ...data, showOnPortal: false } : data,
+    })
     return 'updated' as const
+  }
+
+  if (forceHide) {
+    // First time we've seen this listing and it's already off-market —
+    // nothing to import.
+    return 'skippedOffMarket' as const
   }
 
   const created = await prisma.property.create({
@@ -129,7 +177,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const stats = { created: 0, updated: 0, skippedOutOfArea: 0, pagesProcessed: 0 }
+  const stats = {
+    created: 0,
+    updated: 0,
+    removed: 0,
+    unpublishedNotIdx: 0,
+    skippedNotAuthorized: 0,
+    skippedOffMarket: 0,
+    skippedOutOfArea: 0,
+    pagesProcessed: 0,
+  }
   let latestModificationTimestamp: string | undefined
 
   try {
@@ -138,9 +195,13 @@ export async function GET(req: NextRequest) {
     })
     const modifiedSince = state?.lastModificationTimestamp.toISOString() ?? '2020-01-01T00:00:00.00Z'
 
+    // No status filter here on purpose — we need to see every status
+    // transition (Active → Pending/Closed/Withdrawn/...) to keep our data
+    // accurate and to comply with MLS Grid retention rules. See
+    // OFF_MARKET_HIDE_STATUSES and the MlgCanView/MlgCanUse checks in
+    // upsertListing for how each status/authorization state is handled.
     let page = await fetchProperties({
       modifiedSince,
-      status: 'Active',
       top: 100,
       expand: ['Media'],
     })
