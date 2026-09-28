@@ -274,8 +274,8 @@
     "video": "Property Video",
     "location": "Location",
     "countySuffix": "County, FL",
-    "mlsDisclaimer": "Listing information provided by the MLS. This listing is courtesy of",
-    "mlsDisclaimerFallback": "Listing information provided by the MLS."
+    "mlsDisclaimer": "Listing information provided by My Florida Regional MLS DBA Stellar MLS. This listing is courtesy of",
+    "mlsDisclaimerFallback": "Listing information provided by My Florida Regional MLS DBA Stellar MLS."
   },
   "propertyFilters": {
     "minPrice": "Min price",

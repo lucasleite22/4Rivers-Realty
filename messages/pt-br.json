@@ -274,8 +274,8 @@
     "video": "Vídeo do Imóvel",
     "location": "Localização",
     "countySuffix": "Condado, FL",
-    "mlsDisclaimer": "Informações do imóvel fornecidas pela MLS. Este anúncio é cortesia de",
-    "mlsDisclaimerFallback": "Informações do imóvel fornecidas pela MLS."
+    "mlsDisclaimer": "Informações do imóvel fornecidas pela My Florida Regional MLS DBA Stellar MLS. Este anúncio é cortesia de",
+    "mlsDisclaimerFallback": "Informações do imóvel fornecidas pela My Florida Regional MLS DBA Stellar MLS."
   },
   "propertyFilters": {
     "minPrice": "Preço mín.",
