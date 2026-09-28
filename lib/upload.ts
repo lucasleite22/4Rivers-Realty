@@ -43,6 +43,28 @@ export async function saveLeadAttachment(
 }
 
 /**
+ * Download a photo from an MLS media URL and re-host it in Vercel Blob.
+ *
+ * MLSGrid media URLs are signed and expire within hours — they can never be
+ * stored directly as a property's permanent image URL. This fetches the
+ * photo once at sync time and gives it a permanent home.
+ */
+export async function saveMlsImage(
+  mediaUrl: string,
+  listingKey: string,
+  index: number
+): Promise<string> {
+  const res = await fetch(mediaUrl)
+  if (!res.ok) throw new Error(`Failed to download MLS media: ${res.status} ${mediaUrl}`)
+  const buffer = await res.arrayBuffer()
+  const blob = await put(`properties/mls-${listingKey}/${index}.jpg`, buffer, {
+    access: 'public',
+    contentType: res.headers.get('content-type') ?? 'image/jpeg',
+  })
+  return blob.url
+}
+
+/**
  * Delete a file from Vercel Blob storage given its public URL.
  */
 export async function deleteUploadedFile(url: string): Promise<void> {

@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get('type')
     const status = searchParams.get('status')
     const county = searchParams.get('county')
+    const source = searchParams.get('source')
     const featured = searchParams.get('featured')
     const showOnPortal = searchParams.get('showOnPortal')
     const isLaunch = searchParams.get('isLaunch')
@@ -39,8 +40,13 @@ export async function GET(req: NextRequest) {
     if (!admin) {
       // Public/unauthenticated callers must never see delisted properties
       where.showOnPortal = true
-    } else if (showOnPortal === 'true') {
-      where.showOnPortal = true
+    } else {
+      // source/showOnPortal filters (e.g. source=MLS&showOnPortal=false) are
+      // only meaningful for authenticated admin callers — used by the MLS
+      // curation queue in the admin properties panel.
+      if (source) where.source = source as any
+      if (showOnPortal === 'true') where.showOnPortal = true
+      else if (showOnPortal === 'false') where.showOnPortal = false
     }
 
     if (minPrice || maxPrice) {
