@@ -129,6 +129,15 @@ export default async function PropertyDetailPage({ params }: Props) {
                 </p>
               </div>
 
+              {/* MLS attribution — required by MLSGrid/Stellar compliance rules */}
+              {property.source === 'MLS' && (
+                <p className="mt-6 font-barlow text-xs text-gray-400 border-t border-gray-100 pt-4">
+                  {property.mlsListOfficeName || property.mlsListAgentFullName
+                    ? `${t('mlsDisclaimer')} ${[property.mlsListAgentFullName, property.mlsListOfficeName].filter(Boolean).join(', ')}.`
+                    : t('mlsDisclaimerFallback')}
+                </p>
+              )}
+
               {/* Video */}
               {videoEmbedUrl && (
                 <div className="mt-10">

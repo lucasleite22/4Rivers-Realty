@@ -18,14 +18,14 @@ const securityHeaders = [
   },
   {
     key: 'Content-Security-Policy',
-    // Leaflet tiles come from openstreetmap.org; WhatsApp link opens wa.me
+    // Google Maps JS API + tiles; Leaflet tiles come from openstreetmap.org; WhatsApp link opens wa.me
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'" + __impeccableLiveDev,   // unsafe-eval needed by leaflet
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com" + __impeccableLiveDev,   // unsafe-eval needed by leaflet
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://*.openstreetmap.org https://*.hostinger.com https://4riversrealty.com https://www.4riversrealty.com https://images.unsplash.com https://ui-avatars.com https://*.public.blob.vercel-storage.com https://flagcdn.com",
-      "connect-src 'self' https://simplyrets.com" + __impeccableLiveDev,
+      "img-src 'self' data: blob: https://*.openstreetmap.org https://*.hostinger.com https://4riversrealty.com https://www.4riversrealty.com https://images.unsplash.com https://ui-avatars.com https://*.public.blob.vercel-storage.com https://flagcdn.com https://*.googleapis.com https://*.gstatic.com https://*.ggpht.com https://media.mlsgrid.com",
+      "connect-src 'self' https://api.mlsgrid.com https://*.googleapis.com https://*.gstatic.com" + __impeccableLiveDev,
       "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com",
       "frame-ancestors 'none'",
     ].join('; '),
@@ -48,6 +48,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'ui-avatars.com' },
       { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
+      { protocol: 'https', hostname: 'media.mlsgrid.com' },
     ],
     unoptimized: false,
   },

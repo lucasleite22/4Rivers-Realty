@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Download, Plus, MapPin, Ruler } from 'lucide-react'
+import { Download, Plus, MapPin, Ruler, Check } from 'lucide-react'
 
 interface Property {
   id: string
@@ -11,6 +11,7 @@ interface Property {
   type: string
   status: string
   source: string
+  showOnPortal: boolean
   priceUsd: string
   acreage: string
   city: string
@@ -20,6 +21,13 @@ interface Property {
   launchBadge: string | null
   createdAt: string
 }
+
+const SOURCE_FILTERS = [
+  { value: '', label: 'All sources' },
+  { value: 'AGENT', label: 'Agent' },
+  { value: 'MLS', label: 'MLS' },
+  { value: 'CLIENT', label: 'Client' },
+] as const
 
 const TYPE_COLOR: Record<string, string> = {
   HORSE_FARM:  'bg-amber-100 text-amber-700',
@@ -50,19 +58,58 @@ export default function AdminPropertiesPage() {
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [sourceFilter, setSourceFilter] = useState<string>('')
+  const [pendingOnly, setPendingOnly] = useState(false)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [publishing, setPublishing] = useState(false)
 
-  useEffect(() => {
-    fetch('/api/properties?limit=50')
+  function load() {
+    setLoading(true)
+    const qs = new URLSearchParams({ all: 'true' })
+    if (sourceFilter) qs.set('source', sourceFilter)
+    if (pendingOnly) qs.set('showOnPortal', 'false')
+    fetch(`/api/properties?${qs.toString()}`)
       .then((r) => r.json())
       .then((d) => setProperties(d.data ?? []))
       .finally(() => setLoading(false))
-  }, [])
+  }
+
+  useEffect(() => {
+    load()
+    setSelected(new Set())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sourceFilter, pendingOnly])
 
   const filtered = properties.filter((p) =>
     !search || p.title.toLowerCase().includes(search.toLowerCase()) ||
     p.city.toLowerCase().includes(search.toLowerCase()) ||
     p.county.toLowerCase().includes(search.toLowerCase())
   )
+
+  function toggleSelected(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  async function publishSelected() {
+    if (selected.size === 0) return
+    setPublishing(true)
+    try {
+      await fetch('/api/properties/bulk', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selected), showOnPortal: true }),
+      })
+      setSelected(new Set())
+      load()
+    } finally {
+      setPublishing(false)
+    }
+  }
 
   return (
     <div className="min-h-full bg-[#0a1929] text-white p-6 md:p-8">
@@ -88,8 +135,8 @@ export default function AdminPropertiesPage() {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="mb-5">
+      {/* Search + filters */}
+      <div className="mb-5 flex flex-wrap items-center gap-3">
         <input
           type="search"
           value={search}
@@ -97,6 +144,35 @@ export default function AdminPropertiesPage() {
           placeholder="Search by title, city or county…"
           className="w-full max-w-sm px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-blue/50"
         />
+        <select
+          value={sourceFilter}
+          onChange={(e) => setSourceFilter(e.target.value)}
+          className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white focus:outline-none focus:border-brand-blue/50"
+        >
+          {SOURCE_FILTERS.map((f) => (
+            <option key={f.value} value={f.value} className="bg-[#0a1929]">{f.label}</option>
+          ))}
+        </select>
+        <label className="flex items-center gap-2 px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white/70 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={pendingOnly}
+            onChange={(e) => setPendingOnly(e.target.checked)}
+            className="accent-brand-blue"
+          />
+          Pending review only
+        </label>
+
+        {selected.size > 0 && (
+          <button
+            onClick={publishSelected}
+            disabled={publishing}
+            className="flex items-center gap-2 px-4 py-2.5 bg-green-500/90 text-white font-barlow font-semibold text-sm rounded-lg hover:bg-green-500 transition disabled:opacity-50"
+          >
+            <Check className="w-4 h-4" />
+            {publishing ? 'Publishing…' : `Publish ${selected.size} selected`}
+          </button>
+        )}
       </div>
 
       {/* Table */}
@@ -116,6 +192,16 @@ export default function AdminPropertiesPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/10">
+                  <th className="px-5 py-3 w-10">
+                    <input
+                      type="checkbox"
+                      checked={filtered.length > 0 && filtered.every((p) => selected.has(p.id))}
+                      onChange={(e) =>
+                        setSelected(e.target.checked ? new Set(filtered.map((p) => p.id)) : new Set())
+                      }
+                      className="accent-brand-blue"
+                    />
+                  </th>
                   {['Property', 'Type', 'Status', 'Source', 'Price', 'Location', 'Added'].map((h) => (
                     <th key={h} className="text-left px-5 py-3 font-barlow text-xs font-semibold text-white/40 uppercase tracking-widest">
                       {h}
@@ -130,6 +216,14 @@ export default function AdminPropertiesPage() {
                     onClick={() => router.push(`/admin/properties/${p.id}`)}
                     className="hover:bg-white/5 transition-colors group cursor-pointer"
                   >
+                    <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={selected.has(p.id)}
+                        onChange={() => toggleSelected(p.id)}
+                        className="accent-brand-blue"
+                      />
+                    </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
                         <div>
@@ -163,8 +257,15 @@ export default function AdminPropertiesPage() {
                       {(() => {
                         const src = SOURCE_TAG[p.source] ?? SOURCE_TAG.AGENT
                         return (
-                          <span className={`font-barlow text-xs font-semibold px-2.5 py-1 rounded-full ${src.color}`}>
-                            {src.label}
+                          <span className="flex items-center gap-1.5">
+                            <span className={`font-barlow text-xs font-semibold px-2.5 py-1 rounded-full ${src.color}`}>
+                              {src.label}
+                            </span>
+                            {!p.showOnPortal && (
+                              <span className="font-barlow text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400">
+                                Hidden
+                              </span>
+                            )}
                           </span>
                         )
                       })()}
