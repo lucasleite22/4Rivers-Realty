@@ -1,9 +1,15 @@
 // GET /api/cron/mls-sync
 //
-// Invoked by Vercel Cron (see vercel.json) every 4 hours. Pulls the MLSGrid
+// Invoked by Vercel Cron (see vercel.json) once a day. Pulls the MLSGrid
 // delta since the last successful run, keeps only Marion/Sumter listings
 // (the API itself can't filter by county — see services/mlsgrid.service.ts),
 // and upserts them into Property with source: 'MLS'.
+//
+// Daily cadence + the duration/page caps below are sized for the Vercel
+// Hobby plan (cron jobs capped at once/day; function duration capped at
+// 60s). Still comfortably inside the ~72h staleness window MLS rules
+// require. If this moves to Pro, both the schedule and these caps can be
+// relaxed for fresher data.
 //
 // New listings land with showOnPortal: false / featured: false — an admin
 // has to review and flip showOnPortal in the properties panel before they
@@ -17,10 +23,10 @@
 // $CRON_SECRET` automatically when the env var is set).
 
 export const dynamic = 'force-dynamic'
-// Needs the Vercel Pro plan to actually get 300s (Hobby caps functions at
-// 10s); this route does real work per new listing (photo download+reupload
-// to Blob), so the default 10s is not enough even for a handful of listings.
-export const maxDuration = 300
+// 60s is the max maxDuration the Hobby plan allows. This route does real
+// work per new listing (photo download+reupload to Blob), so pages/images
+// are capped below to fit that budget.
+export const maxDuration = 60
 
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
@@ -30,12 +36,12 @@ import { fetchProperties, fetchNextPage } from '@/services/mlsgrid.service'
 const ORIGINATING_SYSTEM = 'mfrmls'
 const TARGET_COUNTIES = ['Marion', 'Sumter']
 
-// Safety cap so one invocation can't run past the function timeout. Any
+// Safety cap so one invocation can't run past the 60s function timeout. Any
 // remaining pages are picked up on the next cron tick — the cursor only
 // advances up to what was actually processed in this run. Kept low because
-// each new listing now does real work (photo download+reupload to Blob),
-// not just a DB write.
-const MAX_PAGES_PER_RUN = 5
+// each new listing does real work (photo download+reupload to Blob), not
+// just a DB write.
+const MAX_PAGES_PER_RUN = 3
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
