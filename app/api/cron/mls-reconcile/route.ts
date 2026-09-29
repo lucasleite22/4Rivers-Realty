@@ -27,9 +27,12 @@ import { upsertListing, type UpsertResult } from '@/lib/mls-sync'
 import { fetchPropertyByKey } from '@/services/mlsgrid.service'
 
 // No photo re-hosting happens on reconcile (only on first import), so each
-// check is one lightweight API call — but still bounded to fit the 60s
-// Hobby plan function timeout (see mls-sync for the same constraint).
-const BATCH_SIZE = 100
+// check is one lightweight API call — but MLSGrid throttles this
+// subscription to 2 req/s (see services/mlsgrid.service.ts's throttle()),
+// so each request costs at least 600ms plus actual round-trip time. Sized
+// to fit comfortably inside the 60s Hobby plan function timeout even with
+// that floor (50 * 600ms = 30s of enforced waiting alone).
+const BATCH_SIZE = 50
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')

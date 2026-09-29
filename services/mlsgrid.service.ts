@@ -36,6 +36,28 @@
 const BASE_URL = 'https://api.mlsgrid.com/v2'
 const ORIGINATING_SYSTEM = 'mfrmls'
 
+// ── Rate limiting ─────────────────────────────────────────────
+//
+// MLSGrid's general published limits list 4 req/s as the warning threshold
+// and 6 req/s as the hard-suspension threshold — but our actual suspension
+// notice (2026-09-29) cited a *2 req/s* limit specific to this subscription,
+// tripped by a 9.0 req/s burst. Throttle to this subscription's real limit,
+// not the general one, with a comfortable margin below it. A tight
+// sequential loop — e.g. mls-reconcile checking up to 100 listings one by
+// one — has nothing else slowing it down if the API responds fast.
+const MIN_REQUEST_INTERVAL_MS = 600 // ~1.67 req/s, safely under this subscription's 2 req/s cap
+let lastRequestAt = 0
+
+// Exported so lib/upload.ts can pace its photo downloads too — media.mlsgrid.com
+// is the same MLSGrid account/subscription as the /v2/Property API, and a new
+// listing's photo batch (up to MAX_IMAGES_PER_LISTING) is downloaded in a
+// tight loop right after the listing itself is fetched.
+export async function throttle(): Promise<void> {
+  const wait = lastRequestAt + MIN_REQUEST_INTERVAL_MS - Date.now()
+  if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait))
+  lastRequestAt = Date.now()
+}
+
 // ── Auth ──────────────────────────────────────────────────────
 
 function getHeaders(): HeadersInit {
@@ -225,6 +247,7 @@ export async function fetchProperties(
   if (params.expand?.length) qs.set('$expand', params.expand.join(','))
   qs.set('$top', String(params.top ?? 100))
 
+  await throttle()
   const res = await fetch(`${BASE_URL}/Property?${qs.toString()}`, {
     headers: getHeaders(),
   })
@@ -244,6 +267,7 @@ export async function fetchProperties(
 export async function fetchNextPage(
   nextLink: string
 ): Promise<{ listings: MlsListing[]; nextLink?: string }> {
+  await throttle()
   const res = await fetch(nextLink, { headers: getHeaders() })
   if (!res.ok) {
     const body = await res.text()
@@ -289,6 +313,7 @@ export async function fetchPropertyByKey(
     ? `${BASE_URL}/Property('${listingKey}')?${qs.toString()}`
     : `${BASE_URL}/Property('${listingKey}')`
 
+  await throttle()
   const res = await fetch(url, { headers: getHeaders() })
   // A listing that's gone entirely (not just status-changed) 404s here —
   // callers that reconcile an existing local record against the live API
