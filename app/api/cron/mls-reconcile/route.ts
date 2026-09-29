@@ -18,17 +18,18 @@
 // Same CRON_SECRET auth as mls-sync (see vercel.json for the schedule).
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 300
+// 60s is the max maxDuration the Vercel Hobby plan allows.
+export const maxDuration = 60
 
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { upsertListing, type UpsertResult } from '@/lib/mls-sync'
 import { fetchPropertyByKey } from '@/services/mlsgrid.service'
 
-// No photo re-hosting happens on reconcile (only on first import), and
-// each check is one lightweight API call, so this can be more generous
-// than mls-sync's per-page cap.
-const BATCH_SIZE = 150
+// No photo re-hosting happens on reconcile (only on first import), so each
+// check is one lightweight API call — but still bounded to fit the 60s
+// Hobby plan function timeout (see mls-sync for the same constraint).
+const BATCH_SIZE = 100
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
