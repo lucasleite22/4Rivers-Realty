@@ -6,6 +6,7 @@
 
 import { put, del } from '@vercel/blob'
 import path from 'path'
+import { throttle } from '@/services/mlsgrid.service'
 
 function randomFilename(originalName: string): string {
   const ext = path.extname(originalName) || '.jpg'
@@ -54,6 +55,9 @@ export async function saveMlsImage(
   listingKey: string,
   index: number
 ): Promise<string> {
+  // Same MLSGrid account as the /v2/Property API — pace these too so a
+  // listing's photo batch can't spike the account's request rate.
+  await throttle()
   const res = await fetch(mediaUrl)
   if (!res.ok) throw new Error(`Failed to download MLS media: ${res.status} ${mediaUrl}`)
   const buffer = await res.arrayBuffer()
