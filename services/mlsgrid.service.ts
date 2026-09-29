@@ -278,13 +278,22 @@ export async function fetchAllProperties(
 export async function fetchPropertyByKey(
   listingKey: string,
   expand: Array<'Media' | 'Rooms' | 'UnitTypes'> = ['Media', 'Rooms']
-): Promise<MlsListing> {
+): Promise<MlsListing | null> {
   const qs = new URLSearchParams()
   if (expand.length) qs.set('$expand', expand.join(','))
+  // A trailing "?" with an empty query string trips MLSGrid's parser when
+  // sent via Node's fetch (confirmed empirically — the identical URL works
+  // fine over curl, so this is specifically about how undici serializes an
+  // empty query). Only append "?" when there's an actual query to send.
+  const url = qs.toString()
+    ? `${BASE_URL}/Property('${listingKey}')?${qs.toString()}`
+    : `${BASE_URL}/Property('${listingKey}')`
 
-  const res = await fetch(`${BASE_URL}/Property('${listingKey}')?${qs.toString()}`, {
-    headers: getHeaders(),
-  })
+  const res = await fetch(url, { headers: getHeaders() })
+  // A listing that's gone entirely (not just status-changed) 404s here —
+  // callers that reconcile an existing local record against the live API
+  // need to tell that apart from a transient/auth error.
+  if (res.status === 404) return null
   if (!res.ok) {
     const body = await res.text()
     throw new Error(`MLSGrid error: ${res.status} ${res.statusText} — ${body}`)

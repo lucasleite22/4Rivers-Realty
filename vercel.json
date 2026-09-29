@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/mls-sync",
       "schedule": "0 */4 * * *"
+    },
+    {
+      "path": "/api/cron/mls-reconcile",
+      "schedule": "0 3 * * 0"
     }
   ]
 }
