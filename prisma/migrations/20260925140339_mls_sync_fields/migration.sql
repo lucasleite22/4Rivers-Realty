@@ -5,10 +5,13 @@
 
 */
 -- AlterTable
+-- latitude/longitude are NOT included here: they were added to `properties`
+-- outside a tracked migration (the Google Maps work), so they already exist
+-- in every environment this migration will run against. Re-declaring them
+-- as new columns fails with "Duplicate column name" (confirmed against
+-- production's TiDB database on 2026-09-29).
 ALTER TABLE `properties` ADD COLUMN `bathrooms` INTEGER NULL,
     ADD COLUMN `bedrooms` INTEGER NULL,
-    ADD COLUMN `latitude` DOUBLE NULL,
-    ADD COLUMN `longitude` DOUBLE NULL,
     ADD COLUMN `mlsId` VARCHAR(191) NULL,
     ADD COLUMN `mlsStatus` VARCHAR(191) NULL,
     ADD COLUMN `sqft` INTEGER NULL,
