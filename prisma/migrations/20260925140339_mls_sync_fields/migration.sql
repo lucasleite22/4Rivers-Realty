@@ -1,19 +1,15 @@
 /*
-  Warnings:
-
-  - A unique constraint covering the columns `[mlsId]` on the table `properties` will be added. If there are existing duplicate values, this will fail.
-
+  This migration originally also declared `latitude`, `longitude`, `mlsId`
+  (plus its unique index) and re-ran into `bathrooms`/`bedrooms` after a
+  partial-failure retry. All of those already exist in every environment
+  this runs against now — confirmed directly against production's TiDB
+  database on 2026-09-29 (TiDB applies a multi-column ALTER TABLE as
+  independent per-column jobs, so a statement that fails partway can still
+  leave earlier columns in it applied — unlike a single atomic MySQL ALTER).
+  Only the columns still verified missing are added below.
 */
 -- AlterTable
--- latitude/longitude are NOT included here: they were added to `properties`
--- outside a tracked migration (the Google Maps work), so they already exist
--- in every environment this migration will run against. Re-declaring them
--- as new columns fails with "Duplicate column name" (confirmed against
--- production's TiDB database on 2026-09-29).
-ALTER TABLE `properties` ADD COLUMN `bathrooms` INTEGER NULL,
-    ADD COLUMN `bedrooms` INTEGER NULL,
-    ADD COLUMN `mlsId` VARCHAR(191) NULL,
-    ADD COLUMN `mlsStatus` VARCHAR(191) NULL,
+ALTER TABLE `properties` ADD COLUMN `mlsStatus` VARCHAR(191) NULL,
     ADD COLUMN `sqft` INTEGER NULL,
     ADD COLUMN `yearBuilt` INTEGER NULL;
 
@@ -30,6 +26,3 @@ CREATE TABLE `mls_sync_state` (
     UNIQUE INDEX `mls_sync_state_originatingSystemName_key`(`originatingSystemName`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateIndex
-CREATE UNIQUE INDEX `properties_mlsId_key` ON `properties`(`mlsId`);
