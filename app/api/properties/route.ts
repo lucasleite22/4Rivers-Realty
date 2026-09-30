@@ -29,6 +29,10 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search')
     const page = Math.max(1, Number(searchParams.get('page') ?? 1))
     const limit = Math.min(50, Math.max(1, Number(searchParams.get('limit') ?? 20)))
+    // Admin panel passes all=true to fetch the whole curation queue in one
+    // shot (client-side search/selection needs the full set, not one page
+    // at a time) — bypass pagination entirely in that case.
+    const all = searchParams.get('all') === 'true'
 
     if (type) where.type = type as any
     if (status) where.status = status as any
@@ -74,14 +78,13 @@ export async function GET(req: NextRequest) {
         where,
         include: { images: { orderBy: { sortOrder: 'asc' } } },
         orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * limit,
-        take: limit,
+        ...(all ? {} : { skip: (page - 1) * limit, take: limit }),
       }),
     ])
 
     return NextResponse.json({
       data: properties,
-      meta: { total, page, limit, pages: Math.ceil(total / limit) },
+      meta: { total, page, limit, pages: all ? 1 : Math.ceil(total / limit) },
     })
   } catch (err) {
     console.error('[GET /api/properties]', err)
