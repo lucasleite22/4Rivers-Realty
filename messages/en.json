@@ -8,7 +8,7 @@
     "listProperty": "List Your Property"
   },
   "footer": {
-    "tagline": "Premium horse farms, ranches, and rural estates in Ocala and North Central Florida.",
+    "tagline": "Premium horse farms, ranches, and rural estates in Sumter County and North Central Florida.",
     "quickLinks": "Quick Links",
     "contact": "Contact",
     "rights": "All rights reserved."
@@ -50,10 +50,10 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "Ocala · Est. North Central Florida",
+      "eyebrow": "Sumter County · Est. North Central Florida",
       "titleLine1": "Land Built for",
       "titleHighlight": "a Florida Life",
-      "subtitle": "Horse farms, working ranches, and rural estates across Marion County — handled by brokers who were raised on this land.",
+      "subtitle": "Horse farms, working ranches, and rural estates across Sumter County — handled by brokers who were raised on this land.",
       "ctaProperties": "View Properties",
       "ctaContact": "Schedule a Consultation"
     },
@@ -66,7 +66,7 @@
     "circleFeatures": {
       "explore": {
         "title": "Explore Properties",
-        "description": "Browse active horse farms, ranches, and rural land across Marion County."
+        "description": "Browse active horse farms, ranches, and rural land across Sumter County."
       },
       "sell": {
         "title": "Sell Your Land",
@@ -80,7 +80,7 @@
     "featured": {
       "eyebrow": "Featured Listings",
       "title": "Featured Properties",
-      "subtitle": "A hand-picked selection of exclusive listings — estates and farms across Marion County and beyond.",
+      "subtitle": "A hand-picked selection of exclusive listings — estates and farms across Sumter County and beyond.",
       "cta": "View Listing",
       "viewAll": "View All Properties"
     },
@@ -95,7 +95,7 @@
       "cards": {
         "local": {
           "title": "Local Expertise",
-          "description": "10+ years living and working in Marion County. We know every road, every creek, and every corner of North Central Florida."
+          "description": "10+ years living and working in Sumter County. We know every road, every creek, and every corner of North Central Florida."
         },
         "specialist": {
           "title": "Horse Farm Specialists",
@@ -261,7 +261,7 @@
   "properties": {
     "eyebrow": "Our Listings",
     "title": "Properties",
-    "subtitle": "Ocala & Sumter County, Florida"
+    "subtitle": "Sumter County, Florida"
   },
   "propertyDetail": {
     "noPhoto": "No photo available",
@@ -273,7 +273,9 @@
     "about": "About This Property",
     "video": "Property Video",
     "location": "Location",
-    "countySuffix": "County, FL"
+    "countySuffix": "County, FL",
+    "mlsDisclaimer": "Listing information provided by My Florida Regional MLS DBA Stellar MLS. This listing is courtesy of",
+    "mlsDisclaimerFallback": "Listing information provided by My Florida Regional MLS DBA Stellar MLS."
   },
   "propertyFilters": {
     "minPrice": "Min price",

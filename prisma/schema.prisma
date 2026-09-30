@@ -85,14 +85,14 @@ enum DashboardEventType {
 // ─────────────────────────────────────────────
 
 model User {
-  id         String   @id @default(cuid())
-  email      String   @unique
-  name       String
-  password   String
-  role       UserRole @default(AGENT)
-  active     Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      UserRole @default(AGENT)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   leads      Lead[]         @relation("AssignedLeads")
   activities LeadActivity[]
@@ -102,35 +102,43 @@ model User {
 }
 
 model Property {
-  id            String         @id @default(cuid())
-  title         String
-  type          PropertyType
-  priceUsd      Decimal        @db.Decimal(15, 2)
-  acreage       Decimal        @db.Decimal(10, 2)
-  county        String
-  city          String
-  address       String
-  description   String         @db.Text
-  status        PropertyStatus @default(ACTIVE)
-  source        PropertySource @default(AGENT)
-  featured      Boolean        @default(true)
-  showOnPortal  Boolean        @default(true)
-  stables       Int?
-  arenas        Int?
-  pastures      Int?
-  videoUrl      String?
-  isLaunch      Boolean        @default(false)
-  launchBadge   String?
-  launchDate    DateTime?
+  id                   String         @id @default(cuid())
+  title                String
+  type                 PropertyType
+  priceUsd             Decimal        @db.Decimal(15, 2)
+  acreage              Decimal        @db.Decimal(10, 2)
+  county               String
+  city                 String
+  address              String
+  description          String         @db.Text
+  status               PropertyStatus @default(ACTIVE)
+  source               PropertySource @default(AGENT)
+  featured             Boolean        @default(true)
+  showOnPortal         Boolean        @default(true)
+  stables              Int?
+  arenas               Int?
+  pastures             Int?
+  videoUrl             String?
+  isLaunch             Boolean        @default(false)
+  launchBadge          String?
+  launchDate           DateTime?
   // Geolocation — populated by Google Maps Geocoding API (Semana 6, Luan)
-  latitude      Float?
-  longitude     Float?
-  // MLS sync — populated by SimplyRETS Edge Function (Semana 8, Luan)
-  mlsId         String?        @unique
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  latitude             Float?
+  longitude            Float?
+  // MLS sync — populated by services/mlsgrid.service.ts sync job (Semana 8, Luan)
+  mlsId                String?        @unique
+  bedrooms             Int?
+  bathrooms            Int?
+  sqft                 Int?
+  yearBuilt            Int?
+  mlsStatus            String? // raw StandardStatus from the MLS feed (e.g. 'Active', 'Pending') — distinct from PropertyStatus above
+  // Required MLS compliance attribution — listing office/agent of record, shown on public pages for source: MLS
+  mlsListOfficeName    String?
+  mlsListAgentFullName String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
 
-  images        PropertyImage[]
+  images PropertyImage[]
 
   @@index([type])
   @@index([status])
@@ -142,14 +150,14 @@ model Property {
 }
 
 model PropertyImage {
-  id          String   @id @default(cuid())
-  propertyId  String
-  url         String
-  isCover     Boolean  @default(false)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  propertyId String
+  url        String
+  isCover    Boolean  @default(false)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
 
-  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@index([propertyId])
   @@map("property_images")
@@ -173,8 +181,8 @@ model Lead {
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
-  assignedTo       User?          @relation("AssignedLeads", fields: [assignedToId], references: [id], onDelete: SetNull)
-  activities       LeadActivity[]
+  assignedTo User?          @relation("AssignedLeads", fields: [assignedToId], references: [id], onDelete: SetNull)
+  activities LeadActivity[]
 
   @@index([status])
   @@index([type])
@@ -192,22 +200,36 @@ model LeadActivity {
   activityDate DateTime
   createdAt    DateTime     @default(now())
 
-  lead         Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  user         User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  lead Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([leadId])
   @@index([userId])
   @@map("lead_activities")
 }
 
+// Tracks the delta-sync cursor for the MLSGrid replication feed — one row
+// per OriginatingSystemName, so the sync job knows where it left off.
+model MlsSyncState {
+  id                        String   @id @default(cuid())
+  originatingSystemName     String   @unique // e.g. 'mfrmls'
+  lastModificationTimestamp DateTime
+  lastRunAt                 DateTime @default(now())
+  lastRunStatus             String? // 'success' | 'error'
+  lastRunError              String?  @db.Text
+  updatedAt                 DateTime @updatedAt
+
+  @@map("mls_sync_state")
+}
+
 model DashboardEvent {
-  id          String             @id @default(cuid())
-  type        DashboardEventType
-  entityId    String
-  entityType  String
-  metadata    Json?
-  userId      String?
-  createdAt   DateTime           @default(now())
+  id         String             @id @default(cuid())
+  type       DashboardEventType
+  entityId   String
+  entityType String
+  metadata   Json?
+  userId     String?
+  createdAt  DateTime           @default(now())
 
   @@index([type])
   @@index([createdAt])

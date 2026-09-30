@@ -11,8 +11,8 @@ out/
 
 # Variáveis de ambiente (NUNCA commitar)
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
 
 # Uploads de usuários (arquivos de clientes não vão pro git)
 public/uploads/

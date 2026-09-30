@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/mls-sync",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/mls-reconcile",
+      "schedule": "0 3 * * 0"
+    }
+  ]
+}

@@ -199,6 +199,8 @@
 
 > **Trabalho em andamento (não commitado ainda):** internacionalização com `next-intl` — nova estrutura de rotas `app/(marketing)/[locale]/...` (site público, com suporte a idiomas) e `app/(platform)/...` (admin/auth, fora do `[locale]`), `middleware.ts` com `createMiddleware(routing)` e `i18n/routing.ts` + `i18n/request.ts` + `i18n/navigation.ts`. Estrutura testada e funcional (rotas antigas migradas 1:1), mas **ainda não commitada no git** — recomendo commitar assim que validado, para não arriscar perda de trabalho.
 > **Mensagem redigida para o Jales** (`mensagem-jales-mls.md`, ainda não enviada): explica que ele precisa solicitar à Stellar MLS acesso via **IDX/VOW** (RESO Web API) informando o provedor **SimplyRETS** — esse é o único caminho para destravar o Módulo 06.
+> **[25/09/2026] ATUALIZAÇÃO — M06 desbloqueado, provedor trocado para MLSGrid:** um token MLSGrid já funcional (com acesso ao MLS `mfrmls` / My Florida Regional MLS — cobre Marion/Sumter) foi testado com sucesso (HTTP 200, dados reais retornados). `services/simplyrets.service.ts` (nunca usado, esperando credenciais) foi **removido** e substituído por `services/mlsgrid.service.ts`. A mensagem para o Jales sobre solicitar acesso IDX/VOW via SimplyRETS **ficou obsoleta** — não é mais necessária, mas ainda não foi excluída/arquivada (decisão pendente).
+> **Restrição importante descoberta:** a API MLSGrid só permite `$filter` server-side em `MlgCanView`, `ModificationTimestamp`, `OriginatingSystemName`, `StandardStatus`, `ListingId`, `PropertyType`, `ListOfficeMlsId` — **não dá para filtrar por condado/cidade/preço direto na API** (erro 400 confirmado ao tentar `CountyOrParish`). O padrão MLSGrid é replicação completa: puxar o delta via `ModificationTimestamp`, gravar tudo no Postgres via Prisma, e filtrar Marion/Sumter só depois, na nossa própria base — isso deve orientar o design da Edge Function de sync (Semana 8).
 
 ---
 
@@ -324,9 +326,9 @@ Mantido **react-leaflet + OpenStreetMap** (gratuito, já funcional). Migrar para
 | # | Tarefa | Módulo | Observação |
 |---|--------|--------|------------|
 | 1 | ~~Enviar questionário-cliente-4rivers.html para o Jales e aguardar resposta~~ | M01 | ✅ Concluído — cliente respondeu e conteúdo real já aplicado em Sobre/Contato/Time |
-| 2 | Edge Function / cron job para sync SimplyRETS (4h) | M06 | Bloqueado — aguardando Jales solicitar acesso IDX/VOW à Stellar MLS. Mensagem já redigida (`mensagem-jales-mls.md`), ainda não enviada |
-| 3 | Conformidade Stellar MLS (atribuição obrigatória nas listagens) | M06 | Depende do item 2 |
-| 4 | Documentação técnica módulo 06 | M06 | Depende do item 2 |
+| 2 | Edge Function / cron job para sync MLSGrid (`services/mlsgrid.service.ts`, delta via `ModificationTimestamp`, filtro Marion/Sumter pós-replicação no Postgres) | M06 | Desbloqueado 25/09/2026 — token MLSGrid funcional. `mensagem-jales-mls.md` ficou obsoleta (decidir se arquiva) |
+| 3 | Conformidade Stellar MLS (atribuição obrigatória nas listagens, filtro `MlgCanView eq true`) | M06 | Pode avançar junto com o item 2 |
+| 4 | Documentação técnica módulo 06 | M06 | Pode avançar junto com o item 2 |
 | 5 | ~~Fotos reais (hoje são Unsplash/ui-avatars)~~ | M01 | ✅ Resolvido para o time (Talles, Bela, Rose com fotos reais). Pode restar imagem de estoque em contextos decorativos |
 | 6 | ~~Telefone/email reais no Contato~~ | M01 | ✅ Concluído — `tel:+14077895260` e emails reais da equipe aplicados |
 | 7 | Decisão de contraste do `brand-blue` em textos pequenos | M01 | Aguardando validação visual do cliente |
@@ -348,7 +350,7 @@ Mantido **react-leaflet + OpenStreetMap** (gratuito, já funcional). Migrar para
 | Auth | JWT customizado com `jose` · cookie: `4rivers_session` |
 | Storage de arquivos | Vercel Blob Storage |
 | Mapa | Leaflet.js + react-leaflet |
-| MLS | SimplyRETS API (Marion + Sumter County) — bloqueado aguardando credenciais IDX/VOW |
+| MLS | MLSGrid API (`mfrmls` / My Florida Regional MLS, Marion + Sumter County) — token funcional, desbloqueado 25/09/2026 |
 | Email | Resend · remetente: `notifications@4riversrealty.com` |
 | Deploy | Vercel (produção) |
 | i18n | `next-intl` · rotas `app/(marketing)/[locale]/...` (site público) e `app/(platform)/...` (admin/auth, fora do locale) — em andamento, ainda não commitado |

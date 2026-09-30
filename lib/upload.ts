@@ -6,6 +6,7 @@
 
 import { put, del } from '@vercel/blob'
 import path from 'path'
+import { throttle } from '@/services/mlsgrid.service'
 
 function randomFilename(originalName: string): string {
   const ext = path.extname(originalName) || '.jpg'
@@ -38,6 +39,31 @@ export async function saveLeadAttachment(
   const filename = randomFilename(file.name)
   const blob = await put(`leads/${leadId}/${filename}`, file, {
     access: 'public',
+  })
+  return blob.url
+}
+
+/**
+ * Download a photo from an MLS media URL and re-host it in Vercel Blob.
+ *
+ * MLSGrid media URLs are signed and expire within hours — they can never be
+ * stored directly as a property's permanent image URL. This fetches the
+ * photo once at sync time and gives it a permanent home.
+ */
+export async function saveMlsImage(
+  mediaUrl: string,
+  listingKey: string,
+  index: number
+): Promise<string> {
+  // Same MLSGrid account as the /v2/Property API — pace these too so a
+  // listing's photo batch can't spike the account's request rate.
+  await throttle()
+  const res = await fetch(mediaUrl)
+  if (!res.ok) throw new Error(`Failed to download MLS media: ${res.status} ${mediaUrl}`)
+  const buffer = await res.arrayBuffer()
+  const blob = await put(`properties/mls-${listingKey}/${index}.jpg`, buffer, {
+    access: 'public',
+    contentType: res.headers.get('content-type') ?? 'image/jpeg',
   })
   return blob.url
 }

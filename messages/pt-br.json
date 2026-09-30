@@ -8,7 +8,7 @@
     "listProperty": "Anuncie seu Imóvel"
   },
   "footer": {
-    "tagline": "Fazendas de cavalos, ranchos e propriedades rurais premium em Ocala e no Centro-Norte da Flórida.",
+    "tagline": "Fazendas de cavalos, ranchos e propriedades rurais premium no Condado de Sumter e no Centro-Norte da Flórida.",
     "quickLinks": "Links Rápidos",
     "contact": "Contato",
     "rights": "Todos os direitos reservados."
@@ -50,10 +50,10 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "Ocala · Fundada no Centro-Norte da Flórida",
+      "eyebrow": "Condado de Sumter · Fundada no Centro-Norte da Flórida",
       "titleLine1": "Terra Feita para",
       "titleHighlight": "uma Vida na Flórida",
-      "subtitle": "Fazendas de cavalos, ranchos ativos e propriedades rurais em todo o Condado de Marion — conduzidos por corretores que cresceram nessa terra.",
+      "subtitle": "Fazendas de cavalos, ranchos ativos e propriedades rurais em todo o Condado de Sumter — conduzidos por corretores que cresceram nessa terra.",
       "ctaProperties": "Ver Imóveis",
       "ctaContact": "Agendar uma Consulta"
     },
@@ -66,7 +66,7 @@
     "circleFeatures": {
       "explore": {
         "title": "Explore Imóveis",
-        "description": "Navegue por fazendas de cavalos, ranchos e terrenos rurais ativos em todo o Condado de Marion."
+        "description": "Navegue por fazendas de cavalos, ranchos e terrenos rurais ativos em todo o Condado de Sumter."
       },
       "sell": {
         "title": "Venda Seu Terreno",
@@ -80,7 +80,7 @@
     "featured": {
       "eyebrow": "Imóveis em Destaque",
       "title": "Imóveis em Destaque",
-      "subtitle": "Uma seleção exclusiva de imóveis — propriedades e fazendas em todo o Condado de Marion e além.",
+      "subtitle": "Uma seleção exclusiva de imóveis — propriedades e fazendas em todo o Condado de Sumter e além.",
       "cta": "Ver Imóvel",
       "viewAll": "Ver Todos os Imóveis"
     },
@@ -95,7 +95,7 @@
       "cards": {
         "local": {
           "title": "Conhecimento Local",
-          "description": "Mais de 10 anos vivendo e trabalhando no Condado de Marion. Conhecemos cada estrada, cada riacho e cada canto do Centro-Norte da Flórida."
+          "description": "Mais de 10 anos vivendo e trabalhando no Condado de Sumter. Conhecemos cada estrada, cada riacho e cada canto do Centro-Norte da Flórida."
         },
         "specialist": {
           "title": "Especialistas em Fazendas de Cavalos",
@@ -261,7 +261,7 @@
   "properties": {
     "eyebrow": "Nossos Imóveis",
     "title": "Imóveis",
-    "subtitle": "Ocala e Condado de Sumter, Flórida"
+    "subtitle": "Condado de Sumter, Flórida"
   },
   "propertyDetail": {
     "noPhoto": "Nenhuma foto disponível",
@@ -273,7 +273,9 @@
     "about": "Sobre Este Imóvel",
     "video": "Vídeo do Imóvel",
     "location": "Localização",
-    "countySuffix": "Condado, FL"
+    "countySuffix": "Condado, FL",
+    "mlsDisclaimer": "Informações do imóvel fornecidas pela My Florida Regional MLS DBA Stellar MLS. Este anúncio é cortesia de",
+    "mlsDisclaimerFallback": "Informações do imóvel fornecidas pela My Florida Regional MLS DBA Stellar MLS."
   },
   "propertyFilters": {
     "minPrice": "Preço mín.",
