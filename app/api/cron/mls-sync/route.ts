@@ -41,7 +41,12 @@ const TARGET_COUNTIES = ['Marion', 'Sumter']
 // advances up to what was actually processed in this run. Kept low because
 // each new listing does real work (photo download+reupload to Blob), not
 // just a DB write.
-const MAX_PAGES_PER_RUN = 3
+//
+// Lowered from 3 to 2 after the manual 2-minute backfill loop started
+// hitting 504 Gateway Timeout fairly often — runs with ~15+ new listings in
+// a single invocation (3 pages x up to 100 listings) were pushing past 60s
+// once the throttled photo re-hosting calls piled up.
+const MAX_PAGES_PER_RUN = 2
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
