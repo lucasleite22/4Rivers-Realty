@@ -218,9 +218,11 @@ export const MLS_TYPE_MAP: Record<string, string> = {
 //  MlgCanView, ModificationTimestamp, OriginatingSystemName, StandardStatus,
 //  ListingId, PropertyType, ListOfficeMlsId."
 
+type MlsStatus = 'Active' | 'Closed' | 'Pending' | 'Active Under Contract'
+
 export interface MlsPropertyParams {
   modifiedSince?: string // ISO timestamp — required for incremental sync
-  status?: 'Active' | 'Closed' | 'Pending' | 'Active Under Contract'
+  status?: MlsStatus | MlsStatus[]
   propertyType?: 'Residential' | 'Land' | 'Commercial' | 'Farm'
   top?: number // page size, MLSGrid recommends <= 100
   expand?: Array<'Media' | 'Rooms' | 'UnitTypes'>
@@ -232,7 +234,10 @@ function buildFilter(params: MlsPropertyParams): string {
     'MlgCanView eq true',
     `ModificationTimestamp gt ${params.modifiedSince ?? '2020-01-01T00:00:00.00Z'}`,
   ]
-  if (params.status) clauses.push(`StandardStatus eq '${params.status}'`)
+  if (params.status) {
+    const statuses = Array.isArray(params.status) ? params.status : [params.status]
+    clauses.push('(' + statuses.map((s) => `StandardStatus eq '${s}'`).join(' or ') + ')')
+  }
   if (params.propertyType) clauses.push(`PropertyType eq '${params.propertyType}'`)
   return clauses.join(' and ')
 }
