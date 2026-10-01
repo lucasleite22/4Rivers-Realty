@@ -1,11 +1,26 @@
 'use client'
 
 import 'leaflet/dist/leaflet.css'
-import { useEffect } from 'react'
+import { useEffect, type ComponentType } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import type { Map as LeafletMap } from 'leaflet'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
+
+// react-leaflet@4.2.1's component types predate the React 18.3 JSX typings
+// (@types/react), which changed how a component's implicit children prop is
+// inferred — tsc reports "cannot be used as a JSX component" for these even
+// though they work fine at runtime. This is an upstream react-leaflet
+// typing gap, not a real type error. Using `@ts-expect-error` for this was
+// tried first, but it's brittle across environments: whether the error
+// actually fires depends on exactly which @types/react patch version gets
+// resolved, so a comment valid locally can become an "unused directive"
+// build failure elsewhere (as happened on Vercel) — and vice versa. Casting
+// once here is environment-independent.
+const MapContainerC = MapContainer as unknown as ComponentType<any>
+const TileLayerC = TileLayer as unknown as ComponentType<any>
+const MarkerC = Marker as unknown as ComponentType<any>
+const PopupC = Popup as unknown as ComponentType<any>
 
 // Narrow, Prisma-agnostic shape — only what the map actually renders. Using
 // this instead of the full PropertyWithImages (Prisma model) type lets both
@@ -120,22 +135,13 @@ export default function MapClient({
   const mapped = properties.filter((p) => p.latitude != null && p.longitude != null)
 
   return (
-    // react-leaflet@4.2.1's component types predate the React 18.3 JSX
-    // typings (@types/react), which changed how a component's implicit
-    // children prop is inferred — tsc now reports "cannot be used as a JSX
-    // component" for MapContainer/TileLayer/Marker/Popup even though they
-    // work fine at runtime. This is an upstream react-leaflet typing gap,
-    // not an actual type error; suppressed at each occurrence below rather
-    // than downgrading @types/react for the whole project.
-    // @ts-expect-error — react-leaflet v4 JSX typing gap, see comment above
-    <MapContainer
+    <MapContainerC
       center={center}
       zoom={zoom}
       className={className}
       scrollWheelZoom={false}
     >
-      {/* @ts-expect-error — react-leaflet v4 JSX typing gap, see comment above */}
-      <TileLayer
+      <TileLayerC
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
@@ -143,14 +149,12 @@ export default function MapClient({
       {mapped.length > 1 && <FitBounds properties={properties} />}
 
       {mapped.map((prop) => (
-        // @ts-expect-error — react-leaflet v4 JSX typing gap, see comment above
-        <Marker
+        <MarkerC
           key={prop.id}
           position={[prop.latitude as number, prop.longitude as number]}
           icon={customIcon}
         >
-          {/* @ts-expect-error — react-leaflet v4 JSX typing gap, see comment above */}
-          <Popup minWidth={220} maxWidth={260}>
+          <PopupC minWidth={220} maxWidth={260}>
             <div className="font-barlow text-sm">
               {prop.coverImageUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -176,9 +180,9 @@ export default function MapClient({
                 {t('viewDetails')}
               </Link>
             </div>
-          </Popup>
-        </Marker>
+          </PopupC>
+        </MarkerC>
       ))}
-    </MapContainer>
+    </MapContainerC>
   )
 }
