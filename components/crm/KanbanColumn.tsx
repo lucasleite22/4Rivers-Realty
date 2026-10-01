@@ -20,16 +20,16 @@ export default function KanbanColumn({ id, title, leads, color, onCardClick, onD
   return (
     <div
       ref={setNodeRef}
-      className={`flex flex-col min-h-[200px] rounded-xl transition-colors
-        ${isOver ? 'bg-brand-blue/5 ring-2 ring-brand-blue/30' : 'bg-navy/5'}`}
+      className={`flex flex-col min-h-[200px] rounded-xl border transition-colors
+        ${isOver ? 'bg-brand-blue/10 ring-2 ring-brand-blue/30 border-brand-blue/30' : 'bg-white/5 border-white/10'}`}
     >
       {/* Column header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-navy/10">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
         <div className="flex items-center gap-2">
           <span className={`w-2.5 h-2.5 rounded-full ${color}`} />
-          <h3 className="font-barlow font-semibold text-sm text-navy">{title}</h3>
+          <h3 className="font-barlow font-semibold text-sm text-white">{title}</h3>
         </div>
-        <span className="font-barlow text-xs font-bold text-navy/40 bg-white rounded-full px-2 py-0.5">
+        <span className="font-barlow text-xs font-bold text-[#0a1929] bg-white rounded-full px-2 py-0.5 min-w-[1.5rem] text-center">
           {leads.length}
         </span>
       </div>
@@ -41,7 +41,7 @@ export default function KanbanColumn({ id, title, leads, color, onCardClick, onD
       >
         <div className="flex flex-col gap-2 p-3 flex-1">
           {leads.length === 0 && (
-            <p className="font-barlow text-xs text-navy/30 text-center py-6">
+            <p className="font-barlow text-xs text-white/30 text-center py-6">
               Drop leads here
             </p>
           )}
