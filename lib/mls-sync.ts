@@ -12,6 +12,7 @@ import {
   MLS_TYPE_MAP,
   fetchProperties,
   fetchNextPage,
+  fetchPropertyByKey,
   type MlsListing,
   type MlsStatus,
   type MlsPropertyTypeFilter,
@@ -35,8 +36,15 @@ export const OFF_MARKET_HIDE_STATUSES = ['Withdrawn', 'Expired', 'Canceled', 'Ca
 // MLSGrid media URLs are signed and expire within hours (confirmed empirically
 // — see saveMlsImage below), so every photo has to be downloaded and
 // re-hosted in Vercel Blob before it's usable as a permanent property image.
-// Capped per listing so one run can't spend its whole time budget re-hosting
-// photos for a single property.
+//
+// Most synced MLS listings sit in the curation queue (showOnPortal: false)
+// and are never approved — re-hosting a full 8-photo gallery for every one
+// of them was burning through the Vercel Blob Hobby plan's monthly
+// operations quota on listings nobody ever sees. First import now only
+// pulls enough photos to curate with; the rest are backfilled lazily by
+// backfillMlsPhotos() once an admin actually approves the listing (see
+// PATCH /api/properties/[id] and /api/properties/bulk).
+export const INITIAL_IMAGES_PER_LISTING = 4
 export const MAX_IMAGES_PER_LISTING = 8
 
 export type UpsertResult =
@@ -149,12 +157,13 @@ export async function upsertListing(listing: MlsListing): Promise<UpsertResult> 
     data: { ...data, mlsId: listing.ListingKey, source: 'MLS', showOnPortal: false, featured: false },
   })
 
-  // Only public-permission photos, capped per listing, and only on first
-  // import — refreshing photos on every subsequent update is a later pass
-  // (photo set rarely churns after initial sync for a given listing).
+  // Only public-permission photos, and only enough to curate with on first
+  // import (see INITIAL_IMAGES_PER_LISTING above) — the rest of the gallery
+  // is backfilled lazily by backfillMlsPhotos() if/when this listing gets
+  // approved for the portal.
   const media = (listing.Media ?? [])
     .filter((m) => !m.Permission || m.Permission.includes('Public'))
-    .slice(0, MAX_IMAGES_PER_LISTING)
+    .slice(0, INITIAL_IMAGES_PER_LISTING)
 
   for (let i = 0; i < media.length; i++) {
     try {
@@ -168,6 +177,49 @@ export async function upsertListing(listing: MlsListing): Promise<UpsertResult> 
     }
   }
   return 'created'
+}
+
+// ── Lazy photo backfill: called when a curated MLS listing is approved ──
+//
+// MLSGrid media URLs are signed and expire within hours, so the ones from
+// the original sync are long gone by the time a listing gets approved —
+// this re-fetches the listing fresh via fetchPropertyByKey() to get live
+// URLs, then re-hosts whatever photos haven't been saved yet (indices
+// [current image count, MAX_IMAGES_PER_LISTING)). Safe to call repeatedly:
+// a listing already at MAX_IMAGES_PER_LISTING, or that isn't MLS-sourced,
+// is a no-op.
+export async function backfillMlsPhotos(propertyId: string): Promise<number> {
+  const property = await prisma.property.findUnique({
+    where: { id: propertyId },
+    include: { images: true },
+  })
+  if (!property || property.source !== 'MLS' || !property.mlsId) return 0
+  if (property.images.length >= MAX_IMAGES_PER_LISTING) return 0
+
+  const listing = await fetchPropertyByKey(property.mlsId, ['Media'])
+  if (!listing) return 0
+
+  const media = (listing.Media ?? [])
+    .filter((m) => !m.Permission || m.Permission.includes('Public'))
+    .slice(0, MAX_IMAGES_PER_LISTING)
+
+  const existingCount = property.images.length
+  const toFetch = media.slice(existingCount)
+
+  let added = 0
+  for (let i = 0; i < toFetch.length; i++) {
+    const index = existingCount + i
+    try {
+      const url = await saveMlsImage(toFetch[i].MediaURL, property.mlsId, index)
+      await prisma.propertyImage.create({
+        data: { propertyId: property.id, url, isCover: false, sortOrder: toFetch[i].Order ?? index },
+      })
+      added++
+    } catch (err) {
+      console.error(`[mls-sync] failed to backfill photo for ${property.mlsId}`, err)
+    }
+  }
+  return added
 }
 
 // ── Shared runner: one bounded sync pass against the live API ──

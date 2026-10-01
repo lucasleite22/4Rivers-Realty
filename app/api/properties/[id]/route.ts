@@ -4,6 +4,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAuth, AuthError } from '@/lib/auth'
 import { Prisma } from '@prisma/client'
+import { backfillMlsPhotos } from '@/lib/mls-sync'
+
+// Approving an MLS listing can trigger backfillMlsPhotos below, which
+// re-fetches the listing from MLSGrid and re-hosts several photos — well
+// past the ~10s default. 60s is the Hobby plan's max function duration.
+export const maxDuration = 60
 
 // ── GET /api/properties/[id] ─────────────────
 
@@ -32,6 +38,11 @@ export async function PATCH(
   try {
     const token = await requireAuth(req)
     const body = await req.json()
+
+    const before = await prisma.property.findUnique({
+      where: { id: params.id },
+      select: { showOnPortal: true, source: true },
+    })
 
     const data: Prisma.PropertyUpdateInput = {}
     if (body.title !== undefined) data.title = body.title
@@ -71,6 +82,17 @@ export async function PATCH(
       data,
       include: { images: { orderBy: { sortOrder: 'asc' } } },
     })
+
+    // Just-approved MLS listing: go grab the rest of its photo gallery (see
+    // backfillMlsPhotos — first import only saves a handful for curation).
+    if (body.showOnPortal === true && before && !before.showOnPortal && before.source === 'MLS') {
+      await backfillMlsPhotos(params.id)
+      const withPhotos = await prisma.property.findUnique({
+        where: { id: params.id },
+        include: { images: { orderBy: { sortOrder: 'asc' } } },
+      })
+      return NextResponse.json(withPhotos)
+    }
 
     return NextResponse.json(property)
   } catch (err) {
