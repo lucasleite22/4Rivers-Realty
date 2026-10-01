@@ -255,7 +255,7 @@ export default function AdminPropertiesPage() {
                       className="accent-brand-blue"
                     />
                   </th>
-                  <th className="px-5 py-3 w-16" />
+                  <th className="px-5 py-3 w-28" />
                   {['Property', 'Type', 'Status', 'Source', 'Price', 'Location', 'Added'].map((h) => (
                     <th key={h} className="text-left px-5 py-3 font-barlow text-xs font-semibold text-white/40 uppercase tracking-widest">
                       {h}
@@ -283,13 +283,13 @@ export default function AdminPropertiesPage() {
                         <Image
                           src={coverThumb(p)!}
                           alt=""
-                          width={48}
-                          height={48}
-                          className="w-12 h-12 rounded-lg object-cover bg-white/5"
+                          width={96}
+                          height={72}
+                          className="w-24 h-[4.5rem] rounded-lg object-cover bg-white/5"
                         />
                       ) : (
-                        <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
-                          <ImageOff className="w-4 h-4 text-white/20" />
+                        <div className="w-24 h-[4.5rem] rounded-lg bg-white/5 flex items-center justify-center">
+                          <ImageOff className="w-5 h-5 text-white/20" />
                         </div>
                       )}
                     </td>
