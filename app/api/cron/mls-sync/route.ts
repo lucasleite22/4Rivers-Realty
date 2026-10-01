@@ -56,6 +56,7 @@ export async function GET(req: NextRequest) {
     unpublishedNotIdx: 0,
     skippedNotAuthorized: 0,
     skippedOffMarket: 0,
+    skippedAlreadySold: 0,
     skippedOutOfArea: 0,
     pagesProcessed: 0,
   }
