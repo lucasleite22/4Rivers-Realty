@@ -30,6 +30,7 @@ export type UpsertResult =
   | 'unpublishedNotIdx'
   | 'skippedNotAuthorized'
   | 'skippedOffMarket'
+  | 'skippedAlreadySold'
 
 function mapMlsStatusToPropertyStatus(standardStatus: string): 'ACTIVE' | 'SOLD' | 'UNDER_CONTRACT' {
   if (standardStatus === 'Closed') return 'SOLD'
@@ -115,6 +116,17 @@ export async function upsertListing(listing: MlsListing): Promise<UpsertResult> 
     // First time we've seen this listing and it's already off-market —
     // nothing to import.
     return 'skippedOffMarket'
+  }
+
+  if (listing.StandardStatus === 'Closed') {
+    // First time we've seen this listing and it's already sold — we had no
+    // part in that sale, so importing it would misrepresent a stranger's
+    // closed deal as 4Rivers inventory. The initial backfill pulls every
+    // listing modified since 2020, which otherwise floods new imports with
+    // years-old sales. A listing we're ALREADY tracking that later closes
+    // still goes through the `existing` branch above and is kept as SOLD —
+    // this only blocks adopting someone else's old sale from scratch.
+    return 'skippedAlreadySold'
   }
 
   const created = await prisma.property.create({

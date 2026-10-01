@@ -47,6 +47,7 @@ export async function GET(req: NextRequest) {
     unpublishedNotIdx: 0,
     skippedNotAuthorized: 0,
     skippedOffMarket: 0,
+    skippedAlreadySold: 0,
     removedNotFound: 0,
     errored: 0,
     checked: 0,
