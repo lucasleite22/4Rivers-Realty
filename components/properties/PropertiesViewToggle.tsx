@@ -6,6 +6,7 @@ import { LayoutGrid, Map } from 'lucide-react'
 import PropertyGrid from './PropertyGrid'
 import PropertyMap from '@/components/map/PropertyMap'
 import { useProperties } from '@/hooks/useProperties'
+import { Link } from '@/i18n/navigation'
 
 type ViewMode = 'grid' | 'map'
 
@@ -27,6 +28,7 @@ function MapView() {
         countySuffix: tCard('countySuffix'),
         acresSuffix: tCard('acresSuffix'),
       }}
+      LinkComponent={Link}
     />
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import type { ComponentType } from 'react'
 import type { MapProperty, MapLabels } from './MapClient'
 
 function MapLoading({ loadingLabel }: { loadingLabel: string }) {
@@ -29,6 +30,8 @@ interface Props {
   zoom?: number
   center?: [number, number]
   labels?: MapLabels
+  detailsBasePath?: string
+  LinkComponent?: ComponentType<any>
 }
 
 /**
@@ -43,10 +46,19 @@ export default function PropertyMap({
   zoom,
   center,
   labels,
+  detailsBasePath,
+  LinkComponent,
 }: Props) {
   return (
     <div className={`w-full ${height} rounded-xl overflow-hidden border border-navy/10 shadow-sm`}>
-      <MapClient properties={properties} zoom={zoom} center={center} labels={labels} />
+      <MapClient
+        properties={properties}
+        zoom={zoom}
+        center={center}
+        labels={labels}
+        detailsBasePath={detailsBasePath}
+        LinkComponent={LinkComponent}
+      />
     </div>
   )
 }

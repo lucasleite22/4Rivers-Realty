@@ -4,7 +4,14 @@ import 'leaflet/dist/leaflet.css'
 import { useEffect, type ComponentType } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import type { Map as LeafletMap } from 'leaflet'
-import { Link } from '@/i18n/navigation'
+import NextLink from 'next/link'
+
+// Plain next/link by default (safe everywhere, including /admin). The
+// public site passes its own next-intl `Link` via the `LinkComponent` prop
+// so URLs keep the locale prefix — next-intl's Link reads locale context
+// that doesn't exist in the admin panel, and rendering it there is what
+// broke "View Details" clicks inside the admin map popup.
+const LinkC = NextLink as unknown as ComponentType<any>
 
 // Labels are passed as props (not read via useTranslations) because this
 // component also renders inside the admin panel, which has no
@@ -97,7 +104,7 @@ function FitBounds({ properties }: { properties: MapProperty[] }) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const L = require('leaflet')
     const coords = properties
-      .filter((p) => p.latitude != null && p.longitude != null)
+      .filter((p) => p.latitude != null && p.longitude != null && isInFlorida(p.latitude, p.longitude))
       .map((p) => [p.latitude as number, p.longitude as number] as [number, number])
     if (coords.length > 0) {
       map.fitBounds(L.latLngBounds(coords), { padding: [40, 40], maxZoom: 13 })
@@ -128,11 +135,31 @@ interface Props {
   zoom?: number
   center?: [number, number]
   labels?: MapLabels
+  /** Defaults to the public property page; admin passes '/admin/properties'. */
+  detailsBasePath?: string
+  /** Defaults to plain next/link; public site passes next-intl's locale-aware Link. */
+  LinkComponent?: ComponentType<any>
 }
 
 // Ocala, FL center
 const DEFAULT_CENTER: [number, number] = [29.1872, -82.1401]
 const DEFAULT_ZOOM = 10
+
+// Service area is Marion & Sumter County, FL. MLS feed data occasionally
+// has a bad/missing geocode that resolves to some unrelated place on the
+// globe (e.g. a listing once came through centered on India) — plotting it
+// drags the auto-fit viewport to a zoomed-out, meaningless view instead of
+// Florida. Anything outside a generous Florida bounding box is dropped
+// rather than trusted.
+const FLORIDA_BOUNDS = { minLat: 24, maxLat: 31.5, minLng: -88, maxLng: -79 }
+function isInFlorida(lat: number, lng: number) {
+  return (
+    lat >= FLORIDA_BOUNDS.minLat &&
+    lat <= FLORIDA_BOUNDS.maxLat &&
+    lng >= FLORIDA_BOUNDS.minLng &&
+    lng <= FLORIDA_BOUNDS.maxLng
+  )
+}
 
 export default function MapClient({
   properties,
@@ -140,13 +167,17 @@ export default function MapClient({
   zoom = DEFAULT_ZOOM,
   center = DEFAULT_CENTER,
   labels = DEFAULT_LABELS,
+  detailsBasePath = '/properties',
+  LinkComponent = LinkC,
 }: Props) {
   useEffect(() => {
     fixLeafletIcons()
   }, [])
 
   const customIcon = createCustomIcon()
-  const mapped = properties.filter((p) => p.latitude != null && p.longitude != null)
+  const mapped = properties.filter(
+    (p) => p.latitude != null && p.longitude != null && isInFlorida(p.latitude, p.longitude)
+  )
 
   return (
     <MapContainerC
@@ -187,12 +218,12 @@ export default function MapClient({
               <p className="font-cormorant font-bold text-lg text-navy mt-1">
                 {fmtPrice(prop.priceUsd)}
               </p>
-              <Link
-                href={`/properties/${prop.id}`}
+              <LinkComponent
+                href={`${detailsBasePath}/${prop.id}`}
                 className="block mt-2 text-center bg-navy text-white text-xs font-semibold py-1.5 rounded hover:bg-brand-blue transition-colors"
               >
                 {labels.viewDetails}
-              </Link>
+              </LinkComponent>
             </div>
           </PopupC>
         </MarkerC>

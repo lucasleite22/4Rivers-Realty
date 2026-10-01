@@ -631,6 +631,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               center={[property.latitude, property.longitude]}
               zoom={14}
               height="h-[320px]"
+              detailsBasePath="/admin/properties"
             />
           </section>
         )}

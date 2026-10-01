@@ -226,6 +226,7 @@ export default function AdminPropertiesPage() {
               longitude: p.longitude,
             }))}
           height="h-[600px]"
+          detailsBasePath="/admin/properties"
         />
       ) : (
         <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
