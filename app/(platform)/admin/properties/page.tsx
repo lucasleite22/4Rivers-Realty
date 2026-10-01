@@ -3,7 +3,14 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Download, Plus, MapPin, Ruler, Check } from 'lucide-react'
+import Image from 'next/image'
+import { Download, Plus, MapPin, Ruler, Check, ImageOff } from 'lucide-react'
+
+interface PropertyImage {
+  url: string
+  isCover: boolean
+  sortOrder: number
+}
 
 interface Property {
   id: string
@@ -20,6 +27,7 @@ interface Property {
   isLaunch: boolean
   launchBadge: string | null
   createdAt: string
+  images: PropertyImage[]
 }
 
 const SOURCE_FILTERS = [
@@ -37,10 +45,31 @@ const TYPE_COLOR: Record<string, string> = {
   LAND:        'bg-lime-100 text-lime-700',
 }
 
+const TYPE_FILTERS = [
+  { value: '', label: 'All types' },
+  { value: 'RESIDENTIAL', label: 'Residential' },
+  { value: 'HORSE_FARM', label: 'Horse Farm' },
+  { value: 'RANCH', label: 'Ranch' },
+  { value: 'LAND', label: 'Land' },
+  { value: 'COMMERCIAL', label: 'Commercial' },
+] as const
+
 const STATUS_COLOR: Record<string, string> = {
   ACTIVE:         'bg-green-500/20 text-green-400',
   SOLD:           'bg-gray-500/20 text-gray-400',
   UNDER_CONTRACT: 'bg-yellow-500/20 text-yellow-400',
+}
+
+const STATUS_FILTERS = [
+  { value: '', label: 'All statuses' },
+  { value: 'ACTIVE', label: 'Active' },
+  { value: 'UNDER_CONTRACT', label: 'Under Contract' },
+  { value: 'SOLD', label: 'Sold' },
+] as const
+
+function coverThumb(p: Property): string | null {
+  const cover = p.images.find((img) => img.isCover) ?? p.images[0]
+  return cover?.url ?? null
 }
 
 const SOURCE_TAG: Record<string, { label: string; color: string }> = {
@@ -59,6 +88,8 @@ export default function AdminPropertiesPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [sourceFilter, setSourceFilter] = useState<string>('')
+  const [typeFilter, setTypeFilter] = useState<string>('')
+  const [statusFilter, setStatusFilter] = useState<string>('')
   const [pendingOnly, setPendingOnly] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [publishing, setPublishing] = useState(false)
@@ -80,11 +111,15 @@ export default function AdminPropertiesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceFilter, pendingOnly])
 
-  const filtered = properties.filter((p) =>
-    !search || p.title.toLowerCase().includes(search.toLowerCase()) ||
-    p.city.toLowerCase().includes(search.toLowerCase()) ||
-    p.county.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = properties.filter((p) => {
+    const matchesSearch = !search ||
+      p.title.toLowerCase().includes(search.toLowerCase()) ||
+      p.city.toLowerCase().includes(search.toLowerCase()) ||
+      p.county.toLowerCase().includes(search.toLowerCase())
+    const matchesType = !typeFilter || p.type === typeFilter
+    const matchesStatus = !statusFilter || p.status === statusFilter
+    return matchesSearch && matchesType && matchesStatus
+  })
 
   function toggleSelected(id: string) {
     setSelected((prev) => {
@@ -153,6 +188,24 @@ export default function AdminPropertiesPage() {
             <option key={f.value} value={f.value} className="bg-[#0a1929]">{f.label}</option>
           ))}
         </select>
+        <select
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+          className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white focus:outline-none focus:border-brand-blue/50"
+        >
+          {TYPE_FILTERS.map((f) => (
+            <option key={f.value} value={f.value} className="bg-[#0a1929]">{f.label}</option>
+          ))}
+        </select>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white focus:outline-none focus:border-brand-blue/50"
+        >
+          {STATUS_FILTERS.map((f) => (
+            <option key={f.value} value={f.value} className="bg-[#0a1929]">{f.label}</option>
+          ))}
+        </select>
         <label className="flex items-center gap-2 px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white/70 cursor-pointer select-none">
           <input
             type="checkbox"
@@ -202,6 +255,7 @@ export default function AdminPropertiesPage() {
                       className="accent-brand-blue"
                     />
                   </th>
+                  <th className="px-5 py-3 w-16" />
                   {['Property', 'Type', 'Status', 'Source', 'Price', 'Location', 'Added'].map((h) => (
                     <th key={h} className="text-left px-5 py-3 font-barlow text-xs font-semibold text-white/40 uppercase tracking-widest">
                       {h}
@@ -223,6 +277,21 @@ export default function AdminPropertiesPage() {
                         onChange={() => toggleSelected(p.id)}
                         className="accent-brand-blue"
                       />
+                    </td>
+                    <td className="px-5 py-4">
+                      {coverThumb(p) ? (
+                        <Image
+                          src={coverThumb(p)!}
+                          alt=""
+                          width={48}
+                          height={48}
+                          className="w-12 h-12 rounded-lg object-cover bg-white/5"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center">
+                          <ImageOff className="w-4 h-4 text-white/20" />
+                        </div>
+                      )}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
