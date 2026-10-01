@@ -8,7 +8,23 @@
 import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { saveMlsImage } from '@/lib/upload'
-import { MLS_TYPE_MAP, type MlsListing } from '@/services/mlsgrid.service'
+import {
+  MLS_TYPE_MAP,
+  fetchProperties,
+  fetchNextPage,
+  type MlsListing,
+  type MlsStatus,
+  type MlsPropertyTypeFilter,
+} from '@/services/mlsgrid.service'
+
+export const ORIGINATING_SYSTEM = 'mfrmls'
+export const TARGET_COUNTIES = ['Marion', 'Sumter']
+
+// For now we only want to build inventory out of what's actually available
+// or in negotiation — not flood new imports with years-old Closed/Withdrawn
+// listings from the 2020+ backfill window. See upsertListing's
+// skippedAlreadySold guard for the matching rule on the create path.
+export const DEFAULT_SYNC_STATUSES: MlsStatus[] = ['Active', 'Pending', 'Active Under Contract']
 
 // Statuses that mean "no longer legitimate active inventory" but aren't a
 // sale (a sale — Closed — stays visible as SOLD, same as our own agent
@@ -152,4 +168,139 @@ export async function upsertListing(listing: MlsListing): Promise<UpsertResult> 
     }
   }
   return 'created'
+}
+
+// ── Shared runner: one bounded sync pass against the live API ──
+//
+// Used by both app/api/cron/mls-sync (daily, default filters, advances the
+// shared delta cursor) and app/api/admin/mls-sync (manual trigger from the
+// admin panel, with operator-chosen status/type filters — see
+// updateCursor below for why those runs don't touch the cursor).
+
+export interface MlsSyncStats {
+  created: number
+  updated: number
+  removed: number
+  unpublishedNotIdx: number
+  skippedNotAuthorized: number
+  skippedOffMarket: number
+  skippedAlreadySold: number
+  skippedOutOfArea: number
+  pagesProcessed: number
+}
+
+export interface RunMlsSyncOptions {
+  statuses: MlsStatus[]
+  propertyType?: MlsPropertyTypeFilter
+  maxPages: number
+  // The delta cursor (mlsSyncState.lastModificationTimestamp) is shared
+  // across ALL sync runs for this OriginatingSystem — it's what lets the
+  // next run pick up only what changed since the last one. If a
+  // narrower-than-default run (e.g. admin filtering to just "Commercial")
+  // advanced that cursor, the next default-filter run would silently skip
+  // every non-Commercial listing modified during that window forever.
+  // Only a run using the exact default filters (no propertyType, full
+  // status set) is safe to advance it — admin runs with custom filters
+  // must pass false.
+  updateCursor: boolean
+}
+
+export async function runMlsSync(options: RunMlsSyncOptions): Promise<MlsSyncStats> {
+  const { statuses, propertyType, maxPages, updateCursor } = options
+  const stats: MlsSyncStats = {
+    created: 0,
+    updated: 0,
+    removed: 0,
+    unpublishedNotIdx: 0,
+    skippedNotAuthorized: 0,
+    skippedOffMarket: 0,
+    skippedAlreadySold: 0,
+    skippedOutOfArea: 0,
+    pagesProcessed: 0,
+  }
+  let latestModificationTimestamp: string | undefined
+
+  const state = await prisma.mlsSyncState.findUnique({
+    where: { originatingSystemName: ORIGINATING_SYSTEM },
+  })
+  const modifiedSince = state?.lastModificationTimestamp.toISOString() ?? '2020-01-01T00:00:00.00Z'
+
+  try {
+    let page = await fetchProperties({
+      modifiedSince,
+      status: statuses,
+      propertyType,
+      top: 100,
+      expand: ['Media'],
+    })
+
+    for (let pageIndex = 0; pageIndex < maxPages; pageIndex++) {
+      stats.pagesProcessed++
+
+      for (const listing of page.listings) {
+        latestModificationTimestamp = listing.ModificationTimestamp
+
+        if (!listing.CountyOrParish || !TARGET_COUNTIES.includes(listing.CountyOrParish)) {
+          stats.skippedOutOfArea++
+          continue
+        }
+
+        const result = await upsertListing(listing)
+        stats[result]++
+      }
+
+      if (!page.nextLink) break
+      page = await fetchNextPage(page.nextLink)
+    }
+
+    if (updateCursor) {
+      await prisma.mlsSyncState.upsert({
+        where: { originatingSystemName: ORIGINATING_SYSTEM },
+        create: {
+          originatingSystemName: ORIGINATING_SYSTEM,
+          lastModificationTimestamp: latestModificationTimestamp
+            ? new Date(latestModificationTimestamp)
+            : new Date(modifiedSince),
+          lastRunStatus: 'success',
+        },
+        update: {
+          ...(latestModificationTimestamp ? { lastModificationTimestamp: new Date(latestModificationTimestamp) } : {}),
+          lastRunAt: new Date(),
+          lastRunStatus: 'success',
+          lastRunError: null,
+        },
+      })
+
+      if (stats.created > 0) {
+        await prisma.dashboardEvent.create({
+          data: {
+            type: 'PROPERTY_CREATED',
+            entityId: ORIGINATING_SYSTEM,
+            entityType: 'MlsSync',
+            metadata: { ...stats },
+          },
+        })
+      }
+    }
+
+    return stats
+  } catch (err) {
+    if (updateCursor) {
+      await prisma.mlsSyncState.upsert({
+        where: { originatingSystemName: ORIGINATING_SYSTEM },
+        create: {
+          originatingSystemName: ORIGINATING_SYSTEM,
+          lastModificationTimestamp: new Date(modifiedSince),
+          lastRunStatus: 'error',
+          lastRunError: err instanceof Error ? err.message : String(err),
+        },
+        update: {
+          lastRunAt: new Date(),
+          lastRunStatus: 'error',
+          lastRunError: err instanceof Error ? err.message : String(err),
+        },
+      })
+    }
+    throw err
+  }
 }

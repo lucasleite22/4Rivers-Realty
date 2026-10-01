@@ -14,9 +14,11 @@
 // New listings land with showOnPortal: false / featured: false — an admin
 // has to review and flip showOnPortal in the properties panel before they
 // go live (see PATCH /api/properties/bulk for the batch-approve action).
-// Shared upsert/compliance rules (MlgCanView/MlgCanUse checks, off-market
-// auto-unpublish) live in lib/mls-sync.ts — also used by the weekly
-// app/api/cron/mls-reconcile safety-net job.
+// The actual sync loop (and the default status filter / cursor-advance
+// rules) lives in lib/mls-sync.ts's runMlsSync — also used by
+// app/api/admin/mls-sync for manual/filtered runs triggered from the admin
+// panel, and complemented by the weekly app/api/cron/mls-reconcile
+// safety-net job.
 //
 // Not authenticated the normal admin way — protected by CRON_SECRET, the
 // standard Vercel Cron pattern (Vercel sends `Authorization: Bearer
@@ -29,12 +31,7 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
-import { upsertListing, type UpsertResult } from '@/lib/mls-sync'
-import { fetchProperties, fetchNextPage } from '@/services/mlsgrid.service'
-
-const ORIGINATING_SYSTEM = 'mfrmls'
-const TARGET_COUNTIES = ['Marion', 'Sumter']
+import { runMlsSync, DEFAULT_SYNC_STATUSES } from '@/lib/mls-sync'
 
 // Safety cap so one invocation can't run past the 60s function timeout. Any
 // remaining pages are picked up on the next cron tick — the cursor only
@@ -54,102 +51,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const stats: Record<UpsertResult, number> & { skippedOutOfArea: number; pagesProcessed: number } = {
-    created: 0,
-    updated: 0,
-    removed: 0,
-    unpublishedNotIdx: 0,
-    skippedNotAuthorized: 0,
-    skippedOffMarket: 0,
-    skippedAlreadySold: 0,
-    skippedOutOfArea: 0,
-    pagesProcessed: 0,
-  }
-  let latestModificationTimestamp: string | undefined
-
   try {
-    const state = await prisma.mlsSyncState.findUnique({
-      where: { originatingSystemName: ORIGINATING_SYSTEM },
+    const stats = await runMlsSync({
+      statuses: DEFAULT_SYNC_STATUSES,
+      maxPages: MAX_PAGES_PER_RUN,
+      updateCursor: true,
     })
-    const modifiedSince = state?.lastModificationTimestamp.toISOString() ?? '2020-01-01T00:00:00.00Z'
-
-    // Filtered to Active/Pending/Active Under Contract on purpose — for now
-    // we only want to build inventory out of what's actually available or
-    // in negotiation, not flood new imports with years-old Closed/Withdrawn
-    // listings from the 2020+ backfill window. Status transitions on
-    // listings we ALREADY track (e.g. Active → Closed) are still caught —
-    // just not through this filtered delta feed, but through the weekly
-    // app/api/cron/mls-reconcile sweep, which checks each tracked listing
-    // directly against the live API with no status filter at all.
-    let page = await fetchProperties({
-      modifiedSince,
-      status: ['Active', 'Pending', 'Active Under Contract'],
-      top: 100,
-      expand: ['Media'],
-    })
-
-    for (let pageIndex = 0; pageIndex < MAX_PAGES_PER_RUN; pageIndex++) {
-      stats.pagesProcessed++
-
-      for (const listing of page.listings) {
-        latestModificationTimestamp = listing.ModificationTimestamp
-
-        if (!listing.CountyOrParish || !TARGET_COUNTIES.includes(listing.CountyOrParish)) {
-          stats.skippedOutOfArea++
-          continue
-        }
-
-        const result = await upsertListing(listing)
-        stats[result]++
-      }
-
-      if (!page.nextLink) break
-      page = await fetchNextPage(page.nextLink)
-    }
-
-    await prisma.mlsSyncState.upsert({
-      where: { originatingSystemName: ORIGINATING_SYSTEM },
-      create: {
-        originatingSystemName: ORIGINATING_SYSTEM,
-        lastModificationTimestamp: latestModificationTimestamp ? new Date(latestModificationTimestamp) : new Date(modifiedSince),
-        lastRunStatus: 'success',
-      },
-      update: {
-        ...(latestModificationTimestamp ? { lastModificationTimestamp: new Date(latestModificationTimestamp) } : {}),
-        lastRunAt: new Date(),
-        lastRunStatus: 'success',
-        lastRunError: null,
-      },
-    })
-
-    if (stats.created > 0) {
-      await prisma.dashboardEvent.create({
-        data: {
-          type: 'PROPERTY_CREATED',
-          entityId: ORIGINATING_SYSTEM,
-          entityType: 'MlsSync',
-          metadata: stats,
-        },
-      })
-    }
-
     return NextResponse.json({ ok: true, ...stats })
   } catch (err) {
     console.error('[GET /api/cron/mls-sync]', err)
-    await prisma.mlsSyncState.upsert({
-      where: { originatingSystemName: ORIGINATING_SYSTEM },
-      create: {
-        originatingSystemName: ORIGINATING_SYSTEM,
-        lastModificationTimestamp: new Date('2020-01-01T00:00:00.00Z'),
-        lastRunStatus: 'error',
-        lastRunError: err instanceof Error ? err.message : String(err),
-      },
-      update: {
-        lastRunAt: new Date(),
-        lastRunStatus: 'error',
-        lastRunError: err instanceof Error ? err.message : String(err),
-      },
-    })
-    return NextResponse.json({ ok: false, ...stats }, { status: 500 })
+    return NextResponse.json({ ok: false, error: err instanceof Error ? err.message : String(err) }, { status: 500 })
   }
 }
