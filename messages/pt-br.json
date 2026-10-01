@@ -249,7 +249,10 @@
   "propertyGrid": {
     "empty": "Nenhum imóvel encontrado com esses critérios.",
     "loading": "Carregando imóveis…",
-    "error": "Não foi possível carregar os imóveis. Tente novamente."
+    "error": "Não foi possível carregar os imóveis. Tente novamente.",
+    "prevPage": "Anterior",
+    "nextPage": "Próxima",
+    "pageOf": "Página {page} de {pages}"
   },
   "propertyMap": {
     "loading": "Carregando mapa…",

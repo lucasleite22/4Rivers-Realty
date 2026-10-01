@@ -249,7 +249,10 @@
   "propertyGrid": {
     "empty": "No properties found matching your criteria.",
     "loading": "Loading properties…",
-    "error": "Could not load properties. Please try again."
+    "error": "Could not load properties. Please try again.",
+    "prevPage": "Previous",
+    "nextPage": "Next",
+    "pageOf": "Page {page} of {pages}"
   },
   "propertyMap": {
     "loading": "Loading map…",
