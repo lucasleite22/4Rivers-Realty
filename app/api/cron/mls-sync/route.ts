@@ -67,12 +67,17 @@ export async function GET(req: NextRequest) {
     })
     const modifiedSince = state?.lastModificationTimestamp.toISOString() ?? '2020-01-01T00:00:00.00Z'
 
-    // No status filter here on purpose — we need to see every status
-    // transition (Active → Pending/Closed/Withdrawn/...) to keep our data
-    // accurate and to comply with MLS Grid retention rules. See
-    // lib/mls-sync.ts for how each status/authorization state is handled.
+    // Filtered to Active/Pending/Active Under Contract on purpose — for now
+    // we only want to build inventory out of what's actually available or
+    // in negotiation, not flood new imports with years-old Closed/Withdrawn
+    // listings from the 2020+ backfill window. Status transitions on
+    // listings we ALREADY track (e.g. Active → Closed) are still caught —
+    // just not through this filtered delta feed, but through the weekly
+    // app/api/cron/mls-reconcile sweep, which checks each tracked listing
+    // directly against the live API with no status filter at all.
     let page = await fetchProperties({
       modifiedSince,
+      status: ['Active', 'Pending', 'Active Under Contract'],
       top: 100,
       expand: ['Media'],
     })
