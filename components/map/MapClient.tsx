@@ -60,10 +60,18 @@ function FitBounds({ properties }: { properties: PropertyWithImages[] }) {
 }
 
 // ── Price formatter ───────────────────────────────────────────
-function fmtPrice(n: number | { toNumber(): number }) {
-  if (typeof n !== 'number') n = n.toNumber()
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`
-  return `$${Math.round(n / 1000)}k`
+//
+// priceUsd is typed as Prisma.Decimal (which has .toNumber()), but that
+// type only holds for a direct Prisma query. Properties fetched from the
+// public JSON API (/api/properties) have already been through
+// JSON.stringify, which serializes Decimal to a plain string — no
+// .toNumber() method, which crashed every MLS-sourced listing that had
+// lat/lng set (agent-entered listings don't yet have coordinates, so this
+// path never ran for them).
+function fmtPrice(n: number | string | { toNumber(): number }) {
+  const value = typeof n === 'number' ? n : typeof n === 'string' ? Number(n) : n.toNumber()
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`
+  return `$${Math.round(value / 1000)}k`
 }
 
 // ── Main client component ─────────────────────────────────────
