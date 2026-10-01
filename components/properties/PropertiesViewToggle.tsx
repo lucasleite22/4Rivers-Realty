@@ -11,12 +11,24 @@ type ViewMode = 'grid' | 'map'
 
 function MapView() {
   const { properties, loading } = useProperties()
+  const tMap = useTranslations('mapClient')
+  const tCard = useTranslations('propertyCard')
   if (loading) {
     return (
       <div className="w-full h-[520px] bg-gray-100 animate-pulse rounded-xl mt-6" />
     )
   }
-  return <PropertyMap properties={properties} height="h-[520px]" />
+  return (
+    <PropertyMap
+      properties={properties}
+      height="h-[520px]"
+      labels={{
+        viewDetails: tMap('viewDetails'),
+        countySuffix: tCard('countySuffix'),
+        acresSuffix: tCard('acresSuffix'),
+      }}
+    />
+  )
 }
 
 export default function PropertiesViewToggle() {

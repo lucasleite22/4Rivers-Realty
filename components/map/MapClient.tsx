@@ -4,8 +4,23 @@ import 'leaflet/dist/leaflet.css'
 import { useEffect, type ComponentType } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import type { Map as LeafletMap } from 'leaflet'
-import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
+
+// Labels are passed as props (not read via useTranslations) because this
+// component also renders inside the admin panel, which has no
+// NextIntlClientProvider in its tree — calling useTranslations there throws
+// "context from NextIntlClientProvider was not found" and crashes the page.
+export interface MapLabels {
+  viewDetails: string
+  countySuffix: string
+  acresSuffix: string
+}
+
+const DEFAULT_LABELS: MapLabels = {
+  viewDetails: 'View Details',
+  countySuffix: 'County',
+  acresSuffix: 'ac',
+}
 
 // react-leaflet@4.2.1's component types predate the React 18.3 JSX typings
 // (@types/react), which changed how a component's implicit children prop is
@@ -112,6 +127,7 @@ interface Props {
   className?: string
   zoom?: number
   center?: [number, number]
+  labels?: MapLabels
 }
 
 // Ocala, FL center
@@ -123,10 +139,8 @@ export default function MapClient({
   className = 'w-full h-full',
   zoom = DEFAULT_ZOOM,
   center = DEFAULT_CENTER,
+  labels = DEFAULT_LABELS,
 }: Props) {
-  const t = useTranslations('mapClient')
-  const tCard = useTranslations('propertyCard')
-
   useEffect(() => {
     fixLeafletIcons()
   }, [])
@@ -168,7 +182,7 @@ export default function MapClient({
                 {prop.title}
               </p>
               <p className="text-gray-500 text-xs mt-0.5">
-                {prop.city}, {prop.county} {tCard('countySuffix')} · {Number(prop.acreage)} {tCard('acresSuffix')}
+                {prop.city}, {prop.county} {labels.countySuffix} · {Number(prop.acreage)} {labels.acresSuffix}
               </p>
               <p className="font-cormorant font-bold text-lg text-navy mt-1">
                 {fmtPrice(prop.priceUsd)}
@@ -177,7 +191,7 @@ export default function MapClient({
                 href={`/properties/${prop.id}`}
                 className="block mt-2 text-center bg-navy text-white text-xs font-semibold py-1.5 rounded hover:bg-brand-blue transition-colors"
               >
-                {t('viewDetails')}
+                {labels.viewDetails}
               </Link>
             </div>
           </PopupC>

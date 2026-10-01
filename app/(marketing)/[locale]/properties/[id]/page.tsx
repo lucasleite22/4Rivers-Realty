@@ -43,6 +43,8 @@ export default async function PropertyDetailPage({ params }: Props) {
   const t = await getTranslations('propertyDetail')
   const tTypes = await getTranslations('propertyTypes')
   const tStatus = await getTranslations('propertyStatus')
+  const tMap = await getTranslations('mapClient')
+  const tCard = await getTranslations('propertyCard')
 
   const images = property.images.length
     ? property.images.map((img) => img.url)
@@ -167,6 +169,11 @@ export default async function PropertyDetailPage({ params }: Props) {
                     height="h-[360px]"
                     center={[property.latitude as number, property.longitude as number]}
                     zoom={13}
+                    labels={{
+                      viewDetails: tMap('viewDetails'),
+                      countySuffix: tCard('countySuffix'),
+                      acresSuffix: tCard('acresSuffix'),
+                    }}
                   />
                 </div>
               )}

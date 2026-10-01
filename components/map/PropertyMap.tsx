@@ -1,23 +1,25 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useTranslations } from 'next-intl'
-import type { MapProperty } from './MapClient'
+import type { MapProperty, MapLabels } from './MapClient'
 
-function MapLoading() {
-  const t = useTranslations('propertyMap')
+function MapLoading({ loadingLabel }: { loadingLabel: string }) {
   return (
     <div className="w-full h-full bg-off-white animate-pulse flex items-center justify-center">
-      <p className="font-barlow text-sm text-navy/40">{t('loading')}</p>
+      <p className="font-barlow text-sm text-navy/40">{loadingLabel}</p>
     </div>
   )
 }
 
-// Leaflet must be loaded client-side only — it reads window/document on import.
-// next/dynamic with ssr:false is the official Next.js pattern for this.
+const DEFAULT_LOADING_LABEL = 'Loading map…'
+
+// Leaflet must be loaded client-side only — it reads window/document on
+// import. next/dynamic with ssr:false is the official Next.js pattern for
+// this. Kept at module scope so it isn't recreated (and MapClient
+// remounted) on every render.
 const MapClient = dynamic(() => import('./MapClient'), {
   ssr: false,
-  loading: () => <MapLoading />,
+  loading: () => <MapLoading loadingLabel={DEFAULT_LOADING_LABEL} />,
 })
 
 interface Props {
@@ -26,6 +28,7 @@ interface Props {
   height?: string
   zoom?: number
   center?: [number, number]
+  labels?: MapLabels
 }
 
 /**
@@ -39,10 +42,11 @@ export default function PropertyMap({
   height = 'h-[480px]',
   zoom,
   center,
+  labels,
 }: Props) {
   return (
     <div className={`w-full ${height} rounded-xl overflow-hidden border border-navy/10 shadow-sm`}>
-      <MapClient properties={properties} zoom={zoom} center={center} />
+      <MapClient properties={properties} zoom={zoom} center={center} labels={labels} />
     </div>
   )
 }
