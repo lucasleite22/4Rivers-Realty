@@ -218,12 +218,13 @@ export const MLS_TYPE_MAP: Record<string, string> = {
 //  MlgCanView, ModificationTimestamp, OriginatingSystemName, StandardStatus,
 //  ListingId, PropertyType, ListOfficeMlsId."
 
-type MlsStatus = 'Active' | 'Closed' | 'Pending' | 'Active Under Contract'
+export type MlsStatus = 'Active' | 'Closed' | 'Pending' | 'Active Under Contract'
+export type MlsPropertyTypeFilter = 'Residential' | 'Land' | 'Commercial' | 'Farm'
 
 export interface MlsPropertyParams {
   modifiedSince?: string // ISO timestamp — required for incremental sync
   status?: MlsStatus | MlsStatus[]
-  propertyType?: 'Residential' | 'Land' | 'Commercial' | 'Farm'
+  propertyType?: MlsPropertyTypeFilter
   top?: number // page size, MLSGrid recommends <= 100
   expand?: Array<'Media' | 'Rooms' | 'UnitTypes'>
 }
