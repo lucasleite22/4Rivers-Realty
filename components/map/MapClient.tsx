@@ -6,7 +6,24 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import type { Map as LeafletMap } from 'leaflet'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
-import type { PropertyWithImages } from '@/types/properties'
+
+// Narrow, Prisma-agnostic shape — only what the map actually renders. Using
+// this instead of the full PropertyWithImages (Prisma model) type lets both
+// the public site (which has full Property rows) and the admin panel
+// (which has its own, differently-shaped Property interface) pass data in
+// here without an awkward cast — any object with at least these fields
+// structurally satisfies it.
+export interface MapProperty {
+  id: string
+  title: string
+  city: string
+  county: string
+  acreage: number | string | { toString(): string }
+  priceUsd: number | string | { toNumber(): number }
+  latitude: number | null
+  longitude: number | null
+  coverImageUrl?: string | null
+}
 
 // ── Fix Leaflet default icon path broken by webpack ──────────
 function fixLeafletIcons() {
@@ -43,7 +60,7 @@ function createCustomIcon() {
 }
 
 // ── Auto-fit map to all markers ───────────────────────────────
-function FitBounds({ properties }: { properties: PropertyWithImages[] }) {
+function FitBounds({ properties }: { properties: MapProperty[] }) {
   const map = useMap()
   useEffect(() => {
     if (!properties.length) return
@@ -76,7 +93,7 @@ function fmtPrice(n: number | string | { toNumber(): number }) {
 
 // ── Main client component ─────────────────────────────────────
 interface Props {
-  properties: PropertyWithImages[]
+  properties: MapProperty[]
   className?: string
   zoom?: number
   center?: [number, number]
@@ -103,12 +120,21 @@ export default function MapClient({
   const mapped = properties.filter((p) => p.latitude != null && p.longitude != null)
 
   return (
+    // react-leaflet@4.2.1's component types predate the React 18.3 JSX
+    // typings (@types/react), which changed how a component's implicit
+    // children prop is inferred — tsc now reports "cannot be used as a JSX
+    // component" for MapContainer/TileLayer/Marker/Popup even though they
+    // work fine at runtime. This is an upstream react-leaflet typing gap,
+    // not an actual type error; suppressed at each occurrence below rather
+    // than downgrading @types/react for the whole project.
+    // @ts-expect-error — react-leaflet v4 JSX typing gap, see comment above
     <MapContainer
       center={center}
       zoom={zoom}
       className={className}
       scrollWheelZoom={false}
     >
+      {/* @ts-expect-error — react-leaflet v4 JSX typing gap, see comment above */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -117,11 +143,13 @@ export default function MapClient({
       {mapped.length > 1 && <FitBounds properties={properties} />}
 
       {mapped.map((prop) => (
+        // @ts-expect-error — react-leaflet v4 JSX typing gap, see comment above
         <Marker
           key={prop.id}
           position={[prop.latitude as number, prop.longitude as number]}
           icon={customIcon}
         >
+          {/* @ts-expect-error — react-leaflet v4 JSX typing gap, see comment above */}
           <Popup minWidth={220} maxWidth={260}>
             <div className="font-barlow text-sm">
               {prop.coverImageUrl && (

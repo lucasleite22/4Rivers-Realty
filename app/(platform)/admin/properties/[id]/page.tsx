@@ -7,6 +7,7 @@ import {
   ArrowLeft, Pencil, Check, X, Trash2, Upload, Star, ImageIcon,
   MapPin, Ruler, Building2, DollarSign, Calendar, Globe, AlertTriangle,
 } from 'lucide-react'
+import PropertyMap from '@/components/map/PropertyMap'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -608,6 +609,31 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             </div>
           </div>
         </div>
+
+        {/* ── Location map ── */}
+        {property.latitude != null && property.longitude != null && (
+          <section className="bg-white/5 border border-white/10 rounded-xl overflow-hidden mb-5">
+            <div className="px-5 py-4 border-b border-white/10">
+              <p className="font-barlow text-xs font-semibold text-white/40 uppercase tracking-widest">Location</p>
+            </div>
+            <PropertyMap
+              properties={[{
+                id: property.id,
+                title: property.title,
+                city: property.city,
+                county: property.county,
+                acreage: property.acreage,
+                priceUsd: property.priceUsd,
+                latitude: property.latitude,
+                longitude: property.longitude,
+                coverImageUrl: displayImages[coverIdx]?.url ?? displayImages[0]?.url ?? null,
+              }]}
+              center={[property.latitude, property.longitude]}
+              zoom={14}
+              height="h-[320px]"
+            />
+          </section>
+        )}
 
         {/* ── Danger zone ── */}
         <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-6">

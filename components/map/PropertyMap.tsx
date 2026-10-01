@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import type { PropertyWithImages } from '@/types/properties'
+import type { MapProperty } from './MapClient'
 
 function MapLoading() {
   const t = useTranslations('propertyMap')
@@ -21,7 +21,7 @@ const MapClient = dynamic(() => import('./MapClient'), {
 })
 
 interface Props {
-  properties: PropertyWithImages[]
+  properties: MapProperty[]
   /** Tailwind height class, e.g. "h-[500px]" */
   height?: string
   zoom?: number

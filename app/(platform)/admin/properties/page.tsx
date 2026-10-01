@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Download, Plus, MapPin, Ruler, Check } from 'lucide-react'
+import { Download, Plus, MapPin, Ruler, Check, LayoutList, Map as MapIcon } from 'lucide-react'
+import PropertyMap from '@/components/map/PropertyMap'
 
 interface Property {
   id: string
@@ -20,6 +21,8 @@ interface Property {
   isLaunch: boolean
   launchBadge: string | null
   createdAt: string
+  latitude: number | null
+  longitude: number | null
 }
 
 const SOURCE_FILTERS = [
@@ -62,6 +65,7 @@ export default function AdminPropertiesPage() {
   const [pendingOnly, setPendingOnly] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [publishing, setPublishing] = useState(false)
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
 
   function load() {
     setLoading(true)
@@ -173,9 +177,30 @@ export default function AdminPropertiesPage() {
             {publishing ? 'Publishing…' : `Publish ${selected.size} selected`}
           </button>
         )}
+
+        <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg p-1 ml-auto">
+          <button
+            onClick={() => setViewMode('list')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-barlow text-xs font-semibold transition-colors ${
+              viewMode === 'list' ? 'bg-brand-blue text-dark-navy' : 'text-white/50 hover:text-white'
+            }`}
+          >
+            <LayoutList className="w-3.5 h-3.5" />
+            List
+          </button>
+          <button
+            onClick={() => setViewMode('map')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-barlow text-xs font-semibold transition-colors ${
+              viewMode === 'map' ? 'bg-brand-blue text-dark-navy' : 'text-white/50 hover:text-white'
+            }`}
+          >
+            <MapIcon className="w-3.5 h-3.5" />
+            Map
+          </button>
+        </div>
       </div>
 
-      {/* Table */}
+      {/* List / Map */}
       {loading ? (
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
@@ -186,6 +211,22 @@ export default function AdminPropertiesPage() {
         <div className="bg-white/5 rounded-xl p-12 text-center">
           <p className="font-barlow text-white/30">No properties found.</p>
         </div>
+      ) : viewMode === 'map' ? (
+        <PropertyMap
+          properties={filtered
+            .filter((p) => p.latitude != null && p.longitude != null)
+            .map((p) => ({
+              id: p.id,
+              title: p.title,
+              city: p.city,
+              county: p.county,
+              acreage: p.acreage,
+              priceUsd: p.priceUsd,
+              latitude: p.latitude,
+              longitude: p.longitude,
+            }))}
+          height="h-[600px]"
+        />
       ) : (
         <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
