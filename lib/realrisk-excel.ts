@@ -227,7 +227,6 @@ export async function buildRealriskWorkbook(
   options: RealriskExportOptions = {}
 ): Promise<ArrayBuffer> {
   const days = options.days ?? 7
-  const since = Date.now() - days * DAY_MS
   const generated = `Gerado em ${new Date().toLocaleString('pt-BR', { timeZone: 'America/New_York' })} (horário da Flórida)`
 
   const wb = new ExcelJS.Workbook()
@@ -236,47 +235,48 @@ export async function buildRealriskWorkbook(
 
   addSummarySheet(wb, listings, days, generated)
 
-  const byListedDesc = (a: MlsListing, b: MlsListing) =>
-    (b.listingContractDate?.getTime() ?? 0) - (a.listingContractDate?.getTime() ?? 0)
-
-  // "Novos" uses the MLS listing date, not firstSeenAt: the initial backfill
-  // stamped every row with the same firstSeenAt.
-  addListingSheet(
-    wb,
-    'Novos',
-    `Listados no MLS nos últimos ${days} dias`,
-    listings
-      .filter((l) => ACTIVE_STATUSES.includes(l.standardStatus) && (l.listingContractDate?.getTime() ?? 0) >= since)
-      .sort(byListedDesc)
-  )
-  addListingSheet(
-    wb,
-    'Ativos',
-    'StandardStatus = Active',
-    listings.filter((l) => ACTIVE_STATUSES.includes(l.standardStatus)).sort(byListedDesc)
-  )
-  addListingSheet(
-    wb,
-    'Sob contrato',
-    'Pending / Active Under Contract',
-    listings.filter((l) => CONTRACT_STATUSES.includes(l.standardStatus)).sort(byListedDesc)
-  )
+  const tabs = partitionRealriskListings(listings, days)
+  addListingSheet(wb, 'Novos', `Listados no MLS nos últimos ${days} dias`, tabs.novos)
+  addListingSheet(wb, 'Ativos', 'StandardStatus = Active', tabs.ativos)
+  addListingSheet(wb, 'Sob contrato', 'Pending / Active Under Contract', tabs.sobContrato)
   addListingSheet(
     wb,
     'Redução de preço',
     `Ativos com preço abaixo do original — maior redução primeiro; reduções ≥ ${SUSPECT_CUT * 100}% (typo no MLS ou lote desmembrado) vão para o fim`,
-    listings
-      .filter((l) => ACTIVE_STATUSES.includes(l.standardStatus) && priceCut(l) != null)
-      .sort((a, b) => cutRank(b) - cutRank(a))
+    tabs.reducaoPreco
   )
   addListingSheet(
     wb,
     'Saíram do mercado',
     `Withdrawn / Expired / Canceled nos últimos ${days} dias (depende do sync --delta)`,
-    listings.filter(
-      (l) => OFF_MARKET_STATUSES.includes(l.standardStatus) && l.modificationTimestamp.getTime() >= since
-    )
+    tabs.sairamDoMercado
   )
 
   return wb.xlsx.writeBuffer()
 }
+
+// Shared by the workbook tabs and the daily email digest (lib/realrisk-digest.ts),
+// so both always agree on what "new" / "price cut" / "off market" mean.
+export function partitionRealriskListings(listings: MlsListing[], days = 7) {
+  const since = Date.now() - days * DAY_MS
+  const byListedDesc = (a: MlsListing, b: MlsListing) =>
+    (b.listingContractDate?.getTime() ?? 0) - (a.listingContractDate?.getTime() ?? 0)
+
+  return {
+    // "Novos" uses the MLS listing date, not firstSeenAt: the initial backfill
+    // stamped every row with the same firstSeenAt.
+    novos: listings
+      .filter((l) => ACTIVE_STATUSES.includes(l.standardStatus) && (l.listingContractDate?.getTime() ?? 0) >= since)
+      .sort(byListedDesc),
+    ativos: listings.filter((l) => ACTIVE_STATUSES.includes(l.standardStatus)).sort(byListedDesc),
+    sobContrato: listings.filter((l) => CONTRACT_STATUSES.includes(l.standardStatus)).sort(byListedDesc),
+    reducaoPreco: listings
+      .filter((l) => ACTIVE_STATUSES.includes(l.standardStatus) && priceCut(l) != null)
+      .sort((a, b) => cutRank(b) - cutRank(a)),
+    sairamDoMercado: listings.filter(
+      (l) => OFF_MARKET_STATUSES.includes(l.standardStatus) && l.modificationTimestamp.getTime() >= since
+    ),
+  }
+}
+
+export { priceCut, SUSPECT_CUT }

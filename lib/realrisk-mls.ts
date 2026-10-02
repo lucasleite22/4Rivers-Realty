@@ -185,6 +185,10 @@ export interface RunRealriskSyncOptions {
   // the active statuses only, to keep the 2020+ window small.
   statuses?: MlsStatus[]
   maxPages: number
+  // Epoch ms: stop before fetching another page once past it. Lets a Vercel
+  // function (60s cap) do as much as fits and leave the rest for next run —
+  // the cursor only advances over what was actually processed.
+  deadline?: number
   onPage?: (stats: RealriskSyncStats) => void
 }
 
@@ -244,6 +248,7 @@ export async function runRealriskSync(options: RunRealriskSyncOptions): Promise<
         stats.done = true
         break
       }
+      if (options.deadline && Date.now() > options.deadline) break
       page = await fetchNextPage(page.nextLink)
     }
     return stats

@@ -34,3 +34,7 @@ npm-debug.log*
 templates e ideia/
 mensagem-jales-mls.md
 tsconfig.tsbuildinfo
+
+# RealRisk: local previews/exports contain MLS data — never commit
+realrisk-digest-preview/
+*.xlsx

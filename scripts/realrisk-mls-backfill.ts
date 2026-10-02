@@ -23,10 +23,12 @@ function loadEnv(file: string) {
 
 const PAGES_PER_CHUNK = 20
 
-// Portal cron runs at 06:00 UTC — stay out of 05:50–06:30.
+// Crons that also call MLSGrid: portal mls-sync at 06:00 UTC and the
+// RealRisk digest delta at 10:00 UTC (once scheduled) — stay out of
+// 05:50–06:30 and 09:50–10:30.
 function inCronWindow(now = new Date()): boolean {
   const minutes = now.getUTCHours() * 60 + now.getUTCMinutes()
-  return minutes >= 5 * 60 + 50 && minutes < 6 * 60 + 30
+  return [6, 10].some((h) => minutes >= h * 60 - 10 && minutes < h * 60 + 30)
 }
 
 async function main() {
@@ -50,7 +52,7 @@ async function main() {
   try {
     while (totals.pages < maxPages) {
       if (inCronWindow()) {
-        console.log('[realrisk-backfill] portal cron window (05:50–06:30 UTC) — pausing 5 min')
+        console.log('[realrisk-backfill] cron window (05:50–06:30 or 09:50–10:30 UTC) — pausing 5 min')
         await new Promise((r) => setTimeout(r, 5 * 60_000))
         continue
       }

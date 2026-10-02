@@ -79,13 +79,19 @@ Resultado do backfill local (02/Out): **34.040 imóveis** em cerca de 15 min e 1
 - Sem sessão, `/api/realrisk/listings` responde 401. Com sessão, responde 200 com 300 imóveis (~3 s no dev). Os headers de `/realrisk/*` estão corretos.
 - **Não testado no navegador**: a renderização visual do iframe, o mapa e os likes. O Lucas vai testar.
 
-## Pendências para produção (precisam de OK do Lucas)
+## Pendências para produção — status em 02/Out/2026
 
-1. **Base da branch / merge.** A produção publica a partir do `main`. Ver Passo 0.
-2. **Migration**: o `build` roda `prisma migrate deploy` e cria `mls_listings` no TiDB de produção no primeiro deploy. Ela é aditiva (só `CREATE TABLE`).
-3. **Backfill no TiDB**: rodar `realrisk-mls-backfill.ts` localmente apontando para o `DATABASE_URL` de produção (cerca de 15 min). Precisa da connection string, via Lucas ou `vercel env pull` com autorização dele.
-4. **Quem acessa**: hoje é qualquer usuário logado (SUPER_ADMIN e AGENT). O Lucas ainda vai decidir se restringe a `requireAdmin`.
-5. **Frescor e email diário**: o cron do portal só atualiza imóveis Active/Pending/AUC. Saídas de mercado exigem o `--delta`. O Lucas quer **a lista diária por email**. Proposta: um agendamento que roda o delta, gera a triagem e o `.xlsx` e manda pelo **Resend** (já está nas dependências). Falta definir: destinatários (Lucas e/ou Jales), horário (sugestão 07:00 BRT) e se existe domínio verificado no Resend.
+0. ✅ **Passo 0 feito.** `origin/main` já continha os 15 commits da base antiga. `feat/realrisk-mls-listings` foi reapontada para `origin/main` e o RealRisk está commitado nela.
+1. **Merge**: via PR para o `main`.
+2. **Migration**: o `build` roda `prisma migrate deploy`. ⚠️ Na Vercel, `DATABASE_URL` é **o mesmo para Production e Preview**, então o build do Preview da branch já cria `mls_listings` no TiDB de produção. Ela é aditiva (só `CREATE TABLE`), e o Lucas autorizou.
+3. **Backfill no TiDB**: rodar `realrisk-mls-backfill.ts` localmente apontando para o `DATABASE_URL` de produção (cerca de 15 min). Autorizado pelo Lucas. Só depois que a tabela existir (pós-deploy).
+4. ✅ **Quem acessa**: qualquer usuário logado (decisão do Lucas). Fica `requireAuth`.
+5. **Email diário: arquitetura pronta, desligada** (decisão do Lucas: só deixar pronto).
+   - `lib/realrisk-digest.ts`: resumo em HTML (contagens, top 10 novos e top 10 reduções, sempre com a corretora) + `.xlsx` anexo. Avisa no assunto quando os dados estão com mais de 48h. Sem `REALRISK_DIGEST_TO`/`RESEND_API_KEY`, não faz nada e informa o motivo.
+   - `app/api/cron/realrisk-digest`: `CRON_SECRET`. Roda um delta limitado por tempo (35s, cursor `mfrmls:realrisk`) e depois manda o email.
+   - `npx tsx scripts/realrisk-digest-preview.ts [pasta] [--days 1]`: gera `digest.html` + `.xlsx` localmente, sem enviar e sem chamar a MLSGrid.
+   - **Para ligar:** (a) `REALRISK_DIGEST_TO` (separado por vírgula) e `RESEND_API_KEY` na Vercel; (b) domínio do remetente verificado no Resend (`REALRISK_DIGEST_FROM`, padrão `notifications@4riversrealty.us`); (c) adicionar `{ "path": "/api/cron/realrisk-digest", "schedule": "0 10 * * *" }` ao `vercel.json` (07:00 BRT, longe do cron do portal às 06:00 UTC). O backfill local já pausa nas duas janelas.
+   - **Limitação:** no Hobby (60s, 1x/dia), o delta pode não acompanhar o volume diário de modificações do Stellar. Se o email avisar "dados desatualizados", rodar `realrisk-mls-backfill.ts --delta` localmente.
 6. **Observação de segurança (pré-existente)**: as páginas `/admin/*` não verificam a sessão no servidor (o layout é client e o middleware exclui `admin`). Os dados estão protegidos porque todas as APIs usam `requireAuth`, mas o "shell" das páginas abre sem login.
 
 ## Limitações conhecidas (deixar claras para o Lucas/Jales)
