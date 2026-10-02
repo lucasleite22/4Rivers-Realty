@@ -7,10 +7,9 @@ import PropertyMap from '@/components/map/PropertyMap'
 import PropertyGallery from '@/components/properties/PropertyGallery'
 import PropertyInterestForm from '@/components/properties/PropertyInterestForm'
 import type { PropertyWithImages } from '@/types/properties'
-import { Link } from '@/i18n/navigation'
 
 interface Props {
-  params: { id: string }
+  params: { id: string; locale: string }
 }
 
 function getYouTubeEmbedUrl(url: string | null): string | null {
@@ -175,7 +174,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                       countySuffix: tCard('countySuffix'),
                       acresSuffix: tCard('acresSuffix'),
                     }}
-                    LinkComponent={Link}
+                    detailsBasePath={params.locale === 'en' ? '/properties' : `/${params.locale}/properties`}
                   />
                 </div>
               )}
