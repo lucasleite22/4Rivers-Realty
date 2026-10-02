@@ -283,7 +283,10 @@
   "propertyFilters": {
     "minPrice": "Min price",
     "maxPrice": "Max price",
-    "minAcres": "Min acres"
+    "minAcres": "Min acres",
+    "minBedrooms": "Min beds",
+    "minBathrooms": "Min baths",
+    "minSqft": "Min sqft"
   },
   "propertyInterestForm": {
     "title": "Request More Information",

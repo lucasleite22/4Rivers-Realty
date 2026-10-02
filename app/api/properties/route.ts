@@ -26,6 +26,9 @@ export async function GET(req: NextRequest) {
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
     const minAcreage = searchParams.get('minAcreage')
+    const minBedrooms = searchParams.get('minBedrooms')
+    const minBathrooms = searchParams.get('minBathrooms')
+    const minSqft = searchParams.get('minSqft')
     const search = searchParams.get('search')
     const page = Math.max(1, Number(searchParams.get('page') ?? 1))
     const limit = Math.min(50, Math.max(1, Number(searchParams.get('limit') ?? 20)))
@@ -61,6 +64,14 @@ export async function GET(req: NextRequest) {
     if (minAcreage) {
       where.acreage = { gte: new Prisma.Decimal(minAcreage) }
     }
+
+    // bedrooms/bathrooms/sqft are nullable (only MLS-sourced listings have
+    // them reliably populated today — see docs/mls-property-characteristics.md)
+    // so a min-filter here correctly excludes listings where we don't know
+    // the value, rather than guessing.
+    if (minBedrooms) where.bedrooms = { gte: Number(minBedrooms) }
+    if (minBathrooms) where.bathrooms = { gte: Number(minBathrooms) }
+    if (minSqft) where.sqft = { gte: Number(minSqft) }
 
     if (search) {
       where.OR = [

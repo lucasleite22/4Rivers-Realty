@@ -81,6 +81,30 @@ export default function PropertyFilters() {
         placeholder={t('minAcres')}
         defaultValue={params.get('minAcreage') ?? ''}
         onBlur={(e) => update('minAcreage', e.target.value)}
+        className={`${inputCls} sm:w-28`}
+      />
+
+      <input
+        type="number"
+        placeholder={t('minBedrooms')}
+        defaultValue={params.get('minBedrooms') ?? ''}
+        onBlur={(e) => update('minBedrooms', e.target.value)}
+        className={inputCls}
+      />
+
+      <input
+        type="number"
+        placeholder={t('minBathrooms')}
+        defaultValue={params.get('minBathrooms') ?? ''}
+        onBlur={(e) => update('minBathrooms', e.target.value)}
+        className={inputCls}
+      />
+
+      <input
+        type="number"
+        placeholder={t('minSqft')}
+        defaultValue={params.get('minSqft') ?? ''}
+        onBlur={(e) => update('minSqft', e.target.value)}
         className={`${inputCls} col-span-2 sm:w-28`}
       />
     </div>

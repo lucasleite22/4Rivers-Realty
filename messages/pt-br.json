@@ -283,7 +283,10 @@
   "propertyFilters": {
     "minPrice": "Preço mín.",
     "maxPrice": "Preço máx.",
-    "minAcres": "Acres mín."
+    "minAcres": "Acres mín.",
+    "minBedrooms": "Quartos mín.",
+    "minBathrooms": "Banheiros mín.",
+    "minSqft": "Sqft mín."
   },
   "propertyInterestForm": {
     "title": "Solicitar Mais Informações",
