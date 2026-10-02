@@ -8,6 +8,7 @@
 import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { saveMlsImage } from '@/lib/upload'
+import { isRealriskCounty, upsertMlsListing } from '@/lib/realrisk-mls'
 import {
   MLS_TYPE_MAP,
   fetchProperties,
@@ -291,6 +292,16 @@ export async function runMlsSync(options: RunMlsSyncOptions): Promise<MlsSyncSta
 
       for (const listing of page.listings) {
         latestModificationTimestamp = listing.ModificationTimestamp
+
+        // RealRisk's analytical copy rides along on the same page — no extra
+        // MLSGrid requests. Its failures must never break the portal sync.
+        if (isRealriskCounty(listing.CountyOrParish)) {
+          try {
+            await upsertMlsListing(listing)
+          } catch (err) {
+            console.error(`[mls-sync] realrisk upsert failed for ${listing.ListingKey}`, err)
+          }
+        }
 
         if (!listing.CountyOrParish || !TARGET_COUNTIES.includes(listing.CountyOrParish)) {
           stats.skippedOutOfArea++

@@ -167,6 +167,23 @@ export interface MlsListing {
   TaxYear?: number
   ParcelNumber?: string
 
+  // Used by RealRisk (lib/realrisk-mls.ts). MFR_* are Stellar custom
+  // fields — the feed sends their YN flags as "0"/"1" strings and amounts
+  // as decimal strings.
+  DaysOnMarket?: number
+  CumulativeDaysOnMarket?: number
+  AssociationFee?: number
+  AssociationFeeFrequency?: string
+  WaterSource?: string[]
+  Sewer?: string[]
+  Utilities?: string[]
+  LotFeatures?: string[]
+  MFR_FloodZoneCode?: string
+  MFR_MonthlyHOAAmount?: string
+  MFR_MontlyMaintAmtAdditionToHOA?: string
+  MFR_LeaseRestrictionsYN?: string
+  MFR_MinimumLease?: string
+
   Media?: MlsMedia[]
   Rooms?: MlsRoom[]
   UnitTypes?: unknown[]

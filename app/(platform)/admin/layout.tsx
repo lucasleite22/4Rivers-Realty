@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Users, Building2, LogOut, Menu, InboxIcon, RefreshCw } from 'lucide-react'
+import { LayoutDashboard, Users, Building2, LogOut, Menu, InboxIcon, RefreshCw, TrendingUp } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { MlsSyncRunnerProvider, useMlsSyncRunner } from '@/components/admin/MlsSyncRunnerContext'
 
@@ -37,6 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin/submissions', label: 'Submissions',  icon: InboxIcon,       badge: pendingCount },
     { href: '/admin/properties',  label: 'Properties',   icon: Building2,       badge: 0 },
     { href: '/admin/mls-sync',    label: 'MLS Sync',     icon: RefreshCw,       badge: 0 },
+    { href: '/admin/realrisk',    label: 'RealRisk',     icon: TrendingUp,      badge: 0 },
   ]
 
   const Sidebar = () => {

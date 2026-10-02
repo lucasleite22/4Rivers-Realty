@@ -222,6 +222,60 @@ model MlsSyncState {
   @@map("mls_sync_state")
 }
 
+// Analytical copy of MLS listings for the RealRisk dashboard (investment
+// scoring) — NOT portal inventory. Data only: no photos, no curation queue.
+// Filled by upsertMlsListing() in lib/mls-sync.ts for REALRISK_COUNTIES.
+// Same MLS Grid compliance as Property: MlgCanView false → row is deleted.
+model MlsListing {
+  listingKey            String    @id // ListingKey
+  listingId             String // MLS # shown to users
+  standardStatus        String // Active | Pending | Active Under Contract | Closed | ...
+  propertyType          String
+  propertySubType       String?
+  listPrice             Decimal?  @db.Decimal(15, 2)
+  originalListPrice     Decimal?  @db.Decimal(15, 2)
+  closePrice            Decimal?  @db.Decimal(15, 2)
+  closeDate             DateTime?
+  listingContractDate   DateTime?
+  daysOnMarket          Int?
+  address               String?
+  city                  String?
+  county                String?
+  postalCode            String?
+  latitude              Float?
+  longitude             Float?
+  bedrooms              Int?
+  bathrooms             Int?
+  livingArea            Int?
+  lotSizeAcres          Decimal?  @db.Decimal(12, 4)
+  yearBuilt             Int?
+  hoaMonthly            Decimal?  @db.Decimal(10, 2)
+  taxAnnual             Decimal?  @db.Decimal(12, 2)
+  taxYear               Int?
+  poolPrivate           Boolean?
+  zoning                String?
+  floodZone             String? // MFR_FloodZoneCode
+  leaseRestrictions     Boolean? // MFR_LeaseRestrictionsYN — HOA lease rules, NOT zoning
+  minimumLease          String? // MFR_MinimumLease ("No Minimum", "1 Month", ...)
+  waterSource           String? // WaterSource joined (Public, Well, ...)
+  sewer                 String? // Sewer joined (Septic Tank, Public Sewer, ...)
+  utilities             String?   @db.Text // Utilities joined
+  lotFeatures           String?   @db.Text // LotFeatures joined (Paved, Pasture, In County, ...)
+  publicRemarks         String?   @db.Text
+  listOfficeName        String?
+  listAgentFullName     String?
+  mlgCanUse             String? // e.g. "IDX,VOW"
+  modificationTimestamp DateTime
+  firstSeenAt           DateTime  @default(now()) // "new listing" from our point of view
+  updatedAt             DateTime  @updatedAt
+
+  @@index([county])
+  @@index([standardStatus])
+  @@index([firstSeenAt])
+  @@index([listingContractDate])
+  @@map("mls_listings")
+}
+
 model DashboardEvent {
   id         String             @id @default(cuid())
   type       DashboardEventType

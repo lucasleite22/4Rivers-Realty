@@ -32,12 +32,35 @@ const securityHeaders = [
   },
 ]
 
+const realriskHeaders = [
+  ...securityHeaders.filter((h) => h.key !== 'Content-Security-Policy' && h.key !== 'X-Frame-Options'),
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  {
+    key: 'Content-Security-Policy',
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' https://unpkg.com",
+      "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' data: https://*.openstreetmap.org https://unpkg.com",
+      "connect-src 'self' https://*.supabase.co",
+      "frame-ancestors 'self'",
+    ].join('; '),
+  },
+]
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // output: 'standalone', // ativar apenas para deploy manual em VPS/Hostinger
 
   async headers() {
-    return [{ source: '/(.*)', headers: securityHeaders }]
+    return [
+      { source: '/((?!realrisk/).*)', headers: securityHeaders },
+      // RealRisk dashboard (static app in public/realrisk): embedded by
+      // /admin/realrisk in an iframe, loads Leaflet/Supabase from unpkg and
+      // talks to its Supabase project for likes/comments.
+      { source: '/realrisk/:path*', headers: realriskHeaders },
+    ]
   },
 
   images: {
