@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { LayoutDashboard, Users, Building2, LogOut, Menu, InboxIcon, RefreshCw } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { MlsSyncRunnerProvider, useMlsSyncRunner } from '@/components/admin/MlsSyncRunnerContext'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -38,7 +39,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin/mls-sync',    label: 'MLS Sync',     icon: RefreshCw,       badge: 0 },
   ]
 
-  const Sidebar = () => (
+  const Sidebar = () => {
+    // Called inside MlsSyncRunnerProvider's render tree (see the JSX below),
+    // so this hook always has a provider to read from.
+    const { autoRepeat } = useMlsSyncRunner()
+
+    return (
     <aside className="flex flex-col h-full bg-dark-navy border-r border-white/10 w-64">
       {/* Logo */}
       <div className="px-6 py-5 border-b border-white/10">
@@ -61,6 +67,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <nav className="flex-1 px-3 py-6 space-y-1">
         {navItems.map(({ href, label, icon: Icon, badge }) => {
           const active = isActive(href)
+          const showSyncIndicator = href === '/admin/mls-sync' && autoRepeat
           return (
             <Link
               key={href}
@@ -72,8 +79,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   : 'text-white/60 hover:bg-white/5 hover:text-white'
               }`}
             >
-              <Icon className="w-4 h-4 flex-shrink-0" />
+              <Icon className={`w-4 h-4 flex-shrink-0 ${showSyncIndicator ? 'animate-spin' : ''}`} />
               <span className="flex-1">{label}</span>
+              {showSyncIndicator && (
+                <span
+                  className="w-2 h-2 rounded-full bg-green-400 animate-pulse"
+                  title="Auto-repeat running"
+                />
+              )}
               {badge > 0 && (
                 <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-brand-blue text-dark-navy font-barlow text-xs font-bold flex items-center justify-center">
                   {badge > 99 ? '99+' : badge}
@@ -101,51 +114,54 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </button>
       </div>
     </aside>
-  )
+    )
+  }
 
   return (
-    <div className="flex h-screen bg-navy overflow-hidden">
-      {/* Desktop sidebar */}
-      <div className="hidden md:flex flex-shrink-0">
-        <Sidebar />
-      </div>
+    <MlsSyncRunnerProvider>
+      <div className="flex h-screen bg-navy overflow-hidden">
+        {/* Desktop sidebar */}
+        <div className="hidden md:flex flex-shrink-0">
+          <Sidebar />
+        </div>
 
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
-          <div className="fixed inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
-          <div className="relative flex flex-col w-64 z-10">
-            <Sidebar />
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-50 flex md:hidden">
+            <div className="fixed inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
+            <div className="relative flex flex-col w-64 z-10">
+              <Sidebar />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Main area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Mobile topbar */}
-        <div className="md:hidden flex items-center justify-between px-4 py-3 bg-dark-navy border-b border-white/10">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="text-white/60 hover:text-white p-1"
-            aria-label="Open menu"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-          <Image
-            src="/images/logo-horizontal-white.png"
-            alt="4Rivers Realty"
-            width={140}
-            height={40}
-            className="h-9 w-auto object-contain"
-          />
-          <div className="w-7" />
-        </div>
+        {/* Main area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Mobile topbar */}
+          <div className="md:hidden flex items-center justify-between px-4 py-3 bg-dark-navy border-b border-white/10">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="text-white/60 hover:text-white p-1"
+              aria-label="Open menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <Image
+              src="/images/logo-horizontal-white.png"
+              alt="4Rivers Realty"
+              width={140}
+              height={40}
+              className="h-9 w-auto object-contain"
+            />
+            <div className="w-7" />
+          </div>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+          {/* Page content */}
+          <main className="flex-1 overflow-y-auto">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </MlsSyncRunnerProvider>
   )
 }

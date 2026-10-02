@@ -70,6 +70,12 @@ const STATUS_FILTERS = [
   { value: 'SOLD', label: 'Sold' },
 ] as const
 
+const PORTAL_FILTERS = [
+  { value: '', label: 'All listings' },
+  { value: 'true', label: 'Live on site' },
+  { value: 'false', label: 'Pending review' },
+] as const
+
 function coverThumb(p: Property): string | null {
   const cover = p.images.find((img) => img.isCover) ?? p.images[0]
   return cover?.url ?? null
@@ -93,7 +99,7 @@ export default function AdminPropertiesPage() {
   const [sourceFilter, setSourceFilter] = useState<string>('')
   const [typeFilter, setTypeFilter] = useState<string>('')
   const [statusFilter, setStatusFilter] = useState<string>('')
-  const [pendingOnly, setPendingOnly] = useState(false)
+  const [portalFilter, setPortalFilter] = useState<string>('')
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [publishing, setPublishing] = useState(false)
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
@@ -102,7 +108,7 @@ export default function AdminPropertiesPage() {
     setLoading(true)
     const qs = new URLSearchParams({ all: 'true' })
     if (sourceFilter) qs.set('source', sourceFilter)
-    if (pendingOnly) qs.set('showOnPortal', 'false')
+    if (portalFilter) qs.set('showOnPortal', portalFilter)
     fetch(`/api/properties?${qs.toString()}`)
       .then((r) => r.json())
       .then((d) => setProperties(d.data ?? []))
@@ -113,7 +119,7 @@ export default function AdminPropertiesPage() {
     load()
     setSelected(new Set())
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sourceFilter, pendingOnly])
+  }, [sourceFilter, portalFilter])
 
   const filtered = properties.filter((p) => {
     const matchesSearch = !search ||
@@ -210,15 +216,15 @@ export default function AdminPropertiesPage() {
             <option key={f.value} value={f.value} className="bg-[#0a1929]">{f.label}</option>
           ))}
         </select>
-        <label className="flex items-center gap-2 px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white/70 cursor-pointer select-none">
-          <input
-            type="checkbox"
-            checked={pendingOnly}
-            onChange={(e) => setPendingOnly(e.target.checked)}
-            className="accent-brand-blue"
-          />
-          Pending review only
-        </label>
+        <select
+          value={portalFilter}
+          onChange={(e) => setPortalFilter(e.target.value)}
+          className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg font-barlow text-sm text-white focus:outline-none focus:border-brand-blue/50"
+        >
+          {PORTAL_FILTERS.map((f) => (
+            <option key={f.value} value={f.value} className="bg-[#0a1929]">{f.label}</option>
+          ))}
+        </select>
 
         {selected.size > 0 && (
           <button

@@ -1,22 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
 import { RefreshCw, Play, Square } from 'lucide-react'
-
-type MlsStatus = 'Active' | 'Pending' | 'Active Under Contract' | 'Closed'
-type MlsPropertyType = 'Residential' | 'Land' | 'Commercial' | 'Farm'
-
-interface SyncStats {
-  created: number
-  updated: number
-  removed: number
-  unpublishedNotIdx: number
-  skippedNotAuthorized: number
-  skippedOffMarket: number
-  skippedAlreadySold: number
-  skippedOutOfArea: number
-  pagesProcessed: number
-}
+import {
+  useMlsSyncRunner,
+  type MlsStatus,
+  type MlsPropertyType,
+  type SyncStats,
+} from '@/components/admin/MlsSyncRunnerContext'
 
 const STATUS_OPTIONS: { value: MlsStatus; label: string }[] = [
   { value: 'Active', label: 'Active' },
@@ -45,77 +35,12 @@ const STAT_LABELS: Record<keyof SyncStats, string> = {
   pagesProcessed: 'Pages processed',
 }
 
-const EMPTY_STATS: SyncStats = {
-  created: 0, updated: 0, removed: 0, unpublishedNotIdx: 0,
-  skippedNotAuthorized: 0, skippedOffMarket: 0, skippedAlreadySold: 0,
-  skippedOutOfArea: 0, pagesProcessed: 0,
-}
-
-function sumStats(a: SyncStats, b: SyncStats): SyncStats {
-  const out = { ...a }
-  for (const key of Object.keys(b) as (keyof SyncStats)[]) out[key] += b[key]
-  return out
-}
-
 export default function AdminMlsSyncPage() {
-  const [statuses, setStatuses] = useState<MlsStatus[]>(['Active', 'Pending', 'Active Under Contract'])
-  const [propertyType, setPropertyType] = useState<MlsPropertyType | ''>('')
-  const [maxPages, setMaxPages] = useState(2)
-  const [running, setRunning] = useState(false)
-  const [autoRepeat, setAutoRepeat] = useState(false)
-  const [lastStats, setLastStats] = useState<SyncStats | null>(null)
-  const [totalStats, setTotalStats] = useState<SyncStats>(EMPTY_STATS)
-  const [runCount, setRunCount] = useState(0)
-  const [lastRunAt, setLastRunAt] = useState<Date | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  function toggleStatus(s: MlsStatus) {
-    setStatuses((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]))
-  }
-
-  async function runOnce() {
-    setRunning(true)
-    setError(null)
-    try {
-      const res = await fetch('/api/admin/mls-sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          statuses,
-          propertyType: propertyType || undefined,
-          maxPages,
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Sync failed')
-      setLastStats(data)
-      setTotalStats((prev) => sumStats(prev, data))
-      setRunCount((prev) => prev + 1)
-      setLastRunAt(new Date())
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
-      setAutoRepeat(false) // stop the loop on failure instead of hammering a broken endpoint
-    } finally {
-      setRunning(false)
-    }
-  }
-
-  // Auto-repeat every 2 minutes while this tab stays open — a lighter-weight
-  // in-browser alternative to the PowerShell loop script, for whoever is
-  // logged into the admin panel.
-  useEffect(() => {
-    if (!autoRepeat) {
-      if (intervalRef.current) clearInterval(intervalRef.current)
-      return
-    }
-    runOnce()
-    intervalRef.current = setInterval(runOnce, 120_000)
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoRepeat])
+  const {
+    statuses, propertyType, maxPages, running, autoRepeat,
+    lastStats, totalStats, runCount, lastRunAt, error,
+    toggleStatus, setPropertyType, setMaxPages, runOnce, setAutoRepeat,
+  } = useMlsSyncRunner()
 
   return (
     <div className="min-h-full bg-[#0a1929] text-white p-6 md:p-8 max-w-3xl">
@@ -201,7 +126,7 @@ export default function AdminMlsSyncPage() {
           </button>
 
           <button
-            onClick={() => setAutoRepeat((v) => !v)}
+            onClick={() => setAutoRepeat(!autoRepeat)}
             disabled={statuses.length === 0}
             className={`flex items-center gap-2 px-4 py-2.5 font-barlow font-semibold text-sm rounded-lg transition disabled:opacity-40 ${
               autoRepeat
@@ -215,7 +140,8 @@ export default function AdminMlsSyncPage() {
         </div>
         {autoRepeat && (
           <p className="font-barlow text-xs text-white/40">
-            Keep this tab open — the loop stops if you navigate away or close it.
+            Keeps running while you&apos;re anywhere in the admin panel — it only stops if you reload the page,
+            close the tab, or leave the admin section entirely.
           </p>
         )}
 
