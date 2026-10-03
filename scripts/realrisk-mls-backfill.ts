@@ -4,6 +4,12 @@
 //   npx tsx scripts/realrisk-mls-backfill.ts            # backfill: Active/Pending/AUC since cursor
 //   npx tsx scripts/realrisk-mls-backfill.ts --delta    # unfiltered delta (catches Withdrawn/Closed)
 //   npx tsx scripts/realrisk-mls-backfill.ts --max-pages 50
+//   npx tsx scripts/realrisk-mls-backfill.ts --auto     # picks backfill or delta from the cursor
+//
+// --auto is what the scheduled GitHub Action runs
+// (.github/workflows/realrisk-mls-sync.yml): backfill while the initial load
+// isn't finished (no cursor, or cursor older than BACKFILL_UNTIL_DAYS), then
+// the unfiltered daily delta.
 //
 // Safe to Ctrl+C: the 'mfrmls:realrisk' cursor is saved after every page.
 // All requests go through the throttled MLSGrid service (~1.67 req/s) and
@@ -23,6 +29,11 @@ function loadEnv(file: string) {
 
 const PAGES_PER_CHUNK = 20
 
+// The status-filtered backfill walks ModificationTimestamp from 2020 up to
+// "now"; once the cursor is this recent the initial load is done and the
+// unfiltered delta takes over (it would be far too big from 2020).
+const BACKFILL_UNTIL_DAYS = 30
+
 // Crons that also call MLSGrid: portal mls-sync at 06:00 UTC and the
 // RealRisk digest delta at 10:00 UTC (once scheduled) — stay out of
 // 05:50–06:30 and 09:50–10:30.
@@ -36,7 +47,7 @@ async function main() {
   loadEnv(path.join(process.cwd(), '.env'))
 
   const args = process.argv.slice(2)
-  const delta = args.includes('--delta')
+  let delta = args.includes('--delta')
   const maxPagesArg = args.indexOf('--max-pages')
   const maxPages = maxPagesArg >= 0 ? Number(args[maxPagesArg + 1]) : Infinity
 
@@ -44,6 +55,14 @@ async function main() {
   const { runRealriskSync, REALRISK_COUNTIES } = await import('@/lib/realrisk-mls')
   const { DEFAULT_SYNC_STATUSES } = await import('@/lib/mls-sync')
   const { default: prisma } = await import('@/lib/prisma')
+
+  if (args.includes('--auto')) {
+    const { REALRISK_SYNC_STATE } = await import('@/lib/realrisk-mls')
+    const state = await prisma.mlsSyncState.findUnique({ where: { originatingSystemName: REALRISK_SYNC_STATE } })
+    const ageDays = state ? (Date.now() - state.lastModificationTimestamp.getTime()) / 86_400_000 : Infinity
+    delta = ageDays <= BACKFILL_UNTIL_DAYS
+    console.log(`[realrisk-backfill] --auto: cursor ${state ? `${ageDays.toFixed(1)} days old` : 'missing'}`)
+  }
 
   console.log(`[realrisk-backfill] counties=${REALRISK_COUNTIES.join(',')} mode=${delta ? 'delta' : 'backfill'}`)
   const totals = { created: 0, updated: 0, removed: 0, skipped: 0, outOfArea: 0, pages: 0 }

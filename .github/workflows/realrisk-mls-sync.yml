@@ -1,0 +1,56 @@
+# Keeps mls_listings (RealRisk) filled and fresh, automatically.
+#
+# Runs scripts/realrisk-mls-backfill.ts --auto: the initial backfill on the
+# first run(s), then the unfiltered daily delta (new listings, price changes,
+# Withdrawn/Expired/Closed). Runs here instead of a Vercel cron because the
+# Hobby plan caps functions at 60s and crons at once a day — the initial load
+# alone takes ~15 min.
+#
+# Requires two repository secrets (Settings → Secrets and variables → Actions):
+#   DATABASE_URL       — production TiDB connection string (same as Vercel)
+#   MLSGRID_API_TOKEN  — same token as Vercel
+#
+# MLSGrid rate limit (2 req/s for this token): the script goes through the
+# throttled service (~1.67 req/s) and pauses itself around the Vercel crons
+# (06:00 and 10:00 UTC). `concurrency` below guarantees only one run at a time.
+
+name: RealRisk MLS sync
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # 08:00 UTC = 05:00 BRT, between the two Vercel crons
+  workflow_dispatch: # "Run workflow" button in the Actions tab
+  push:
+    # Lets the Preview get data before merge. Harmless after merge (the
+    # branch goes away) — each run just resumes from the cursor.
+    branches: [feat/realrisk-mls-listings]
+    paths:
+      - 'lib/realrisk-mls.ts'
+      - 'scripts/realrisk-mls-backfill.ts'
+      - '.github/workflows/realrisk-mls-sync.yml'
+
+concurrency:
+  group: realrisk-mls-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx prisma generate
+
+      - name: Sync mls_listings
+        run: npx --yes tsx scripts/realrisk-mls-backfill.ts --auto
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          MLSGRID_API_TOKEN: ${{ secrets.MLSGRID_API_TOKEN }}
